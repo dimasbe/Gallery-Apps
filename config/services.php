@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'google' => [
+    'client_id' => env('GOOGLE_CLIENT_ID'),  // Ambil dari .env
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),  // Ambil dari .env
+    'redirect' => env('GOOGLE_REDIRECT_URI'),  // Ambil dari .env
+    ],
+
+
+
 ];
