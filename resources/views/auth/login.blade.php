@@ -2,11 +2,11 @@
     <div class="min-h-screen flex items-center justify-center bg-[#B688BF]">
         <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
             <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
-            <p class="text-center text-sm text-gray-600 mb-6">Silahkan Melakukan Login Terlebih Dahulu</p>
+            <p class="text-center text-sm text-gray-600 mb-6">Silahkan Login Terlebih Dahulu</p>
 
             <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            <form method="POST" action="{{ route('login') }}" class="space-y-4" id="loginForm">
                 @csrf
 
                 @if ($errors->has('email'))
@@ -40,16 +40,16 @@
 
                 <!-- Remember Me -->
                 <div class="flex items-center">
-                    <input id="remember_me" type="checkbox" name="remember"
+                    <input id="agree" type="checkbox" name="remember"
                         class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
-                    <label for="remember_me" class="ml-2 text-sm text-gray-600">
+                    <label for="agree" class="ml-2 text-sm text-gray-600">
                         {{ __('Saya setuju dengan syarat dan ketentuan') }}
                     </label>
                 </div>
 
                 <!-- Submit -->
-                <button type="submit"
-                    class="w-full bg-[#b30000] text-white font-semibold py-2 rounded-lg hover:bg-red-700 transition">
+                <button type="submit" id="submitBtn" disabled
+                    class="w-full bg-[#b30000] text-white font-semibold py-2 rounded-lg opacity-50 cursor-not-allowed">
                     Login
                 </button>
 
@@ -72,4 +72,19 @@
             </form>
         </div>
     </div>
+
+    <script>
+        const agreeCheckbox = document.getElementById('agree');
+        const submitBtn = document.getElementById('submitBtn');
+
+        agreeCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+    </script>
 </x-guest-layout>
