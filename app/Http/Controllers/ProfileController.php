@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,13 +27,45 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Jika tombol hapus avatar ditekan
+        if ($request->has('delete_avatar')) {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+                $user->avatar = null;
+                $user->save();
+            }
+
+            // Jangan hapus google_avatar, biarkan tetap ada
+            return Redirect::route('profile.edit')->with('status', 'profile-updated');
         }
 
-        $request->user()->save();
+        // Update name & email
+        $user->name = $request->input('name');
+
+        if ($request->input('email') !== $user->email) {
+            $user->email = $request->input('email');
+            $user->email_verified_at = null;
+        }
+
+        // Update password jika diisi
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        // Upload avatar jika ada
+        if ($request->hasFile('avatar')) {
+            // Hapus avatar lama jika ada
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -49,6 +82,11 @@ class ProfileController extends Controller
         $user = $request->user();
 
         Auth::logout();
+
+        // Hapus avatar jika ada
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
 
         $user->delete();
 
