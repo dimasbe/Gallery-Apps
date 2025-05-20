@@ -1,4 +1,6 @@
-<x-guest-layout>
+@extends('layouts.app')
+
+@section('content')
     <div class="min-h-screen flex items-center justify-center bg-white">
         <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
             <!-- Title -->
@@ -100,4 +102,4 @@
             }
         });
     </script>
-</x-guest-layout>
+@endsection

@@ -1,7 +1,10 @@
-<x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-[#B688BF]">
+@extends('layouts.app')
+
+@section('content')
+    <div class="min-h-screen flex items-center justify-center bg-white">
         <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Login</h2>
+
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Login</h2>
             <p class="text-center text-sm text-gray-600 mb-6">Silahkan Login Terlebih Dahulu</p>
 
             <x-auth-session-status class="mb-4" :status="session('status')" />
@@ -23,7 +26,7 @@
                         :value="old('email')" required autofocus autocomplete="username" />
                 </div>
 
-                <!-- Password + Forgot Password -->
+                <!-- Password -->
                 <div>
                     <div class="flex justify-between items-center">
                         <x-input-label for="password" :value="__('Password')" />
@@ -62,7 +65,7 @@
                     <span>Sign in with Google</span>
                 </a>
 
-                <!-- Register bawah -->
+                <!-- Register Link -->
                 <div class="mt-4 text-center text-sm text-gray-700">
                     Tidak punya akun?
                     <a href="{{ route('register') }}" class="text-indigo-600 hover:underline font-medium">
@@ -77,7 +80,7 @@
         const agreeCheckbox = document.getElementById('agree');
         const submitBtn = document.getElementById('submitBtn');
 
-        agreeCheckbox.addEventListener('change', function () {
+        agreeCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -87,4 +90,4 @@
             }
         });
     </script>
-</x-guest-layout>
+@endsection
