@@ -148,11 +148,11 @@
         </div>
       </div>
             <div class="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {{-- Item 1 --}}
+            {{-- Item 1 --}}
                 <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px]">
                     <img src="{{ asset('images/township.png') }}" alt="Township" class="w-full h-32 object-cover rounded-t-xl">
                      <div class="pt-4 flex items-start space-x-3">
-                    <img src="{{ asset('images/township.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
+                    <img src="{{ asset('images/icon_township.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
             <div>
             <h3 class="font-semibold text-gray-800 text-sm mb-1">Township</h3>
             <p class="text-gray-600 text-xs">Playrix</p>
@@ -167,81 +167,94 @@
 </div>
 
                 {{-- Item 2 --}}
-                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
-    <img src="{{ asset('images/mobilelegends.png') }}" alt="Mobile Legends" class="w-full h-32 object-cover rounded-t-xl">
-    <div class="pt-4">
-        <h3 class="font-semibold text-gray-800 text-sm mb-1">Mobile Legends: Bang Bang</h3>
-        <p class="text-gray-600 text-xs">MOONTON</p>
-        <div class="flex items-center mt-2">
-            <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
-            </svg>
-            <span class="text-gray-700 text-xs">4.7</span>
+                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px]">
+                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Township" class="w-full h-32 object-cover rounded-t-xl">
+                     <div class="pt-4 flex items-start space-x-3">
+                    <img src="{{ asset('images/icon_ml.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
+            <div>
+            <h3 class="font-semibold text-gray-800 text-sm mb-1">Mobile Legends</h3>
+            <p class="text-gray-600 text-xs">Playrix</p>
+            <div class="flex items-center mt-2">
+                <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
+                </svg>
+                <span class="text-gray-700 text-xs">4.7</span>
+            </div>
         </div>
     </div>
 </div>
 
                 {{-- Item 3 --}}
-                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
-    <img src="{{ asset('images/tokopedia.png') }}" alt="Tokopedia" class="w-full h-32 object-cover rounded-t-xl">
-    <div class="pt-4">
-        <h3 class="font-semibold text-gray-800 text-sm mb-1">Tokopedia</h3>
-        <p class="text-gray-600 text-xs">PT. Tokopedia</p>
-        <div class="flex items-center mt-2">
-            <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
-            </svg>
-            <span class="text-gray-700 text-xs">4.7</span>
+                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px]">
+                    <img src="{{ asset('images/tokopedia.png') }}" alt="Township" class="w-full h-32 object-cover rounded-t-xl">
+                     <div class="pt-4 flex items-start space-x-3">
+                    <img src="{{ asset('images/icon_tokopedia.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
+            <div>
+            <h3 class="font-semibold text-gray-800 text-sm mb-1">Tokopedia</h3>
+            <p class="text-gray-600 text-xs">Playrix</p>
+            <div class="flex items-center mt-2">
+                <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
+                </svg>
+                <span class="text-gray-700 text-xs">4.7</span>
+            </div>
         </div>
     </div>
 </div>
 
                 {{-- Item 4 --}}
-                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
-                    <img src="{{ asset('images/ruangguru.png') }}" alt="Ruangguru" class="w-full h-32 object-cover">
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-800 text-sm mb-1">Ruangguru: Bimbel SD SMP SMA</h3>
-                        <p class="text-gray-600 text-xs">ruangguru.com</p>
-                        <div class="flex items-center mt-2">
-            <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
-            </svg>
-            <span class="text-gray-700 text-xs">4.7</span>
+                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px]">
+                    <img src="{{ asset('images/ruangguru.png') }}" alt="Township" class="w-full h-32 object-cover rounded-t-xl">
+                     <div class="pt-4 flex items-start space-x-3">
+                    <img src="{{ asset('images/icon_ruangguru.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
+            <div>
+            <h3 class="font-semibold text-gray-800 text-sm mb-1">Ruang Guru</h3>
+            <p class="text-gray-600 text-xs">Playrix</p>
+            <div class="flex items-center mt-2">
+                <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
+                </svg>
+                <span class="text-gray-700 text-xs">4.7</span>
+            </div>
         </div>
-                    </div>
-                </div>
+    </div>
+</div>
 
                 {{-- Item 5 --}}
-                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
-                    <div class="relative">
-                        <img src="{{ asset('images/township.png') }}" alt="Panen!" class="w-full h-32 object-cover">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-800 text-sm mb-1">Township</h3>
-                        <p class="text-gray-600 text-xs">Playrix</p>
-                        <div class="flex items-center mt-2">
-            <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
-            </svg>
-            <span class="text-gray-700 text-xs">4.7</span>
+                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px]">
+                    <img src="{{ asset('images/ruangguru.png') }}" alt="Township" class="w-full h-32 object-cover rounded-t-xl">
+                     <div class="pt-4 flex items-start space-x-3">
+                    <img src="{{ asset('images/icon_ruangguru.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
+            <div>
+            <h3 class="font-semibold text-gray-800 text-sm mb-1">Ruang Guru</h3>
+            <p class="text-gray-600 text-xs">Playrix</p>
+            <div class="flex items-center mt-2">
+                <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
+                </svg>
+                <span class="text-gray-700 text-xs">4.7</span>
+            </div>
         </div>
-                    </div>
-                </div>
+    </div>
+</div>
 
                 {{-- Item 6 --}}
-                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
-                    <div class="relative">
-                        <img src="{{ asset('images/township.png') }}" alt="Panen!" class="w-full h-32 object-cover">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-800 text-sm mb-1">Township</h3>
-                        <p class="text-gray-600 text-xs">Playrix</p>
-                        <div class="flex items-center mt-2">
-            <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
-            </svg>
-            <span class="text-gray-700 text-xs">4.7</span>
+                <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px]">
+                    <img src="{{ asset('images/ruangguru.png') }}" alt="Township" class="w-full h-32 object-cover rounded-t-xl">
+                     <div class="pt-4 flex items-start space-x-3">
+                    <img src="{{ asset('images/icon_ruangguru.png') }}" alt="Icon Township" class="w-10 h-10 rounded-md object-cover">
+            <div>
+            <h3 class="font-semibold text-gray-800 text-sm mb-1">Ruang Guru</h3>
+            <p class="text-gray-600 text-xs">Playrix</p>
+            <div class="flex items-center mt-2">
+                <svg class="w-4 h-4 text-yellow-500 fill-current mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z"/>
+                </svg>
+                <span class="text-gray-700 text-xs">4.7</span>
+            </div>
         </div>
+    </div>
+</div>
                     </div>
                 </div>
             </div>
