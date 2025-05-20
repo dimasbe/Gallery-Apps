@@ -34,26 +34,37 @@
                     @auth
                         @php
                             $defaultAvatar = asset('images/default-avatar.png');
-                            $googleAvatar = Auth::user()->google_avatar ?? null;
-                            $localAvatar = Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : null;
+                            $avatarPath = Auth::user()->avatar ?? null;
 
-                            // Validasi URL google avatar
-                            $validGoogleAvatar = filter_var($googleAvatar, FILTER_VALIDATE_URL) ? $googleAvatar : null;
+                            // Fungsi untuk memperbaiki Google avatar URL supaya ada suffix ukuran =s256-c
+                            function fixGoogleAvatarUrl($url) {
+                                if (str_contains($url, 'lh3.googleusercontent.com')) {
+                                    if (!preg_match('/=s\d+(-c)?$/', $url)) {
+                                        return $url . '=s256-c';
+                                    } else {
+                                        return preg_replace('/=s\d+(-c)?$/', '=s256-c', $url);
+                                    }
+                                }
+                                return $url;
+                            }
 
-                            // Ambil inisial dari nama user
+                            if ($avatarPath && filter_var($avatarPath, FILTER_VALIDATE_URL)) {
+                                $avatarUrl = fixGoogleAvatarUrl($avatarPath);
+                            } elseif ($avatarPath) {
+                                $avatarUrl = asset('storage/' . $avatarPath);
+                            } else {
+                                $avatarUrl = null;
+                            }
+
                             $name = Auth::user()->name ?? '';
                             $nameParts = preg_split('/\s+/', trim($name));
-                            $initials = '';
-                            foreach ($nameParts as $part) {
-                                $initials .= mb_substr($part, 0, 1);
-                            }
-                            $initials = strtoupper(substr($initials, 0, 2));
-
-                            // Prioritas: lokal > google avatar valid > null (untuk inisial)
-                            $avatarUrl = $localAvatar ?: $validGoogleAvatar ?: null;
+                            $initials = strtoupper(
+                                collect($nameParts)->map(fn($part) => mb_substr($part, 0, 1))->implode('')
+                            );
+                            $initials = substr($initials, 0, 2);
                         @endphp
 
-                        <button type="button" onclick="toggleDropdown()" class="flex items-center focus:outline-none">
+                        <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none">
                             @if ($avatarUrl)
                                 <img
                                     src="{{ $avatarUrl }}"
@@ -62,15 +73,15 @@
                                     class="w-10 h-10 rounded-full object-cover"
                                 >
                             @else
-                                {{-- Tampilkan lingkaran inisial --}}
                                 <div class="w-10 h-10 rounded-full bg-[#AD1500] text-white flex items-center justify-center font-semibold text-lg select-none">
                                     {{ $initials ?: '?' }}
                                 </div>
                             @endif
-                            <span class="ml-2 text-[#1b1b18] dark:text-[#EDEDEC] font-medium hidden sm:inline">
+
+                            <span class="ml-2 text-[#1b1b18] dark:text-[#EDEDEC] font-medium hidden sm:inline select-none">
                                 {{ $name }}
                             </span>
-                            <svg class="w-4 h-4 ml-1 text-gray-500 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.184l3.71-3.954a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                             </svg>
                         </button>
@@ -121,7 +132,7 @@
         }
 
         document.addEventListener('click', function (event) {
-            const trigger = event.target.closest('button');
+            const trigger = event.target.closest('button[onclick="toggleDropdown()"]');
             const dropdown = document.getElementById('dropdownMenu');
             const insideDropdown = event.target.closest('#dropdownMenu');
             if (!trigger && !insideDropdown && dropdown && !dropdown.classList.contains('hidden')) {
