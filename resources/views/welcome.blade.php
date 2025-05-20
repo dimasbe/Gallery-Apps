@@ -2,23 +2,18 @@
 
 @section('content')
 {{-- Landing Page --}}
-<section class="w-full min-h-screen flex items-start justify-center p-0 m-0" 
-    style="
-      background-image: url('{{ asset('images/background.png') }}');
-      background-size: 100% 700px; 
-      background-repeat: no-repeat;
-      background-position: top center;
-    ">
-<div class="max-w-7xl w-full px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+<section class="w-full flex items-start justify-center p-6 md:p-0 m-0">
+<div class="max-w-7xl w-full px-3 py-2 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
         {{-- Text Kiri --}}
         <div>
-        <h2 class="text-5xl md:text-6xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4">
+        <h2 class="text-4xl md:text-4xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4">
     Selamat Datang di <br>
     <span class="text-[#AD1500]">GalleryApps</span>
 </h2>
-<p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-6 font-poppins">
+<p class="text-base md:text-lg text-gray-500 dark:text-gray-200 leading-relaxed mb-4 font-poppins">
             Temukan aplikasi terbaik yang sesuai kebutuhanmu lewat ulasan mendalam,
-            fitur unggulan, dan link unduh resmi. Semua cepat, spesifik, dan terpercaya di satu platform.
+            fitur unggulan, dan link unduh resmi. <br>
+            Semua cepat, spesifik, dan terpercaya di satu platform.
             </p>
 
             {{-- Form Pencarian --}}
@@ -41,18 +36,18 @@
 </section>
 
 {{-- Section Kategori --}}
-<section class="w-full bg-white pt-0 pb-12">
-<div class="max-w-7xl mx-auto px-2 -mt-2">
-        <h2 class="text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-2">
+<section class="">
+<div class="max-w-7xl mx-auto px-2 mt-10">
+        <h2 class="text-2xl md:text-2xl font-semibold text-center text-[#1b1b18] font-poppins mb-2">
             KATEGORI
         </h2>
-        <p class="text-center text-gray-600 font-poppins mb-10">
+        <p class="text-center text-gray-500 font-poppins mb-7">
             Temukan Aplikasi yang Anda Inginkan
         </p>
-        <div class="mx-auto border-b-2 border-gray-300 w-400 mb-10"></div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
+        <div class="mx-auto w-fit grid grid-cols-2 md:grid-cols-3 gap-x-20 gap-y-6">
             {{-- Kategori Item --}}
-            <div class="relative rounded-xl overflow-hidden shadow-md">
+            <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
                 <img src="{{ asset('images/permainan.png') }}"class="w-full h-[200px] object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
                     <div class="bg-white p-2 rounded-full mb-2">
@@ -65,7 +60,7 @@
                 </div>
             </div>
 
-            <div class="relative rounded-xl overflow-hidden shadow-md">
+            <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
                 <img src="{{ asset('images/belanja.png') }}" class="w-full h-[200px] object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
                     <div class="bg-white p-2 rounded-full mb-2">
@@ -77,7 +72,7 @@
                 </div>
             </div>
 
-            <div class="relative rounded-xl overflow-hidden shadow-md">
+            <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
                 <img src="{{ asset('images/pendidikan.png') }}" class="w-full h-[200px] object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
                     <div class="bg-white p-2 rounded-full mb-2">
@@ -89,7 +84,7 @@
                 </div>
             </div>
 
-            <div class="relative rounded-xl overflow-hidden shadow-md">
+            <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
                 <img src="{{ asset('images/olahraga.png') }}" class="w-full h-[200px] object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
                     <div class="bg-white p-2 rounded-full mb-2">
@@ -101,7 +96,7 @@
                 </div>
             </div>
 
-            <div class="relative rounded-xl overflow-hidden shadow-md">
+            <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
                 <img src="{{ asset('images/fashion.png') }}" class="w-full h-[200px] object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
                     <div class="bg-white p-2 rounded-full mb-2">
@@ -113,7 +108,7 @@
                 </div>
             </div>
 
-            <div class="relative rounded-xl overflow-hidden shadow-md">
+            <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
                 <img src="{{ asset('images/kesehatan.png') }}" class="w-full h-[200px] object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
                     <div class="bg-white p-2 rounded-full mb-2">
@@ -126,16 +121,17 @@
             </div>
         </div>
 
-        <div class="text-center mt-10">
-            <a href="#" class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-6 py-3 rounded-full font-poppins shadow-md transition">
-                Lihat semua kategori
-            </a>
-        </div>
+        <div class="text-center mt-12">
+    <a href="#" class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-4 py-2 rounded-full font-poppins shadow-md transition text-ms">
+        Lihat semua kategori
+    </a>
+</div>
+
     </div>
 </section>
 
 {{-- Section Aplikasi Terpopuler --}}
-<section class="w-full bg-white py-12">
+<section class="mt-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
     <div class="col-span-1 bg-gray-100 border border-[#D9D9D9] rounded-xl p-6 flex flex-col justify-center h-full min-h-[300px] shadow-xl">
@@ -143,10 +139,10 @@
           <h2 class="text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4">
             Aplikasi Terpopuler
           </h2>
-          <p class="text-gray-600 font-poppins">
+          <p class="text-gray-500 font-poppins">
             Jelajahi berbagai aplikasi terpopuler yang paling sering dicari dan digunakan oleh pengguna lainnya di sini!
           </p>
-          <a href="#" class="mt-3 inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-6 py-3 rounded-full font-poppins shadow-md transition">
+          <a href="#" class="mt-3 inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-3 py-2 rounded-full font-poppins shadow-md transition text-ms">
             Lihat semua aplikasi
           </a>
         </div>
@@ -219,7 +215,6 @@
                 <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
                     <div class="relative">
                         <img src="{{ asset('images/township.png') }}" alt="Panen!" class="w-full h-32 object-cover">
-                        <div class="absolute top-2 left-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">PANEN!</div>
                     </div>
                     <div class="p-4">
                         <h3 class="font-semibold text-gray-800 text-sm mb-1">Township</h3>
@@ -237,7 +232,6 @@
                 <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center h-full min-h-[300px]">
                     <div class="relative">
                         <img src="{{ asset('images/township.png') }}" alt="Panen!" class="w-full h-32 object-cover">
-                        <div class="absolute top-2 left-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">PANEN!</div>
                     </div>
                     <div class="p-4">
                         <h3 class="font-semibold text-gray-800 text-sm mb-1">Township</h3>
@@ -256,11 +250,15 @@
 </section>
 
 {{-- Section Berita Terbaru --}}
-<section class="w-full bg-white py-12">
+<section class="mt-20">
     <div class="max-w-7xl mx-auto px-2">
-        <h2 class="text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-6">
-            BERITA TERBARU
+        <h2 class="text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-4">
+            BERITA
         </h2>
+        <p class="text-center text-gray-500 font-poppins mb-4">
+            Lihat Berita Terbaru Kami
+        </p>
+        <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
         <div class="relative">
             <div class="flex overflow-x-auto space-x-4 scroll-smooth snap-x snap-mandatory">
                 {{-- Berita Item 1 --}}
@@ -298,10 +296,10 @@
 
                 {{-- Tambahkan lebih banyak item berita di sini jika ada --}}
             </div>
-            <div class="absolute top-1/2 left-2 transform -translate-y-1/2 cursor-pointer">
+            <div class="absolute top-1/2 -left-14 transform -translate-y-1/2 cursor-pointer">
                 <svg class="w-6 h-6 text-gray-500 hover:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </div>
-            <div class="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer">
+            <div class="absolute top-1/2 -right-14 transform -translate-y-1/2 cursor-pointer">
                 <svg class="w-6 h-6 text-gray-500 hover:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </div>
         </div>
@@ -315,61 +313,65 @@
 </section>
 
 {{-- Footer --}}
-<footer class="w-full bg-white py-8">
-    <div class="max-w-7xl mx-auto px-2 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {{-- Bagian Tentang Aplikasi --}}
-        <div class="text-left">
-            <div class="flex items-center mb-4">
-                <img src="{{ asset('images/logo2.png') }}" alt="Logo Galerry Apps" class="w-12 h-12 rounded-full object-cover" />
+<footer class="w-full bg-white mt-20 px-4 py-8">
+    <div class="max-w-7xl mx-auto px-2 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {{-- Bagian Tentang Aplikasi --}}
+            <div class="text-left">
+                <div class="flex items-center mb-4">
+                    <img src="{{ asset('images/logo2.png') }}" alt="Logo Galerry Apps" class="w-12 h-12 rounded-full object-cover" />
+                </div>
+                <p class="text-gray-600 text-sm">
+                    Galerry Apps adalah platform gratis untuk berbagai aplikasi buatan pengguna, tempat di mana siapa saja bisa mengunggah, menjelajahi, dan menemukan karya digital dari komunitas kreatif di seluruh Indonesia.
+                </p>
             </div>
-            <p class="text-gray-600 text-sm">
-                Galerry Apps adalah platform gratis untuk berbagai aplikasi buatan pengguna, tempat di mana siapa saja bisa mengunggah, menjelajahi, dan menemukan karya digital dari komunitas kreatif di seluruh Indonesia.
-            </p>
+
+            {{-- Bagian Alamat --}}
+            <div class="text-left">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4">Alamat</h3>
+                <ul class="text-gray-600 text-sm">
+                    <li class="flex items-start mb-2">
+                        <img src="/images/iconmaps.png" alt="Lokasi" class="w-5 h-5 mr-2 flex-shrink-0" />
+                        <span>Perum Permata Regency 1 Blok 10 no 28<br />Ngijo Karangploso Malang</span>
+                    </li>
+                    <li class="flex items-center mb-2">
+                        <img src="/images/icon_email.png" alt="Email" class="w-5 h-5 mr-2 flex-shrink-0" />
+                        <span>galerryapps@gmail.com</span>
+                    </li>
+                    <li class="flex items-center">
+                        <img src="/images/icon_telepon.png" alt="Telepon" class="w-5 h-5 mr-2 flex-shrink-0" />
+                        <span>(+62) 82132560566</span>
+                    </li>
+                </ul>
+            </div>
+
+            {{-- Bagian Sosial Media --}}
+            <div class="text-left">
+                <h3 class="font-semibold text-lg text-gray-800 mb-4"></h3>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Facebook">
+                        <img src="/images/icon_facebook.png" alt="Facebook" class="w-6 h-6" />
+                    </a>
+                    <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Twitter">
+                        <img src="/images/icon_twitter.png" alt="Twitter" class="w-6 h-6" />
+                    </a>
+                    <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Instagram">
+                        <img src="/images/icon_instagram.png" alt="Instagram" class="w-6 h-6" />
+                    </a>
+                </div>
+            </div>
         </div>
-
-        {{-- Bagian Alamat --}}
-        <div class="text-left">
-  <h3 class="font-semibold text-lg text-gray-800 mb-4">Alamat</h3>
-  <ul class="text-gray-600 text-sm">
-    <li class="flex items-start mb-2">
-      <img src="/images/iconmaps.png" alt="Lokasi" class="w-5 h-5 mr-2 flex-shrink-0" />
-      <span>Perum Permata Regency 1 Blok 10 no 28<br>Ngijo Karangploso Malang</span>
-    </li>
-    <li class="flex items-center mb-2">
-      <img src="/images/icon_email.png" alt="Email" class="w-5 h-5 mr-2 flex-shrink-0" />
-      <span>galerryapps@gmail.com</span>
-    </li>
-    <li class="flex items-center">
-      <img src="/images/icon_telepon.png" alt="Telepon" class="w-5 h-5 mr-2 flex-shrink-0" />
-      <span>(+62) 82132560566</span>
-    </li>
-  </ul>
-</div>
-
-{{-- Bagian Sosial Media --}}
-<div class="text-left">
-    <h3 class="font-semibold text-lg text-gray-800 mb-4"></h3>
-    <div class="flex space-x-4">
-        <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Facebook">
-            <img src="/images/icon_facebook.png" alt="Facebook" class="w-6 h-6" />
-        </a>
-        <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Twitter">
-            <img src="/images/icon_twitter.png" alt="Twitter" class="w-6 h-6" />
-        </a>
-        <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Instagram">
-            <img src="/images/icon_instagram.png" alt="Instagram" class="w-6 h-6" />
-        </a>
-    </div>
-</div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-2 mt-8 text-gray-500 text-xs border-t border-gray-200 py-4">
-    <div class="flex justify-between">
-        <div>2025 Hummatech All Rights Reserved</div>
-        <div>Copyright By GalerryApp</div>
+    {{-- Border garis full width + copyright yang lebih pendek --}}
+    <div class="border-t border-gray-200 w-full">
+        <div class="max-w-7xl mx-auto px-2 py-2 text-gray-500 text-xs flex justify-between">
+            <div>2025 Hummatech All Rights Reserved</div>
+            <div>Copyright By GalerryApp</div>
+        </div>
     </div>
-</div>
-
 </footer>
+
+
 
 @endsection
