@@ -52,7 +52,7 @@ class KategoriAplikasiController extends Controller
 
     public function update(UpdateKategoriAplikasiRequest $request, KategoriAplikasi $kategoriAplikasi) {
         try {
-            $kategoriAplikasi->update($request->validated());
+            $this->kategoriAplikasi->update($kategoriAplikasi->id, $request->validated());
             Alert::success('Berhasil', 'Kategori Berhasil Diperbarui');
             return redirect()->route('admin.kategoriaplikasi.index');
         } catch (\Illuminate\Validation\ValidationException $e) {
