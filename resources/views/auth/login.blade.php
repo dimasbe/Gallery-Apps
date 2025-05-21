@@ -56,7 +56,12 @@
                     Login
                 </button>
 
-                <div class="text-center text-gray-500">atau</div>
+                <!-- Or separator -->
+                <div class="flex items-center my-6">
+                    <hr class="flex-grow border-gray-300" />
+                    <span class="mx-3 text-gray-500">Atau</span>
+                    <hr class="flex-grow border-gray-300" />
+                </div>
 
                 <!-- Google Login Button -->
                 <a href="{{ route('google.redirect') }}"

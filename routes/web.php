@@ -21,6 +21,9 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+Route::get('/aplikasi', function () {
+    return view('aplikasi.index');
+})->name('aplikasi');
 
 // Rute Login via Google
 Route::get('/login/google', [GoogleController::class, 'redirect'])->name('google.redirect');
