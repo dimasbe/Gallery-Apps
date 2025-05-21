@@ -40,5 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/search', function () {
+    return view('search');
+})->name('search');
 // Rute auth dari Laravel Breeze (login, logout, password reset, dll)
 require __DIR__.'/auth.php';
