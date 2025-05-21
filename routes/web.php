@@ -20,7 +20,7 @@ Route::get('/', function () {
 // Rute dashboard (hanya bisa diakses jika login & verifikasi)
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('dashboard');
 
 // Rute Login via Google
 Route::get('/login/google', [GoogleController::class, 'redirect'])->name('google.redirect');
