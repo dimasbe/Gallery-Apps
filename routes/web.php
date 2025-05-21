@@ -14,7 +14,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 // Rute utama
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
 // Rute dashboard (hanya bisa diakses jika login & verifikasi)
