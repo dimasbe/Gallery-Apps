@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen font-[Poppins]">
-    <header class="w-full shadow-sm bg-white dark:bg-[#1b1b18]">
+    <header class="fixed top-0 left-0 w-full z-50 shadow-sm bg-white dark:bg-[#1b1b18]">
         <nav class="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
             {{-- LOGO --}}
             <div class="flex items-center space-x-4">
@@ -136,7 +136,7 @@
     @endif
 
     {{-- PAGE CONTENT --}}
-    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 pt-[102px]">
         @yield('content')
     </main>
 
