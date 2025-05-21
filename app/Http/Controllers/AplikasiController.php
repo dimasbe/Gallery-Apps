@@ -95,16 +95,24 @@ class AplikasiController extends Controller
         return redirect()->route('aplikasi.index');
     }
     public function search(Request $request): View
-{
-    $keyword = $request->input('keyword');  // pakai 'keyword' sebagai key
+    {
+        $keyword = $request->input('keyword');  // pakai 'keyword' sebagai key
+        
+        $aplikasi = $this->aplikasi->search($keyword);
     
-    $aplikasi = $this->aplikasi->search($keyword);
-
+        $kategoriAplikasi = $this->kategoriAplikasi->get();
+        $fotoAplikasi = $this->fotoAplikasi->get();
+    
+        // Kirim variabel ke view, gunakan nama yang konsisten (misal $aplikasi)
+        return view('aplikasi.search', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi', 'keyword'));
+    }
+    
+    public function detail(Aplikasi $aplikasi): View
+{
     $kategoriAplikasi = $this->kategoriAplikasi->get();
     $fotoAplikasi = $this->fotoAplikasi->get();
 
-    // Kirim variabel ke view, gunakan nama yang konsisten (misal $aplikasi)
-    return view('aplikasi.search', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi', 'keyword'));
+    return view('aplikasi.detail', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
 }
 
     

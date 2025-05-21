@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AplikasiController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,13 +45,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/aplikasi/detail', function () {
+    return view('aplikasi.detail');
+});
+
+
+
 //Rute untuk aplikasi
-Route::get('/search', [AplikasiController::class, 'search'])->name('aplikasi.search');
+// Route::get('/search', [AplikasiController::class, 'search'])->name('aplikasi.search');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 
-
-// Route::get('/search', function () {
-// return view('search');
-// })->name('search');
+Route::get('/search', function () {
+return view('aplikasi.search');
+})->name('search');
 // Rute auth dari Laravel Breeze (login, logout, password reset, dll)
 require __DIR__.'/auth.php';
