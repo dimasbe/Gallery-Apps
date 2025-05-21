@@ -34,11 +34,35 @@
                 Aplikasi
                 </a>
 
-                <a href="/kategori"
-                class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
-                Kategori
-                </a>
-
+                <div class="relative inline-block text-left">
+                    <button
+                      type="button"
+                      class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2 flex"
+                      id="menu-button"
+                      aria-expanded="true"
+                      aria-haspopup="true"
+                      onclick="document.getElementById('dropdown-menu').classList.toggle('hidden')"
+                    >
+                      Kategori
+                      <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  
+                    <!-- Dropdown menu -->
+                    <div id="dropdown-menu" class="hidden absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-[#1b1b18] ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div class="py-1" role="none">
+                        <a href="{{ route('kategori.permainan') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Permainan</a>
+                        <a href="{{ route('kategori.kesehatan') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Kesehatan</a>
+                        <a href="{{ route('kategori.fashion') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Fashion</a>
+                        <a href="{{ route('kategori.olahraga') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Olahraga</a>
+                        <a href="{{ route('kategori.pendidikan') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Pendidikan</a>
+                        <a href="{{ route('kategori.belanja') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Belanja</a>
+                      </div>
+                    </div>
+                  </div>
+                                
+                
                 <a href="/berita"
                 class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Berita

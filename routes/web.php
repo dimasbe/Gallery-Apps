@@ -23,6 +23,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
 Route::get('/aplikasi', function () {
     return view('aplikasi.index');
 })->name('aplikasi');
@@ -49,15 +50,21 @@ Route::get('/aplikasi/detail', function () {
     return view('aplikasi.detail');
 });
 
-
-
-//Rute untuk aplikasi
-// Route::get('/search', [AplikasiController::class, 'search'])->name('aplikasi.search');
-Route::get('/search', [SearchController::class, 'index'])->name('search');
-
-
+// Rute search (Pilih salah satu)
+// Route::get('/search', [AplikasiController::class, 'index'])->name('search');
 Route::get('/search', function () {
-return view('aplikasi.search');
+    return view('aplikasi.search');
 })->name('search');
-// Rute auth dari Laravel Breeze (login, logout, password reset, dll)
+
+
+Route::prefix('kategori')->group(function () {
+    Route::view('/permainan', 'kategori.permainan')->name('kategori.permainan');
+    Route::view('/kesehatan', 'kategori.kesehatan')->name('kategori.kesehatan');
+    Route::view('/fashion', 'kategori.fashion')->name('kategori.fashion');
+    Route::view('/olahraga', 'kategori.olahraga')->name('kategori.olahraga');
+    Route::view('/pendidikan', 'kategori.pendidikan')->name('kategori.pendidikan');
+    Route::view('/belanja', 'kategori.belanja')->name('kategori.belanja');
+});
+
+// Rute auth dari Laravel Breeze
 require __DIR__.'/auth.php';
