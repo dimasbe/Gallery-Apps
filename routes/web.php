@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\KategoriAplikasiController;
+use App\Http\Controllers\KategoriController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
@@ -40,5 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Rute untuk Kategori
+Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+
 // Rute auth dari Laravel Breeze (login, logout, password reset, dll)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
