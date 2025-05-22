@@ -1,105 +1,173 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen flex items-center justify-center bg-white">
-        <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
-            <!-- Title -->
-            <h2 class="text-2xl font-bold text-center text-black">Register</h2>
-            <p class="text-center text-sm text-gray-600 mb-6">Selamat Datang di GalleryApps</p>
+<div class="min-h-screen flex items-center justify-center bg-white font-[Poppins]">
+    <div class="w-[460px] bg-white rounded-xl shadow p-8">
+        <h2 class="text-[24px] font-bold text-black text-center mb-1">Register</h2>
+        <p class="text-center text-[13px] text-black mb-6">Selamat Datang di GalleryApps</p>
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registerForm">
-                @csrf
+        <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registerForm">
+            @csrf
 
-                <!-- Name -->
-                <div>
-                    <x-input-label for="name" :value="__('Nama Lengkap')" />
-                    <x-text-input id="name" name="name" type="text" required
-                        class="block mt-1 w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Masukkan nama lengkap anda"
-                        autocomplete="name" />
-                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                </div>
-
-                <!-- Email -->
-                <div>
-                    <x-input-label for="email" :value="__('Email')" />
-                    <x-text-input id="email" name="email" type="email" required
-                        class="block mt-1 w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Masukkan email anda"
-                        autocomplete="email" />
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                </div>
-
-                <!-- Password -->
-                <div>
-                    <x-input-label for="password" :value="__('Password')" />
-                    <x-text-input id="password" name="password" type="password" required
-                        class="block mt-1 w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Masukkan password anda"
-                        autocomplete="new-password" />
-                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                </div>
-
-                <!-- Password Confirmation -->
-                <div>
-                    <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" />
-                    <x-text-input id="password_confirmation" name="password_confirmation" type="password" required
-                        class="block mt-1 w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        placeholder="Masukkan ulang password anda"
-                        autocomplete="new-password" />
-                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                </div>
-
-                <!-- Agreement -->
-                <div class="flex items-start">
-                    <input id="terms" name="terms" type="checkbox"
-                        class="mt-1 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
-                    <label for="terms" class="ml-2 text-sm text-gray-600">Saya setuju dengan syarat dan kebijakan</label>
-                </div>
-
-                <!-- Register Button -->
-                <button type="submit" id="registerBtn" disabled
-                    class="w-full bg-[#b30000] text-white font-semibold py-2 rounded-lg opacity-50 cursor-not-allowed">
-                    Register
-                </button>
-            </form>
-
-            <!-- Or separator -->
-            <div class="flex items-center my-6">
-                <hr class="flex-grow border-gray-300" />
-                <span class="mx-3 text-gray-500">Atau</span>
-                <hr class="flex-grow border-gray-300" />
+            <div>
+                <label for="name" class="block text-sm font-medium text-black mb-1">Nama Lengkap</label>
+                <input id="name" name="name" type="text" required
+                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black"
+                    placeholder="Masukkan nama lengkap anda" autocomplete="name">
+                <x-input-error :messages="$errors->get('name')" class="mt-1 text-sm text-red-600" />
             </div>
 
-            <!-- Google Register -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-black mb-1">Email</label>
+                <input id="email" name="email" type="email" required
+                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black"
+                    placeholder="Masukkan email anda" autocomplete="email">
+                <x-input-error :messages="$errors->get('email')" class="mt-1 text-sm text-red-600" />
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-black mb-1">Password</label>
+                <div class="relative">
+                    <input id="password" name="password" type="password" required
+                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black"
+                        placeholder="Masukkan password anda">
+                    <button type="button" onclick="togglePassword(this)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                s8.268 2.943 9.542 7-3.732 7-9.542 7
+                                -8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M13.875 18.825A10.05 10.05 0 0112 19
+                                c-4.478 0-8.269-2.944-9.543-7
+                                a9.956 9.956 0 012.342-3.36m3.093-2.52
+                                A9.953 9.953 0 0112 5c4.478 0 8.269 2.944 9.543 7
+                                a9.956 9.956 0 01-1.88 3.106" />
+                            <path d="M3 3l18 18" />
+                        </svg>
+                    </button>
+                </div>
+                <x-input-error :messages="$errors->get('password')" class="mt-1 text-sm text-red-600" />
+            </div>
+
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-black mb-1">Konfirmasi Password</label>
+                <div class="relative">
+                    <input id="password_confirmation" name="password_confirmation" type="password" required
+                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black"
+                        placeholder="Ulangi password anda">
+                    <button type="button" onclick="togglePassword(this)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                s8.268 2.943 9.542 7-3.732 7-9.542 7
+                                -8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M13.875 18.825A10.05 10.05 0 0112 19
+                                c-4.478 0-8.269-2.944-9.543-7
+                                a9.956 9.956 0 012.342-3.36m3.093-2.52
+                                A9.953 9.953 0 0112 5c4.478 0 8.269 2.944 9.543 7
+                                a9.956 9.956 0 01-1.88 3.106" />
+                            <path d="M3 3l18 18" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-2 mt-2">
+                <input id="terms" name="terms" type="checkbox"
+                    class="mt-1 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                <label for="terms" class="text-xs text-black leading-tight">
+                    Saya setuju dengan syarat dan kebijakan
+                </label>
+            </div>
+
+            <button type="submit" id="registerBtn" disabled
+                class="w-full h-[40px] mt-2 bg-[#AD1500] text-white font-semibold text-sm rounded-md opacity-50 cursor-not-allowed transition-all">
+                Register
+            </button>
+        </form>
+
+        <div class="flex items-center my-6">
+            <hr class="flex-grow border-gray-300">
+            <span class="mx-3 text-gray-500 text-sm">Atau</span>
+            <hr class="flex-grow border-gray-300">
+        </div>
+
+        <div class="flex justify-center">
             <a href="{{ route('google.redirect', ['from' => 'register']) }}"
-                class="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-lg py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google" />
+                class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
                 <span>Sign up with Google</span>
             </a>
+        </div>
 
-            <!-- Login link bawah -->
-            <div class="mt-4 text-center text-sm text-gray-700">
-                Sudah punya akun?
-                <a href="{{ route('login') }}" class="text-indigo-600 hover:underline font-medium">
-                    Login
-                </a>
-            </div>
+        <div class="mt-6 text-center text-sm text-black">
+            Sudah punya akun?
+            {{-- Tautan Login yang akan membuka modal --}}
+            <a href="{{ route('login') }}" id="loginLinkRegister" class="text-[#0500FF] hover:underline font-medium">Login</a>
         </div>
     </div>
+</div>
 
-    <script>
-        const termsCheckbox = document.getElementById('terms');
-        const registerBtn = document.getElementById('registerBtn');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fungsi untuk toggle password visibility
+    function togglePassword(button) {
+        const input = button.previousElementSibling;
+        const eye = button.querySelector('.eye-icon');
+        const eyeOff = button.querySelector('.eye-off-icon');
 
-        termsCheckbox.addEventListener('change', function () {
-            if (this.checked) {
-                registerBtn.disabled = false;
-                registerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        eye.classList.toggle('hidden', !isPassword);
+        eyeOff.classList.toggle('hidden', isPassword);
+    }
+
+    // PENTING: Memastikan fungsi togglePassword tersedia secara global jika tidak di app.blade.php
+    // Jika togglePassword sudah ada di app.blade.php, Anda bisa menghapus fungsi ini dari sini.
+    // Namun, agar kode ini mandiri, saya akan biarkan di sini.
+    window.togglePassword = togglePassword;
+
+    // Logika untuk mengaktifkan/menonaktifkan tombol Register
+    const termsCheckbox = document.getElementById('terms');
+    const registerBtn = document.getElementById('registerBtn');
+
+    if (termsCheckbox && registerBtn) {
+        // Atur status awal tombol berdasarkan status checkbox
+        registerBtn.disabled = !termsCheckbox.checked;
+        registerBtn.classList.toggle('opacity-50', !termsCheckbox.checked);
+        registerBtn.classList.toggle('cursor-not-allowed', !termsCheckbox.checked);
+        registerBtn.classList.toggle('cursor-pointer', termsCheckbox.checked);
+
+        termsCheckbox.addEventListener('change', function() {
+            registerBtn.disabled = !this.checked;
+            registerBtn.classList.toggle('opacity-50', !this.checked);
+            registerBtn.classList.toggle('cursor-not-allowed', !this.checked);
+            registerBtn.classList.toggle('cursor-pointer', this.checked);
+        });
+    }
+
+    // Logika untuk tautan "Login" di halaman registrasi agar membuka modal
+    const loginLinkRegister = document.getElementById('loginLinkRegister');
+    if (loginLinkRegister) {
+        loginLinkRegister.addEventListener('click', function(event) {
+            event.preventDefault(); // Mencegah browser mengikuti href (perilaku default)
+            // Memanggil fungsi openModal() yang seharusnya ada di layouts/app.blade.php
+            if (typeof openModal === 'function') {
+                openModal();
             } else {
-                registerBtn.disabled = true;
-                registerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                console.warn('openModal() function not found. Redirecting to login page.');
+                window.location.href = this.href; // Fallback jika openModal tidak ditemukan
             }
         });
-    </script>
+    }
+});
+</script>
 @endsection
