@@ -6,18 +6,50 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Font Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Styles & Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        /* Gaya tambahan untuk scrollbar notifikasi */
+        #notificationDropdown .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #notificationDropdown .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #notificationDropdown .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        #notificationDropdown .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Dark mode scrollbar */
+        .dark #notificationDropdown .custom-scrollbar::-webkit-scrollbar-track {
+            background: #2a2a27; /* Darker track */
+        }
+
+        .dark #notificationDropdown .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #555; /* Darker thumb */
+        }
+
+        .dark #notificationDropdown .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #777; /* Even darker thumb on hover */
+        }
+    </style>
 </head>
 <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen font-[Poppins]">
     <header class="fixed top-0 left-0 w-full z-50 shadow-sm bg-white dark:bg-[#1b1b18]">
         <nav class="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
             {{-- LOGO --}}
             <div class="flex items-center space-x-4">
-                <a href="/" class="{{ route('dashboard') }}">
+                <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-[150px] h-[70px] object-cover rounded-full">
                 </a>
             </div>
@@ -37,7 +69,7 @@
                 <a href="/kategori"
                 class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Kategori
-                </a>            
+                </a>          
                 
                 <a href="/berita"
                 class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
@@ -48,6 +80,82 @@
             {{-- USER MENU --}}
             <div class="flex items-center space-x-3 relative">
                 @auth
+                    {{-- DROPDOWN NOTIFIKASI (sesuai gambar) --}}
+                    <div class="relative cursor-pointer" onclick="toggleNotificationDropdown()">
+                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+                        </svg>
+                        {{-- Dot notifikasi belum dibaca (sesuai gambar) --}}
+                        <span id="globalNotificationDot" class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white hidden"></span>
+                    </div>
+
+                    {{-- Dropdown notifikasi (sesuai gambar) --}}
+                    <div id="notificationDropdown" class="hidden absolute right-0 top-12 w-80 bg-white dark:bg-[#1b1b18] rounded-md shadow-lg z-50 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Notifikasi</p>
+                        </div>
+                        <div class="py-1 max-h-60 overflow-y-auto custom-scrollbar">
+                            {{-- Contoh item notifikasi - GANTI DENGAN DATA DARI DATABASE ANDA --}}
+                            {{-- Notifikasi 1: Upload Aplikasi Berhasil--}}
+                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
+                                <div class="flex-grow overflow-hidden">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Upload Aplikasi Berhasil</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">Aplikasi "Kalkulator Pintar" sudah berhasil diunggah.</p>
+                                </div>
+                                <div class="ml-3 flex-shrink-0 text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="7.14 AM">7.14 AM</p>
+                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                </div>
+                            </div>
+                            {{-- Notifikasi 2: Fitur Baru Telah Hadir--}}
+                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
+                                <div class="flex-grow overflow-hidden">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Fitur Baru Telah Hadir</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">Sekarang kamu bisa menambahkan changelog aplikasi.</p>
+                                </div>
+                                <div class="ml-3 flex-shrink-0 text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="Kemarin">Kemarin</p>
+                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                </div>
+                            </div>
+                            {{-- Notifikasi 3: Selamat Datang di Galery Apps!--}}
+                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
+                                <div class="flex-grow overflow-hidden">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Selamat Datang di Galery Apps!</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">Yuk mulai unggah aplikasi pertamamu.</p>
+                                </div>
+                                <div class="ml-3 flex-shrink-0 text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="Sabtu">Sabtu</p>
+                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                </div>
+                            </div>
+                            {{-- Notifikasi 4: Maintenance Terjadwal--}}
+                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
+                                <div class="flex-grow overflow-hidden">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Maintenance Terjadwal</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">Galery Apps akan offline sementara malam ini.</p>
+                                </div>
+                                <div class="ml-3 flex-shrink-0 text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="05/01/2025">05/01/2025</p>
+                                    {{-- Dot biru tidak ada karena sudah dibaca --}}
+                                </div>
+                            </div>
+                             {{-- Notifikasi 5: Sistem Dalam Pemeliharaan--}}
+                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
+                                <div class="flex-grow overflow-hidden">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Sistem Dalam Pemeliharaan</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">Galery Apps akan offline sementara malam ini.</p>
+                                </div>
+                                <div class="ml-3 flex-shrink-0 text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="05/01/2025">05/01/2025</p>
+                                    {{-- Dot biru tidak ada karena sudah dibaca --}}
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <a href="/semua-notifikasi" class="block text-center text-sm px-4 py-2 text-[#AD1500] dark:text-[#F39C12] hover:bg-gray-100 dark:hover:bg-[#2a2a27] border-t border-gray-200 dark:border-gray-700">Lihat Semua</a> --}}
+                        {{-- Baris di atas dihilangkan untuk menghapus tombol "Lihat Semua" --}}
+                    </div>
+
                     @php
                         $defaultAvatar = asset('images/default-avatar.png');
                         $avatarPath = Auth::user()->avatar ?? null;
@@ -79,6 +187,7 @@
                         $initials = substr($initials, 0, 2);
                     @endphp
 
+                    {{-- TOMBOL PROFILE INI --}}
                     <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none">
                         @if ($avatarUrl)
                             <img
@@ -175,7 +284,7 @@
 
                 {{-- Bagian Sosial Media --}}
                 <div class="text-left">
-                    <h3 class="font-semibold text-lg text-gray-800 mb-4"></h3>
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4">Sosial Media</h3>
                     <div class="flex space-x-4">
                         <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Facebook">
                             <img src="/images/icon_facebook.png" alt="Facebook" class="w-6 h-6" />
@@ -200,20 +309,203 @@
         </div>
     </footer>
 
-    {{-- Script for Dropdown --}}
+    {{-- Pop-up Notifikasi (Ditempatkan langsung di app.blade.php) --}}
+    <div id="notificationPopupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] hidden">
+        <div id="notificationPopup" class="bg-white dark:bg-[#1b1b18] rounded-lg shadow-xl max-w-md w-full p-6 relative m-4 flex flex-col items-center">
+            {{-- Tombol Tutup di Pojok Kanan Atas --}}
+            <button onclick="closeNotificationPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            {{-- Judul Notifikasi (di tengah) --}}
+            <h3 id="popupNotificationTitle" class="text-lg font-bold text-gray-900 dark:text-white mb-1 text-center"></h3>
+            {{-- Waktu Notifikasi (di tengah) --}}
+            <p id="popupNotificationTime" class="text-xs text-gray-500 dark:text-gray-400 mb-4 text-center"></p>
+
+            {{-- Card untuk Konten Notifikasi (di tengah) --}}
+            <div class="bg-[#F7F7F7] dark:bg-[#2a2a27] rounded-md p-4 mb-6 w-full">
+                <p id="popupNotificationContent" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed text-center"></p>
+            </div>
+            
+            {{-- Tombol Tutup (di tengah) --}}
+            <button onclick="closeNotificationPopup()" class="px-6 py-2 bg-[#AD1500] text-white rounded-md hover:bg-[#8F1000] focus:outline-none focus:ring-2 focus:ring-[#AD1500] focus:ring-opacity-50">Tutup</button>
+        </div>
+    </div>
+
+    {{-- Script for Dropdown and Notification --}}
     <script>
+        // Fungsi untuk dropdown profil
         function toggleDropdown() {
             const dropdown = document.getElementById('dropdownMenu');
             dropdown.classList.toggle('hidden');
+            // Jika dropdown notifikasi terbuka, tutup
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            if (notificationDropdown && !notificationDropdown.classList.contains('hidden')) {
+                notificationDropdown.classList.add('hidden');
+            }
+            // Tutup pop-up juga jika terbuka
+            closeNotificationPopup();
         }
 
-        document.addEventListener('click', function (event) {
-            const trigger = event.target.closest('button[onclick="toggleDropdown()"]');
-            const dropdown = document.getElementById('dropdownMenu');
-            const insideDropdown = event.target.closest('#dropdownMenu');
-            if (!trigger && !insideDropdown && dropdown && !dropdown.classList.contains('hidden')) {
-                dropdown.classList.add('hidden');
+        // Fungsi untuk menampilkan/menyembunyikan dropdown notifikasi
+        function toggleNotificationDropdown() {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('hidden');
+            // Jika dropdown profil terbuka, tutup
+            const profileDropdown = document.getElementById('dropdownMenu');
+            if (profileDropdown && !profileDropdown.classList.contains('hidden')) {
+                profileDropdown.classList.add('hidden');
             }
+            // Tutup pop-up juga jika terbuka
+            closeNotificationPopup();
+        }
+
+        // Fungsi untuk menampilkan pop-up notifikasi
+        function showNotificationPopup(title, time, content) {
+            document.getElementById('popupNotificationTitle').innerText = title;
+            document.getElementById('popupNotificationTime').innerText = time;
+            document.getElementById('popupNotificationContent').innerText = content;
+            document.getElementById('notificationPopupOverlay').classList.remove('hidden');
+            // Sembunyikan dropdown notifikasi jika terbuka
+            document.getElementById('notificationDropdown').classList.add('hidden');
+        }
+
+        // Fungsi untuk menutup pop-up notifikasi
+        function closeNotificationPopup() {
+            document.getElementById('notificationPopupOverlay').classList.add('hidden');
+        }
+
+        // Menutup dropdown/pop-up jika user mengklik di luar area
+        document.addEventListener('click', function (event) {
+            // Logic untuk dropdown profil
+            const profileTrigger = event.target.closest('button[onclick="toggleDropdown()"]');
+            const profileDropdown = document.getElementById('dropdownMenu');
+            const insideProfileDropdown = event.target.closest('#dropdownMenu');
+            if (profileDropdown && !profileTrigger && !insideProfileDropdown && !profileDropdown.classList.contains('hidden')) {
+                profileDropdown.classList.add('hidden');
+            }
+
+            // Logic untuk dropdown notifikasi
+            const notificationIconTrigger = event.target.closest('div.relative.cursor-pointer'); // Ini adalah div pembungkus ikon lonceng
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const insideNotificationDropdown = event.target.closest('#notificationDropdown');
+
+            if (notificationDropdown && !notificationIconTrigger && !insideNotificationDropdown && !notificationDropdown.classList.contains('hidden')) {
+                notificationDropdown.classList.add('hidden');
+            }
+
+            // Logic untuk pop-up notifikasi (tutup jika klik di luar pop-up tapi bukan di dalam notifikasi dropdown/ikon)
+            const notificationPopupOverlay = document.getElementById('notificationPopupOverlay');
+            const notificationPopup = document.getElementById('notificationPopup');
+            // Pastikan klik tidak berasal dari dalam pop-up, tidak dari dalam dropdown notifikasi, dan tidak dari ikon notifikasi
+            if (notificationPopupOverlay && !notificationPopup.contains(event.target) && !insideNotificationDropdown && !notificationIconTrigger) {
+                if (!notificationPopupOverlay.classList.contains('hidden')) {
+                    closeNotificationPopup();
+                }
+            }
+        });
+
+        // --- Logika untuk notifikasi belum dibaca ---
+
+        // Fungsi untuk memperbarui dot merah pada ikon lonceng utama
+        function updateGlobalUnreadNotificationDot() {
+            const unreadCount = document.querySelectorAll('#notificationDropdown .unread-notification').length;
+            const globalNotificationDot = document.getElementById('globalNotificationDot');
+
+            if (globalNotificationDot) {
+                if (unreadCount > 0) {
+                    globalNotificationDot.classList.remove('hidden');
+                } else {
+                    globalNotificationDot.classList.add('hidden');
+                }
+            }
+        }
+
+        // Fungsi untuk menandai notifikasi individual sebagai sudah dibaca
+        function markNotificationAsRead(notificationElement) {
+            if (notificationElement && notificationElement.classList.contains('unread-notification')) {
+                notificationElement.classList.remove('unread-notification');
+                const unreadDot = notificationElement.querySelector('.unread-dot');
+                if (unreadDot) {
+                    unreadDot.classList.add('hidden'); // Sembunyikan dot biru
+                }
+                updateGlobalUnreadNotificationDot(); // Perbarui jumlah notifikasi belum dibaca
+                // TODO: Di sini Anda bisa mengirim permintaan AJAX ke server untuk menandai notifikasi sebagai dibaca di database
+            }
+        }
+
+        // Fungsi untuk memformat waktu sesuai gambar (Hari ini, Kemarin, Sabtu, atau MM/DD/YYYY) menjadi "Hari, DD Bln, HH.MM AM/PM"
+        function formatTimeForPopup(originalTime) {
+            const now = new Date();
+            const dayOfWeek = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+            let displayDate = "";
+            let displayTime = "";
+            let dateObj;
+
+            if (originalTime.toLowerCase() === "hari ini") {
+                dateObj = now;
+                displayTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            } else if (originalTime.toLowerCase() === "kemarin") {
+                dateObj = new Date(now);
+                dateObj.setDate(now.getDate() - 1);
+                displayTime = "09.00 AM"; // Placeholder, idealnya dari data notifikasi asli
+            } else if (originalTime.toLowerCase() === "sabtu") {
+                // Ini perlu logika yang lebih cerdas untuk menentukan Sabtu yang tepat.
+                // Untuk sementara, kita asumsikan Sabtu yang paling dekat di masa lalu jika hari ini bukan Sabtu.
+                dateObj = new Date(now);
+                dateObj.setDate(now.getDate() - (now.getDay() + 7 - 6) % 7); // 6 adalah indeks hari Sabtu
+                displayTime = "08.00 PM"; // Placeholder
+            } else if (originalTime.match(/^\d{1,2}\.\d{2}\s(AM|PM)$/i)) { // Contoh: "7.14 AM"
+                dateObj = now; // Asumsi hari ini jika hanya waktu
+                displayTime = originalTime;
+            } else if (originalTime.match(/^\d{2}\/\d{2}\/\d{4}$/)) { // Contoh: "05/01/2025"
+                const parts = originalTime.split('/');
+                dateObj = new Date(parts[2], parts[0] - 1, parts[1]); // Month is 0-indexed
+                displayTime = "09.00 AM"; // Placeholder
+            } else {
+                // Fallback untuk format yang tidak dikenal
+                return originalTime;
+            }
+
+            if (dateObj) {
+                displayDate = dayOfWeek[dateObj.getDay()] + ", " + dateObj.getDate() + " " + monthNames[dateObj.getMonth()];
+                return displayDate + ", " + displayTime;
+            }
+            return originalTime;
+        }
+
+
+        // Event listener saat DOM sudah siap
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tambahkan event listener ke setiap item notifikasi untuk menampilkan pop-up
+            const notificationDropdownContainer = document.getElementById('notificationDropdown');
+            if (notificationDropdownContainer) {
+                 notificationDropdownContainer.addEventListener('click', function(event) {
+                    const notificationItem = event.target.closest('.notification-item');
+                    if (notificationItem) {
+                        // Ambil data dari elemen notifikasi
+                        const title = notificationItem.querySelector('p.text-sm.font-medium.text-gray-900').innerText;
+                        // Mengambil waktu dari data-original-time jika ada, jika tidak, dari innerText
+                        const originalTime = notificationItem.querySelector('.text-xs.text-gray-500').getAttribute('data-original-time') || notificationItem.querySelector('.text-xs.text-gray-500').innerText;
+                        const content = notificationItem.querySelector('p.text-xs.text-gray-600').innerText;
+
+                        // Periksa apakah notifikasi memiliki dot biru (yaitu unread-dot)
+                        const unreadDotElement = notificationItem.querySelector('.unread-dot');
+                        if (unreadDotElement && !unreadDotElement.classList.contains('hidden')) {
+                             markNotificationAsRead(notificationItem); // Tandai sebagai sudah dibaca
+                        }
+                        
+                        const formattedTime = formatTimeForPopup(originalTime);
+                        showNotificationPopup(title, formattedTime, content); // Tampilkan pop-up
+                    }
+                });
+            }
+           
+            // Panggil saat halaman dimuat untuk inisialisasi dot merah
+            updateGlobalUnreadNotificationDot();
         });
     </script>
 </body>

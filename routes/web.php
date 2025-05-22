@@ -66,6 +66,11 @@ Route::get('/aplikasi/populer', function () {
     return view('aplikasi.populer');
 });
 
+//Route::middleware(['auth'])->group(function () {
+   // Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    //Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+//});
+
 // Rute search (Pilih salah satu)
 // Route::get('/search', [AplikasiController::class, 'index'])->name('search');
 Route::get('/search', function () {
