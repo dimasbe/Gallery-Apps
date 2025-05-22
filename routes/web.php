@@ -57,7 +57,6 @@ Route::get('/aplikasi/populer', function () {
     return view('aplikasi.populer');
 });
 
-<<<<<<< HEAD
 //Route::middleware(['auth'])->group(function () {
    // Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     //Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
@@ -65,7 +64,6 @@ Route::get('/aplikasi/populer', function () {
 
 // Rute search (Pilih salah satu)
 // Route::get('/search', [AplikasiController::class, 'index'])->name('search');
-=======
 Route::get('/aplikasi/detail', function () {
     return view('aplikasi.detail');
 })->name('aplikasi.detail');
@@ -73,7 +71,6 @@ Route::get('/aplikasi/detail', function () {
 
 
 
->>>>>>> cce8cee3f4847cebc721469582f938f851cda1a9
 Route::get('/search', function () {
     return view('aplikasi.search');
 })->name('search');
