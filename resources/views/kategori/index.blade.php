@@ -34,26 +34,26 @@
 
             <div id="category-group" class="grid grid-cols-3 gap-2 overflow-hidden transition-all duration-300"
                 style="max-height: 10rem;">
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Permainan</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Belanja</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Pendidikan</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Olahraga</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Fashion</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Kesehatan</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Teknologi</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Kuliner</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Travel</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Fotografi</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Musik</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Finansial</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Bisnis</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Hobi</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Kecantikan</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Lingkungan</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Games</a>
-                <a href="" class="bg-gray-200 text-center p-2 rounded-md hover:bg-gray-300">Komunitas</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Permainan</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Belanja</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Pendidikan</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Olahraga</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Fashion</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kesehatan</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Teknologi</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kuliner</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Travel</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Fotografi</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Musik</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Finansial</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Bisnis</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Hobi</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kecantikan</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Lingkungan</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Games</a>
+                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Komunitas</a>
             </div>
-            <div class="relative mt-5 border-t-2 border-black mb-10">
+            <div class="relative mt-5 border-t-2 border-gray mb-10">
                 <button id="toggle-button"
                     class="absolute left-1/2 -translate-x-1/2 -top-3 bg-white px-3 text-sm font-semibold hover:underline focus:outline-none">
                     Tampilkan Semua

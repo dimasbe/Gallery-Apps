@@ -59,10 +59,6 @@ Route::get('/kategori/pendidikan', [KategoriController::class, 'pendidikan'])->n
 Route::get('/kategori/belanja', [KategoriController::class, 'belanja'])->name('kategori.belanja');
 
 
-
-
-
-
 Route::get('/aplikasi/detail', function () {
     return view('aplikasi.detail');
 });
