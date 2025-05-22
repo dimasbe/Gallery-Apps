@@ -22,8 +22,13 @@
 
   <!-- Paling Populer -->
   <div class="mb-10 mt-10">
-    <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4">
-      Paling populer
+    <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
+        Paling populer
+        <a href="/aplikasi/populer" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </a>
     </h3>
     <div class="grid grid-cols-3 gap-4 mt-8">
       <div class="space-y-3">

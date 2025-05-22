@@ -62,6 +62,9 @@ Route::get('/kategori/belanja', [KategoriController::class, 'belanja'])->name('k
 Route::get('/aplikasi/detail', function () {
     return view('aplikasi.detail');
 });
+Route::get('/aplikasi/populer', function () {
+    return view('aplikasi.populer');
+});
 
 // Rute search (Pilih salah satu)
 // Route::get('/search', [AplikasiController::class, 'index'])->name('search');
