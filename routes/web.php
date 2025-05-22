@@ -50,14 +50,7 @@ Route::middleware('auth')->group(function () {
 
 // Rute untuk Kategori
 Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
-
-Route::get('/kategori/permainan', [KategoriController::class, 'permainan'])->name('kategori.permainan');
-Route::get('/kategori/kesehatan', [KategoriController::class, 'kesehatan'])->name('kategori.kesehatan');
-Route::get('/kategori/fashion', [KategoriController::class, 'fashion'])->name('kategori.fashion');
-Route::get('/kategori/olahraga', [KategoriController::class, 'olahraga'])->name('kategori.olahraga');
-Route::get('/kategori/pendidikan', [KategoriController::class, 'pendidikan'])->name('kategori.pendidikan');
-Route::get('/kategori/belanja', [KategoriController::class, 'belanja'])->name('kategori.belanja');
-
+Route::get('/kategori/{slug}', [KategoriController::class, 'show'])->name('kategori.show');
 
 Route::get('/aplikasi/detail', function () {
     return view('aplikasi.detail');
