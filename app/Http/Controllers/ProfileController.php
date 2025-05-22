@@ -37,14 +37,14 @@ class ProfileController extends Controller
                 $user->save();
             }
 
-            // Jangan hapus google_avatar, biarkan tetap ada
             return Redirect::route('profile.edit')->with('status', 'profile-updated');
         }
 
-        // Update name & email
+        // Update name
         $user->name = $request->input('name');
 
-        if ($request->input('email') !== $user->email) {
+        // Hanya user non-Google yang bisa update email
+        if (!$user->google_id && $request->input('email') !== $user->email) {
             $user->email = $request->input('email');
             $user->email_verified_at = null;
         }

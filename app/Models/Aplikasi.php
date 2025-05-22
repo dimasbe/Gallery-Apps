@@ -15,7 +15,6 @@ class Aplikasi extends Model
     protected $fillable = [
         'id_user',
         'nama_aplikasi',
-        'foto',
         'logo',
         'id_kategori',
         'nama_pemilik',

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AplikasiController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +18,16 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 // Rute utama
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
 // Rute dashboard (hanya bisa diakses jika login & verifikasi)
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('dashboard');
+Route::get('/aplikasi', function () {
+    return view('aplikasi.index');
+})->name('aplikasi');
 
 // Rute Login via Google
 Route::get('/login/google', [GoogleController::class, 'redirect'])->name('google.redirect');
@@ -45,5 +50,19 @@ Route::middleware('auth')->group(function () {
 // Rute untuk Kategori
 Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
+Route::get('/aplikasi/detail', function () {
+    return view('aplikasi.detail');
+});
+
+
+
+//Rute untuk aplikasi
+// Route::get('/search', [AplikasiController::class, 'search'])->name('aplikasi.search');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+
+Route::get('/search', function () {
+return view('aplikasi.search');
+})->name('search');
 // Rute auth dari Laravel Breeze (login, logout, password reset, dll)
 require __DIR__ . '/auth.php';
