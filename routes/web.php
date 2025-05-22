@@ -59,15 +59,18 @@ Route::get('/kategori/pendidikan', [KategoriController::class, 'pendidikan'])->n
 Route::get('/kategori/belanja', [KategoriController::class, 'belanja'])->name('kategori.belanja');
 
 
-Route::get('/aplikasi/detail', function () {
-    return view('aplikasi.detail');
-});
+
 Route::get('/aplikasi/populer', function () {
     return view('aplikasi.populer');
 });
 
-// Rute search (Pilih salah satu)
-// Route::get('/search', [AplikasiController::class, 'index'])->name('search');
+Route::get('/aplikasi/detail', function () {
+    return view('aplikasi.detail');
+})->name('aplikasi.detail');
+// Route::get('/aplikasi/detail', [AplikasiController::class, 'detail'])->name('aplikasi.detail');
+
+
+
 Route::get('/search', function () {
     return view('aplikasi.search');
 })->name('search');
