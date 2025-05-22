@@ -212,6 +212,7 @@
 
                     <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-44 bg-white dark:bg-[#1b1b18] rounded-md shadow-lg z-50">
                         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Edit Profil</a>
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Tambah Aplikasi</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">
@@ -245,7 +246,7 @@
     @endif
 
     {{-- PAGE CONTENT --}}
-    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 pt-[102px]">
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 pt-[120px]">
         @yield('content')
     </main>
 

@@ -1,4 +1,4 @@
-@extends('layouts.app');
+@extends('layouts.app')
 
 @section('content')
     {{-- Konten Utama --}}
@@ -34,12 +34,18 @@
 
             <div id="category-group" class="grid grid-cols-3 gap-2 overflow-hidden transition-all duration-300"
                 style="max-height: 10rem;">
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Permainan</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Belanja</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Pendidikan</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Olahraga</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Fashion</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kesehatan</a>
+                <a href="{{ route('kategori.show', ['slug' => 'permainan']) }}"
+                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Permainan</a>
+                <a href="{{ route('kategori.show', ['slug' => 'belanja']) }}"
+                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Belanja</a>
+                <a href="{{ route('kategori.show', ['slug' => 'pendidikan']) }}"
+                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Pendidikan</a>
+                <a href="{{ route('kategori.show', ['slug' => 'olahraga']) }}"
+                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Olahraga</a>
+                <a href="{{ route('kategori.show', ['slug' => 'Fashion']) }}"
+                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Fashion</a>
+                <a href="{{ route('kategori.show', ['slug' => 'kesehatan']) }}"
+                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kesehatan</a>
                 <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Teknologi</a>
                 <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kuliner</a>
                 <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Travel</a>
@@ -66,7 +72,7 @@
     </footer>
 @endsection
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const categoryGroup = document.getElementById('category-group');
         const toggleButton = document.getElementById('toggle-button');
         let expanded = false;

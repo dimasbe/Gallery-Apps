@@ -11,4 +11,15 @@ class KategoriController extends Controller
     {
         return view('kategori.index');
     }
+
+    public function show($slug)
+    {
+        $view = 'kategori.' . $slug;
+
+        if (view()->exists($view)) {
+            return view($view, compact('slug'));
+        }
+
+        return view('kategori', compact('slug')); // fallback jika file spesifik tidak ada
+    }
 }

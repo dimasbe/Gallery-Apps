@@ -58,7 +58,7 @@ class AplikasiController extends Controller
         $kategorisAplikasi = $this->kategoriAplikasi->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
 
-        return view('aplikasi.index', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
+        return view('aplikasi.index', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi', 'aplikasi.detail'));
     }
 
     public function edit(Aplikasi $aplikasi): View {
@@ -107,15 +107,16 @@ class AplikasiController extends Controller
         return view('aplikasi.search', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi', 'keyword'));
     }
     
-    public function detail(Aplikasi $aplikasi): View
-{
-    $kategoriAplikasi = $this->kategoriAplikasi->get();
-    $fotoAplikasi = $this->fotoAplikasi->get();
-
-    return view('aplikasi.detail', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
-}
+   
 
     
+    public function detail(): View
+    {
+        // Anda bisa tetap mengambil data kategori dan foto jika view detail Anda memerlukannya
+        $kategoriAplikasi = $this->kategoriAplikasi->get();
+        $fotoAplikasi = $this->fotoAplikasi->get();
 
-}
-                            
+        // PENTING: Hapus 'aplikasi' dari compact karena variabel $aplikasi tidak didefinisikan di sini
+        return view('aplikasi.detail', compact('kategoriAplikasi', 'fotoAplikasi'));
+    }
+}                  
