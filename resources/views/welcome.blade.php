@@ -138,12 +138,11 @@
             </div>
 
             <div class="text-center mt-12">
-                <a href="#"
+                <a href="/kategori"
                     class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-4 py-2 rounded-full font-poppins shadow-md transition text-ms">
                     Lihat semua kategori
                 </a>
             </div>
-
         </div>
     </section>
 
@@ -161,7 +160,7 @@
                             Jelajahi berbagai aplikasi terpopuler yang paling sering dicari dan digunakan oleh pengguna
                             lainnya di sini!
                         </p>
-                        <a href="#"
+                        <a href="/aplikasi/populer"
                             class="mt-3 inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-3 py-2 rounded-full font-poppins shadow-md transition text-ms">
                             Lihat semua aplikasi
                         </a>
