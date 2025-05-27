@@ -4,49 +4,45 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use App\Contracts\Interfaces\UserInterface;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): View
+    protected UserInterface $userInterface;
+
+    public function __construct(UserInterface $userInterface)
+    {
+        $this->userInterface = $userInterface;
+    }
+
+    public function create()
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-        public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        $user = $this->userInterface->create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'role'     => 'user',
+            'password' => $request->password,
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
-        // Redirect ke dashboard dengan flash message
-        return redirect(route('dashboard'))->with('status', 'Registrasi berhasil! Selamat datang di dashboard.');
+        return redirect(RouteServiceProvider::HOME);
     }
-
 }
