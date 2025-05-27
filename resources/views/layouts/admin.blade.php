@@ -214,11 +214,15 @@
             </nav>
         </aside>
 
-        <main
-            id="mainContent"
-            class="flex-grow p-6 overflow-y-auto bg-custom-main-bg main-content-transition"
-        >
-            @yield('content')
+         {{-- MAIN CONTENT --}}
+        <main id="mainContent" class="flex-grow p-6 overflow-y-auto bg-custom-main-bg main-content-transition">
+                @yield('content')
+
+                {{-- FOOTER --}}
+                <div class="flex justify-between items-center text-gray-500 text-sm pt-8 border-t border-gray-200 mt-8">
+                    <p>2025 Hummatech All Rights Reserved</p>
+                    <p>Copyright By GalleryApp</p>
+                </div>
         </main>
     </div>
 
