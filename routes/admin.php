@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminRegisterController;
 use App\Http\Controllers\Admin\AdminVerifikasiController;
+use App\Http\Controllers\Admin\RiwayatController;
+use App\Http\Controllers\Admin\BeritaController;
+use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\ArsipController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 /*
@@ -41,9 +45,29 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Nama rute akan menjadi 'admin.logout' karena RouteServiceProvider
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-     // Rute untuk halaman verifikasi
-     Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
+    // =============================================================
+    //           PERBAIKAN / PENAMBAHAN RUTE DI SINI
+    // =============================================================
 
-    // Contoh rute lain untuk admin
-    // Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    // Rute untuk halaman verifikasi
+    // Nama rute akan menjadi 'admin.verifikasi'
+    Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
+
+    // Rute Resource untuk Riwayat (akan membuat rute seperti admin.riwayat.index, admin.riwayat.show, dll.)
+    // Asumsi RiwayatController adalah resource controller
+    Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']); // Umumnya riwayat tidak ada create/edit
+
+    // Rute Resource untuk Berita
+    // Asumsi BeritaController adalah resource controller
+    Route::resource('berita', BeritaController::class);
+
+    // Rute Resource untuk Kategori
+    // Asumsi KategoriController adalah resource controller
+    Route::resource('kategori', KategoriController::class);
+
+    // Rute Resource untuk Arsip
+    // Asumsi ArsipController adalah resource controller
+    Route::resource('arsip', ArsipController::class);
+
+    // Anda bisa tambahkan rute-rute admin lainnya di sini
 });

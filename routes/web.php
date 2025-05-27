@@ -54,6 +54,12 @@ Route::get('/aplikasi/populer', function () {
     return view('aplikasi.populer');
 })->name('aplikasi.populer');
 
+Route::get('/berita/detail', function () {
+    return view('berita.detail');
+});
+
+
+
 
 // 🔐 Login via Google (untuk user biasa)
 Route::get('/login/google', [GoogleController::class, 'redirect'])->name('google.redirect');

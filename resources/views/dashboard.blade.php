@@ -292,7 +292,10 @@
                         <h3 class="font-semibold text-gray-800 text-lg mb-1">Update Fitur Upload Baru!</h3>
                         <p class="text-gray-600 text-sm mb-2">5 Mei 2025</p>
                         <p class="text-gray-700 text-sm mb-3">Kini upload aplikasi jadi lebih cepat dan aman dengan sistem verifikasi terbaru...</p>
-                        <a href="#" class="text-blue-500 hover:underline text-sm font-semibold">Baca Selengkapnya</a>
+                        <a href="{{ url('/berita/detail') }}" class="text-blue-600 hover:underline">
+    Baca Selengkapnya
+</a>
+
                     </div>
                 </div>
 
@@ -303,7 +306,10 @@
                         <h3 class="font-semibold text-gray-800 text-lg mb-1">Maintenance Server</h3>
                         <p class="text-gray-600 text-sm mb-2">5 Mei 2025</p>
                         <p class="text-gray-700 text-sm mb-3">Akan ada perawatan sistem pada pukul 22.00 - 01.00 WIB, mohon persiapkan diri...</p>
-                        <a href="#" class="text-blue-500 hover:underline text-sm font-semibold">Baca Selengkapnya</a>
+                        <a href="{{ url('/berita/detail') }}" class="text-blue-600 hover:underline">
+    Baca Selengkapnya
+</a>
+
                     </div>
                 </div>
 
@@ -314,7 +320,10 @@
                         <h3 class="font-semibold text-gray-800 text-lg mb-1">Maintenance Server</h3>
                         <p class="text-gray-600 text-sm mb-2">5 Mei 2025</p>
                         <p class="text-gray-700 text-sm mb-3">Akan ada perawatan sistem pada pukul 22.00 - 01.00 WIB, mohon persiapkan diri...</p>
-                        <a href="#" class="text-blue-500 hover:underline text-sm font-semibold">Baca Selengkapnya</a>
+                        <a href="{{ url('/berita/detail') }}" class="text-blue-600 hover:underline">
+    Baca Selengkapnya
+</a>
+
                     </div>
                 </div>
 
