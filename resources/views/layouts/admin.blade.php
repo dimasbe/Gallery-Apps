@@ -140,11 +140,6 @@
         </div>
 
         <div class="flex items-center space-x-4 ml-auto">
-            <button class="text-custom-primary-red hover:text-custom-primary-red focus:outline-none relative">
-                <i class="fas fa-bell text-xl"></i>
-                <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-            </button>
-
             <div class="relative">
                 <button id="profileDropdownBtn" class="flex items-center space-x-2 focus:outline-none">
                     <div
