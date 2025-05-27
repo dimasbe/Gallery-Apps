@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminRegisterController;
+use App\Http\Controllers\Admin\AdminVerifikasiController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 /*
@@ -39,6 +40,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // ⛔ Logout Admin (dilindungi oleh middleware 'auth')
     // Nama rute akan menjadi 'admin.logout' karena RouteServiceProvider
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+     // Rute untuk halaman verifikasi
+     Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
 
     // Contoh rute lain untuk admin
     // Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');

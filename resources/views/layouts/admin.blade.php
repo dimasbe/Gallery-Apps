@@ -68,7 +68,7 @@
             {{-- Tampilan Admin Gallery Apps --}}
             <span class="text-gray-800 font-semibold text-lg">Admin Gallery Apps</span>
             {{-- Form Logout --}}
-            <form method="POST" action="{{ route('admin.logout') }}">
+            <form method="POST" action="{{ route('admin.logout') }}"> {{-- Pastikan rute logout benar --}}
                 @csrf
                 <button type="submit" class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out">
                     Logout
@@ -91,7 +91,8 @@
                         </a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="flex items-center p-3 rounded-lg text-on-dark hover:bg-custom-sidebar-hover transition duration-200">
+                        {{-- MODIFIKASI DI SINI --}}
+                        <a href="{{ route('admin.verifikasi') }}" class="flex items-center p-3 rounded-lg text-on-dark hover:bg-custom-sidebar-hover transition duration-200 {{ request()->routeIs('admin.verifikasi') ? 'bg-custom-sidebar-active text-white' : '' }}">
                             <i class="fas fa-check-circle mr-3"></i> Verifikasi
                         </a>
                     </li>
@@ -131,6 +132,12 @@
     </div>
 
     {{-- Script JavaScript Anda di sini --}}
+    {{-- Jika Anda menggunakan Vite (Laravel 9+), pastikan ini ada di layout utama --}}
+    {{-- @vite('resources/js/app.js') --}}
+    {{-- Atau jika menggunakan Laravel Mix (Laravel 8-): --}}
     {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+
+    {{-- Ini penting untuk script Chart.js dan script spesifik halaman lainnya --}}
+    @stack('scripts') 
 </body>
 </html>
