@@ -13,12 +13,9 @@
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
                         <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                        {{-- Menggunakan titik (&bull;) sebagai pemisah breadcrumb, dengan warna merah dari CSS kustom Anda --}}
-                        {{-- PENYESUAIAN UKURAN TITIK MERAH DI SINI UNTUK ALIGNMENT --}}
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span> {{-- Menggunakan text-base agar sejajar --}}
+                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
-                    {{-- BARIS INI AKAN MENJADIKAN TEKS "Verifikasi" MERAH --}}
-                    <li class="text-custom-primary-red" aria-current="page">Verifikasi</li> {{-- Teks "Verifikasi" dengan warna merah --}}
+                    <li class="text-custom-primary-red" aria-current="page">Verifikasi</li>
                 </ol>
             </nav>
         </div>
@@ -45,70 +42,63 @@
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
                             Tanggal
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
                             Aksi
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Data Dummy untuk Tabel --}}
-                    @php
-                        $verifikasiData = [
-                            ['no' => 1, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 2, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 3, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 4, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 5, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 6, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 7, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 8, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 9, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                            ['no' => 10, 'nama_aplikasi' => 'Mobile Legend', 'pemilik' => 'Stevia Magdalena', 'kategori' => 'Permainan', 'tanggal' => '06 - 05 - 2025'],
-                        ];
-                    @endphp
-
-                    @foreach($verifikasiData as $data)
-                    <tr>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ $data['no'] }}</p>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_aplikasi'] }}</p>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ $data['pemilik'] }}</p>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ $data['kategori'] }}</p>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ $data['tanggal'] }}</p>
-                        </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <div class="flex space-x-2">
-                                {{-- Tombol Aksi dengan warna yang disesuaikan --}}
-                                <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Diterima</button>
-                                <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Ditolak</button>
-                                <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Lihat</button>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
+                    {{-- Data Dummy untuk Tabel, diambil dari Controller --}}
+                    @if(count($verifikasiData) > 0)
+                        @foreach($verifikasiData as $data)
+                        <tr>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $loop->iteration }}</p>
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_aplikasi'] }}</p>
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['pemilik'] }}</p>
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['kategori'] }}</p>
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['tanggal'] }}</p>
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                                <div class="flex space-x-2 justify-center">
+                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Diterima</button>
+                                    <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200"
+                                            onclick="showRejectPopup()">Ditolak</button>
+                                    <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Lihat</button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="6" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center text-gray-500">
+                                Tidak ada data verifikasi.
+                            </td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
 
-        {{-- Bagian Pagination --}}
+        {{-- Bagian Pagination (Statis) --}}
         <div class="flex justify-between items-center mt-6">
             <div class="text-sm text-gray-600">
                 Rows per page:
-                <select class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
-                    <option>10</option>
-                    <option>20</option>
-                    <option>30</option>
+                <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
                 </select>
             </div>
-            <div class="text-sm text-gray-600">
+            <div id="pagination-info" class="text-sm text-gray-600">
                 1-10 of 30
             </div>
             <div class="flex space-x-2">
@@ -122,4 +112,53 @@
         </div>
     </div>
 </div>
+
+{{-- Pop-up Tolak Ajuan --}}
+<div id="reject-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Tolak Ajuan</h2>
+        <div class="mb-4">
+            <label for="reject-notes" class="block text-gray-700 text-sm font-bold mb-2">Catatan</label>
+            <textarea id="reject-notes"
+                      rows="4"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
+                      placeholder="Aplikasi tidak sesuai kriteria."></textarea>
+        </div>
+        {{-- Mengubah flex-justify-center menjadi flex justify-end untuk menempatkan tombol di kanan --}}
+            <div class="flex justify-end space-x-4">
+        {{-- Tombol Batal: Ubah py-2 px-4 menjadi py-1 px-2 --}}
+        <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 font-bold py-1 px-2 rounded-md transition duration-200"
+                onclick="hideRejectPopup()">Batal</button>
+        {{-- Tombol Kirim: Ubah py-2 px-4 menjadi py-1 px-2 --}}
+        <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white font-bold py-1 px-2 rounded-md shadow-sm transition duration-200"
+                onclick="submitReject()">Kirim</button>
+    </div>
+    </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<script>
+    // Fungsi untuk menampilkan pop-up
+    function showRejectPopup() {
+        console.log('Tombol Ditolak diklik! Menampilkan pop-up...'); // Untuk debugging
+        document.getElementById('reject-popup-overlay').classList.remove('hidden');
+    }
+
+    // Fungsi untuk menyembunyikan pop-up
+    function hideRejectPopup() {
+        console.log('Menyembunyikan pop-up...'); // Untuk debugging
+        document.getElementById('reject-popup-overlay').classList.add('hidden');
+        document.getElementById('reject-notes').value = ''; // Bersihkan textarea
+    }
+
+    // Fungsi untuk menangani saat tombol 'Kirim' diklik
+    function submitReject() {
+        const notes = document.getElementById('reject-notes').value;
+        console.log('Catatan penolakan:', notes); // Untuk debugging
+        alert('Mengirim catatan penolakan: ' + notes); // Contoh feedback
+        hideRejectPopup();
+    }
+</script>
+@endpush

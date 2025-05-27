@@ -224,5 +224,6 @@
 
     {{-- Script JavaScript Anda di sini --}}
     {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+    @stack('scripts') 
 </body>
 </html>

@@ -1,11 +1,22 @@
-@extends('layouts.admin') {{-- Pastikan ini mengarah ke layout admin Anda --}}
+@extends('layouts.admin') {{-- Memastikan halaman ini menggunakan layout admin Anda --}}
 
-@section('title', 'Halaman Riwayat (Tanpa Data)')
+@section('title', 'Riwayat') {{-- INI YANG HARUS ANDA UBAH/TAMBAHKAN --}}
 
 @section('content')
-    <div class="p-6 bg-white border-b border-gray-200">
-        <h1 class="text-2xl font-bold mb-4">Ini adalah Halaman Riwayat</h1>
-        <p>Konten halaman riwayat akan ditampilkan di sini. Data belum dimuat dari database.</p>
-        <p>Jika Anda melihat pesan ini, berarti koneksi rute, controller, dan view sudah berhasil!</p>
+    {{-- Konten halaman riwayat Anda di sini --}}
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-800">Riwayat</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="flex items-center text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
+                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                    </li>
+                    <li class="text-custom-primary-red" aria-current="page">Riwayat</li>
+                </ol>
+            </nav>
+        </div>
     </div>
+    {{-- Sisa konten halaman riwayat Anda --}}
 @endsection
