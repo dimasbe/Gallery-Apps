@@ -34,6 +34,48 @@
         .text-custom-sidebar { color: var(--color-text-sidebar); }
         .text-custom-light { color: var(--color-text-light); } /* White text for active state */
 
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Pastikan body mengambil tinggi penuh viewport */
+        }
+
+        /* Header, Sidebar, Main Content */
+        header {
+            height: 102px; /* Atau tinggi header Anda yang sebenarnya */
+            position: fixed; /* Penting agar header tidak mengambil ruang dalam aliran dokumen */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            background-color: var(--color-topbar-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #sidebar {
+            flex: 0 0 256px;
+            position: fixed;
+            top: 102px; /* Cocokkan dengan tinggi header */
+            bottom: 0;
+            left: 0;
+            overflow-y: auto; /* Ini yang membuat sidebar bisa discroll */
+            background-color: var(--color-sidebar-bg);
+        }
+
+        #mainContent {
+            margin-left: 256px; /* Offset untuk sidebar */
+            margin-top: 102px; /* Offset untuk header */
+            overflow-y: auto; /* Ini yang membuat main content bisa discroll */
+            height: calc(100vh - 102px); /* Mengisi sisa tinggi viewport di bawah header */
+            padding: 1.5rem;
+            background-color: var(--color-main-bg);
+        }
+
         /* New class for the subtle raised effect when active */
         .sidebar-item-active-raised {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -302,5 +344,7 @@
             }
         });
     </script>
+
+@stack('scripts')
 </body>
 </html>
