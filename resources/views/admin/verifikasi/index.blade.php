@@ -69,10 +69,12 @@
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                 <div class="flex space-x-2 justify-center">
-                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Diterima</button>
-                                    <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200"
+                                    {{-- Tombol Diterima sekarang memicu pop-up `showAcceptPopup()` --}}
+                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200" {{-- DIUBAH: rounded-lg --}}
+                                            onclick="showAcceptPopup()">Diterima</button>
+                                    <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200" {{-- DIUBAH: rounded-lg --}}
                                             onclick="showRejectPopup()">Ditolak</button>
-                                    <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Lihat</button>
+                                    <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200">Lihat</button> {{-- DIUBAH: rounded-lg --}}
                                 </div>
                             </td>
                         </tr>
@@ -114,7 +116,7 @@
 </div>
 
 {{-- Pop-up Tolak Ajuan --}}
-<div id="reject-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
+<div id="reject-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto">
         <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Tolak Ajuan</h2>
         <div class="mb-4">
@@ -124,15 +126,30 @@
                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
                       placeholder="Aplikasi tidak sesuai kriteria."></textarea>
         </div>
-        {{-- Mengubah flex-justify-center menjadi flex justify-end untuk menempatkan tombol di kanan --}}
-            <div class="flex justify-end space-x-4">
-        {{-- Tombol Batal: Ubah py-2 px-4 menjadi py-1 px-2 --}}
-        <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 font-bold py-1 px-2 rounded-md transition duration-200"
-                onclick="hideRejectPopup()">Batal</button>
-        {{-- Tombol Kirim: Ubah py-2 px-4 menjadi py-1 px-2 --}}
-        <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white font-bold py-1 px-2 rounded-md shadow-sm transition duration-200"
-                onclick="submitReject()">Kirim</button>
+        <div class="flex justify-end space-x-4">
+            {{-- Tombol Batal --}}
+            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+                    onclick="hideRejectPopup()">Batal</button>
+            {{-- Tombol Kirim --}}
+            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+                    onclick="submitReject()">Kirim</button>
+        </div>
     </div>
+</div>
+
+{{-- Pop-up Terima Ajuan --}}
+<div id="accept-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
+        <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+        <h2 class="text-base font-bold text-gray-800 mb-4">Apakah Anda yakin ingin menerima aplikasi ini?</h2>
+        <div class="flex justify-center space-x-4">
+            {{-- Tombol Batal --}}
+            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+                    onclick="hideAcceptPopup()">Batal</button>
+            {{-- Tombol Terima --}}
+            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+                    onclick="submitAccept()">Terima</button>
+        </div>
     </div>
 </div>
 
@@ -140,25 +157,62 @@
 
 @push('scripts')
 <script>
-    // Fungsi untuk menampilkan pop-up
+    // --- Fungsi untuk Pop-up Tolak Ajuan ---
     function showRejectPopup() {
-        console.log('Tombol Ditolak diklik! Menampilkan pop-up...'); // Untuk debugging
+        console.log('Tombol Ditolak diklik! Menampilkan pop-up...');
         document.getElementById('reject-popup-overlay').classList.remove('hidden');
     }
 
-    // Fungsi untuk menyembunyikan pop-up
     function hideRejectPopup() {
-        console.log('Menyembunyikan pop-up...'); // Untuk debugging
+        console.log('Menyembunyikan pop-up Ditolak...');
         document.getElementById('reject-popup-overlay').classList.add('hidden');
         document.getElementById('reject-notes').value = ''; // Bersihkan textarea
     }
 
-    // Fungsi untuk menangani saat tombol 'Kirim' diklik
     function submitReject() {
         const notes = document.getElementById('reject-notes').value;
-        console.log('Catatan penolakan:', notes); // Untuk debugging
-        alert('Mengirim catatan penolakan: ' + notes); // Contoh feedback
+        console.log('Catatan penolakan:', notes);
+        alert('Anda akan mengirim catatan penolakan: "' + notes + '"\n(Ini adalah simulasi statis.)');
         hideRejectPopup();
     }
+
+    // --- Fungsi untuk Pop-up Terima Ajuan ---
+    function showAcceptPopup() {
+        console.log('Tombol Diterima diklik! Menampilkan pop-up...');
+        document.getElementById('accept-popup-overlay').classList.remove('hidden');
+    }
+
+    function hideAcceptPopup() {
+        console.log('Menyembunyikan pop-up Diterima...');
+        document.getElementById('accept-popup-overlay').classList.add('hidden');
+    }
+
+    function submitAccept() {
+        console.log('Aplikasi diterima!');
+        alert('Aplikasi telah diterima!\n(Ini adalah simulasi statis.)'); // Contoh feedback
+        hideAcceptPopup(); // Sembunyikan pop-up setelah "mengirim"
+    }
+
+    // --- Opsional: Menutup pop-up saat mengklik di luar area modal ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const rejectPopupOverlay = document.getElementById('reject-popup-overlay');
+        const acceptPopupOverlay = document.getElementById('accept-popup-overlay');
+
+        if (rejectPopupOverlay) {
+            rejectPopupOverlay.addEventListener('click', function(event) {
+                if (event.target === rejectPopupOverlay) {
+                    hideRejectPopup();
+                }
+            });
+        }
+
+        if (acceptPopupOverlay) {
+            acceptPopupOverlay.addEventListener('click', function(event) {
+                if (event.target === acceptPopupOverlay) {
+                    hideAcceptPopup();
+                }
+            });
+        }
+    });
 </script>
 @endpush

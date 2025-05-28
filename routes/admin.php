@@ -52,6 +52,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Rute untuk halaman verifikasi
     // Nama rute akan menjadi 'admin.verifikasi'
     Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
+    Route::post('/admin/aplikasi/{id}/terima', [VerifikasiController::class, 'terima'])->name('admin.aplikasi.terima');
+    Route::post('/admin/aplikasi/{id}/tolak', [VerifikasiController::class, 'tolak'])->name('admin.aplikasi.tolak');
 
     // Rute Resource untuk Riwayat (akan membuat rute seperti admin.riwayat.index, admin.riwayat.show, dll.)
     // Asumsi RiwayatController adalah resource controller
