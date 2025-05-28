@@ -135,17 +135,61 @@
                 </button>
             </div>
         </div>
-        <nav class="flex items-center space-x-4">
-            {{-- Tampilan Admin Gallery Apps --}}
-            <span class="text-gray-800 font-semibold text-lg">Admin Gallery Apps</span>
-            {{-- Form Logout --}}
-            <form method="POST" action="{{ route('admin.logout') }}">
-                @csrf
-                <button type="submit" class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out">
-                    Logout
+
+        <div class="flex items-center space-x-4 ml-auto">
+            <div class="relative">
+                <button id="profileDropdownBtn" class="flex items-center space-x-2 focus:outline-none">
+                    <div
+                        class="w-10 h-10 rounded-full bg-custom-primary-red flex items-center justify-center text-white font-bold text-lg overflow-hidden">
+                        {{-- Menampilkan gambar profil jika ada, atau inisial jika tidak ada --}}
+                        @if(Auth::check() && Auth::user()->profile_picture)
+                            <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Avatar" class="w-full h-full object-cover">
+                        @else
+                            @php
+                                $initials = 'U'; // Inisial default
+                                if (Auth::check()) {
+                                    if (Auth::user()->name) {
+                                        $words = explode(' ', Auth::user()->name);
+                                        $initials = '';
+                                        foreach ($words as $word) {
+                                            $initials .= strtoupper(substr($word, 0, 1));
+                                        }
+                                        $initials = substr($initials, 0, 2); // Ambil maksimal 2 inisial
+                                    } elseif (Auth::user()->username) {
+                                        $initials = strtoupper(substr(Auth::user()->username, 0, 1));
+                                    }
+                                }
+                            @endphp
+                            {{ $initials }}
+                        @endif
+                    </div>
+                    <div class="flex flex-col text-sm text-left">
+                        <span class="font-semibold text-custom-primary-red">Admin Gallery Apps</span> <span class="text-gray-500 text-xs">
+                            @if(Auth::check())
+                                {{ Auth::user()->name }}
+                            @else
+                                @username_admin
+                            @endif
+                        </span>
+                    </div>
                 </button>
-            </form>
-        </nav>
+
+                <div
+                    id="profileDropdownMenu"
+                    class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden"
+                >
+                    <form method="POST" action="{{ route('admin.logout') }}">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
+                        >
+                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </header>
 
     {{-- Main Content Area (Sidebar + Content) --}}
@@ -214,7 +258,7 @@
             </nav>
         </aside>
 
-         {{-- MAIN CONTENT --}}
+          {{-- MAIN CONTENT --}}
         <main id="mainContent" class="flex-grow p-6 overflow-y-auto bg-custom-main-bg main-content-transition">
                 @yield('content')
 
@@ -226,8 +270,37 @@
         </main>
     </div>
 
-    {{-- Script JavaScript Anda di sini --}}
-    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
-    @stack('scripts') 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+            const profileDropdownMenu = document.getElementById('profileDropdownMenu');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            // --- Profile Dropdown Toggle ---
+            if (profileDropdownBtn && profileDropdownMenu) {
+                profileDropdownBtn.addEventListener('click', function (event) {
+                    event.stopPropagation(); // Prevents the click from immediately closing the dropdown if body listener is present
+                    profileDropdownMenu.classList.toggle('hidden');
+                });
+
+                // Close the dropdown if the user clicks outside of it
+                document.addEventListener('click', function (event) {
+                    if (!profileDropdownMenu.contains(event.target) && !profileDropdownBtn.contains(event.target)) {
+                        profileDropdownMenu.classList.add('hidden');
+                    }
+                });
+            }
+
+            // --- Sidebar Toggle ---
+            if (sidebarToggle && sidebar && mainContent) {
+                sidebarToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('sidebar-collapsed');
+                    mainContent.classList.toggle('main-content-shifted');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
