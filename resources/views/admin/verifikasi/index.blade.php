@@ -71,9 +71,9 @@
                                 <div class="flex space-x-2 justify-center">
                                     {{-- Tombol Diterima sekarang memicu pop-up `showAcceptPopup()` --}}
                                     <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
-                                            onclick="showAcceptPopup()">Diterima</button>
+                                            onclick="showAcceptPopup()">Terima</button>
                                     <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
-                                            onclick="showRejectPopup()">Ditolak</button>
+                                            onclick="showRejectPopup()">Tolak</button>
                                     {{-- PERUBAHAN DI SINI: Mengubah button menjadi <a> dan menambahkan href --}}
                                     <a href="{{ route('admin.verifikasi.detail', ['id' => $loop->iteration]) }}" {{-- Menggunakan route helper dengan ID dummy --}}
                                        class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
