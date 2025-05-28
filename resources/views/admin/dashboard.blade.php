@@ -86,8 +86,25 @@
 
 <div class="p-6"> {{-- Padding utama untuk area konten --}}
 
+    {{-- KARTU PUTIH UNTUK HEADER & BREADCRUMB --}}
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6"> {{-- Card putih baru untuk header, dengan bayangan dan sudut membulat --}}
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-800">Beranda</h1> {{-- Judul utama halaman --}}
+            <nav aria-label="breadcrumb">
+                <ol class="flex items-center text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
+                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                    </li>
+                    <li class="text-custom-primary-red" aria-current="page">Dashboard</li> {{-- Breadcrumb untuk halaman dashboard --}}
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+
     {{-- BAGIAN ATAS: Judul dan Kartu Statistik Besar --}}
-    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Beranda</h1>
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6"></h1> {{-- Judul ini sekarang bisa dikosongkan atau dihapus karena sudah ada di kartu header --}}
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {{-- Kartu: Jumlah Pengguna --}}
