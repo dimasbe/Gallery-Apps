@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    {{-- Kartu (Card) yang Membungkus Tabel Verifikasi --}}
+    {{-- Kartu (Card) yang Membungkus Tabel Arsip --}}
     <div class="bg-white shadow-md rounded-lg p-6">
         <div class="overflow-x-auto"> {{-- Membuat tabel responsif terhadap ukuran layar kecil --}}
             <table class="min-w-full leading-normal">
@@ -41,9 +41,6 @@
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
                             Tanggal
-                        </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
-                            Status
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
                             Aksi
@@ -71,14 +68,12 @@
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $data['tanggal'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                                <span class="inline-block px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold">
-                                    Arsip
-                                </span>
-                            </td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                 <div class="flex space-x-2 justify-center">
-                                    <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Tampilkan</button>
-                                    {{-- Mengubah onclick menjadi showDeletePopup --}}
+                                    <a href="{{ route('admin.arsip.show', $data['id']) }}"
+                                    class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">
+                                        Lihat
+                                    </a>
+                                    <button class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200">Tampilkan</button>
                                     <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm transition duration-200"
                                             onclick="showDeletePopup()">
                                             Hapus
