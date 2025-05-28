@@ -174,6 +174,7 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
     <div id="arsip-popup-overlay"
         class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -229,3 +230,6 @@
         }
     </script>
 @endsection
+=======
+@endsection
+>>>>>>> 631bb20e6feeec80bb5e96a05613d04bac1167f9

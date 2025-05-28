@@ -52,12 +52,22 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Rute untuk halaman verifikasi
     // Nama rute akan menjadi 'admin.verifikasi'
     Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
-    Route::post('/admin/aplikasi/{id}/terima', [VerifikasiController::class, 'terima'])->name('admin.aplikasi.terima');
-    Route::post('/admin/aplikasi/{id}/tolak', [VerifikasiController::class, 'tolak'])->name('admin.aplikasi.tolak');
+    Route::post('/admin/aplikasi/{id}/terima', [AdminVerifikasiController::class, 'terima'])->name('admin.aplikasi.terima');
+    Route::post('/admin/aplikasi/{id}/tolak', [AdminVerifikasiController::class, 'tolak'])->name('admin.aplikasi.tolak');
+
+    Route::get('/verifikasi/{id}/detail', function($id) {
+        // Untuk tampilan statis, ID ini tidak akan digunakan secara dinamis
+        // Namun, rute ini membutuhkan parameter {id}
+        // Pastikan view `detail.blade.php` ada di `resources/views/admin/verifikasi/`
+        return view('admin.verifikasi.detail', ['appId' => $id]);
+    })->name('verifikasi.detail');
 
     // Rute Resource untuk Riwayat (akan membuat rute seperti admin.riwayat.index, admin.riwayat.show, dll.)
     // Asumsi RiwayatController adalah resource controller
     Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']); // Umumnya riwayat tidak ada create/edit
+    Route::get('/aplikasi/{id}', function() {
+        return view('admin.riwayat.detail');
+    })->name('aplikasi.show');
 
     // Rute Resource untuk Berita
     // Asumsi BeritaController adalah resource controller

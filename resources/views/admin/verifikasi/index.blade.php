@@ -70,11 +70,15 @@
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                 <div class="flex space-x-2 justify-center">
                                     {{-- Tombol Diterima sekarang memicu pop-up `showAcceptPopup()` --}}
-                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200" {{-- DIUBAH: rounded-lg --}}
-                                            onclick="showAcceptPopup()">Diterima</button>
-                                    <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200" {{-- DIUBAH: rounded-lg --}}
-                                            onclick="showRejectPopup()">Ditolak</button>
-                                    <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200">Lihat</button> {{-- DIUBAH: rounded-lg --}}
+                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
+                                            onclick="showAcceptPopup()">Terima</button>
+                                    <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
+                                            onclick="showRejectPopup()">Tolak</button>
+                                    {{-- PERUBAHAN DI SINI: Mengubah button menjadi <a> dan menambahkan href --}}
+                                    <a href="{{ route('admin.verifikasi.detail', ['id' => $loop->iteration]) }}" {{-- Menggunakan route helper dengan ID dummy --}}
+                                       class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                        Lihat
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -128,10 +132,10 @@
         </div>
         <div class="flex justify-end space-x-4">
             {{-- Tombol Batal --}}
-            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
                     onclick="hideRejectPopup()">Batal</button>
             {{-- Tombol Kirim --}}
-            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20"
                     onclick="submitReject()">Kirim</button>
         </div>
     </div>
@@ -144,10 +148,10 @@
         <h2 class="text-base font-bold text-gray-800 mb-4">Apakah Anda yakin ingin menerima aplikasi ini?</h2>
         <div class="flex justify-center space-x-4">
             {{-- Tombol Batal --}}
-            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
                     onclick="hideAcceptPopup()">Batal</button>
             {{-- Tombol Terima --}}
-            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20" {{-- DIUBAH: rounded-lg --}}
+            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20"
                     onclick="submitAccept()">Terima</button>
         </div>
     </div>
