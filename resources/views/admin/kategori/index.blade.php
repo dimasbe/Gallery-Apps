@@ -133,7 +133,27 @@
                 </tbody>
             </table>
         </div>
-
+        <div class="flex justify-between items-center mt-6">
+            <div class="text-sm text-gray-600">
+                Baris per halaman:
+                <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
+                    <option value="10" selected>5</option>
+                    <option value="20">10</option>
+                    <option value="30">20</option>
+                </select>
+            </div>
+            <div id="pagination-info" class="text-sm text-gray-600">
+                1-5 of 1
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
