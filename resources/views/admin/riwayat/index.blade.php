@@ -1,37 +1,42 @@
 @extends('layouts.admin')
 
 @section('content')
-    <!-- Navbar Riwayat + Breadcrumbs -->
-    <div class="bg-white shadow-md rounded-xl px-6 py-4 mb-6 flex items-center justify-between">
-        <!-- Judul Halaman -->
-        <h1 class="text-2xl font-bold" style="color: #AD1500;">Riwayat</h1>
+    <!-- Wrapper Konten Utama -->
+    <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+        <!-- Navbar Riwayat + Breadcrumbs -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-800">Riwayat</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="flex items-center text-sm text-gray-600">
+                        <li class="flex items-center">
+                            <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
+                            <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                        </li>
+                        <li class="flex items-center">
+                            <a href="#" class="hover:text-custom-primary-red">Riwayat</a>
+                            <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                        </li>
+                        <li class="text-custom-primary-red capitalize" aria-current="page">
+                            {{ request('status', 'diterima') }}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
-
-        <!-- Breadcrumbs Custom -->
-        <nav class="text-sm text-gray-600" aria-label="Breadcrumb">
-            <ol class="flex items-center space-x-2">
-                <li>
-                    <a href="#" class="hover:underline hover:text-red-600 font-medium">Beranda</a>
-                </li>
-                <li>
-                    <span class="text-red-600 text-lg">●</span>
-                </li>
-                <li>
-                    <a href="#" class="hover:underline hover:text-red-600 font-medium">Riwayat</a>
-                </li>
-                <li>
-                    <span class="text-red-600 text-lg">●</span>
-                </li>
-                <li class="text-gray-800 font-semibold capitalize">{{ request('status', 'diterima') }}</li>
-            </ol>
-        </nav>
-    </div>
-
-    <div class="p-6">
+        <!-- Card Riwayat -->
         <div class="bg-white shadow-md rounded-xl p-6">
             <!-- Tombol Switch Status -->
             <div class="flex justify-end mb-4">
                 <div class="flex items-center space-x-3">
+                    <a href="?status=semua">
+                        <button
+                            class="px-5 py-2 rounded-2xl font-semibold 
+                {{ request('status') == 'semua' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                            Semua
+                        </button>
+                    </a>
                     <a href="?status=diterima">
                         <button
                             class="px-5 py-2 rounded-2xl font-semibold 
@@ -46,93 +51,181 @@
                             Ditolak
                         </button>
                     </a>
+                    <a href="?status=arsip">
+                        <button
+                            class="px-5 py-2 rounded-2xl font-semibold 
+                {{ request('status') == 'arsip' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                            Arsip
+                        </button>
+                    </a>
                 </div>
             </div>
 
-
             <!-- Tabel Riwayat -->
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left border-separate border-spacing-y-4">
-                    <thead class="text-gray-700">
-                        <tr class="hover:bg-gray-100 transition duration-200">
-                            @foreach (['No.', 'Nama Aplikasi', 'Pemilik', 'Kategori', 'Tanggal', 'Status', 'Aksi'] as $header)
-                                <th class="align-middle text-center">
-                                    <div
-                                        class="bg-white px-4 py-3 rounded-lg shadow-sm w-full text-sm font-semibold text-gray-700 text-center">
-                                        {{ $header }}
-                                    </div>
-                                </th>
-                            @endforeach
+                <table class="min-w-full text-sm leading-normal">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                No.
+                            </th>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                Nama Aplikasi
+                            </th>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                Pemilik
+                            </th>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                Kategori
+                            </th>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                Tanggal
+                            </th>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
+                                Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
-                        @for ($i = 1; $i <= 5; $i++)
-                            <tr class="hover:bg-gray-100 transition duration-200">
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm text-center w-full">
-                                        {{ $i }}</div>
-                                </td>
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm w-full">Mobile Legend</div>
-                                </td>
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm w-full">Stevia Magdalena</div>
-                                </td>
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm w-full">Permainan</div>
-                                </td>
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm w-full">06 - 05 - 2025</div>
-                                </td>
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm w-full">
+                        @php
+                            $statuses = ['diterima', 'ditolak'];
+                            $currentStatus = request('status', 'diterima');
+                            $loopStatuses = $currentStatus == 'semua' ? $statuses : [$currentStatus];
+                        @endphp
+
+                        @php $no = 1; @endphp
+                        @foreach ($loopStatuses as $status)
+                            @for ($i = 1; $i <= 3; $i++)
+                                {{-- Ubah 3 jika ingin banyak data dummy per status --}}
+                                <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
+                                    <td class="px-5 py-4 text-center">{{ $no++ }}</td>
+                                    <td class="px-5 py-4">Mobile Legend</td>
+                                    <td class="px-5 py-4">Stevia Magdalena</td>
+                                    <td class="px-5 py-4">Permainan</td>
+                                    <td class="px-5 py-4">06 - 05 - 2025</td>
+                                    <td class="px-5 py-4">
                                         <span
-                                            class="
-                                        text-xs font-semibold px-3 py-1 rounded-full
-                                        {{ request('status', 'diterima') == 'diterima' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800' }}">
-                                            {{ ucfirst(request('status', 'diterima')) }}
+                                            class="text-xs font-medium px-3 py-1 rounded-full
+                        {{ $status == 'diterima' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                            {{ ucfirst($status) }}
                                         </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="bg-white px-4 py-3 rounded-lg shadow-sm w-full h-full">
-                                        <div class="flex items-center justify-center gap-2 h-full">
-                                            @if (request('status', 'diterima') == 'diterima')
-                                                <button
-                                                    class="bg-yellow-300 text-yellow-900 text-xs font-semibold px-3 py-1 rounded-lg hover:bg-yellow-400 transition">
+                                    </td>
+                                    <td class="px-5 py-4">
+                                        <div class="flex justify-center gap-2">
+                                            @if ($status == 'diterima')
+                                                <button onclick="showArsipPopup()"
+                                                    class="bg-yellow-300 hover:bg-yellow-400 text-yellow-900 text-xs font-semibold px-3 py-1 rounded-lg transition">
                                                     Arsipkan
                                                 </button>
                                             @else
-                                                <button
-                                                    class="bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-lg hover:bg-red-700 transition">
+                                                <button onclick="showHapusPopup()" 
+                                                    class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1 rounded-lg transition">
                                                     Hapus
                                                 </button>
                                             @endif
                                             <button
-                                                class="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg hover:bg-blue-700 transition">
+                                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-lg transition">
                                                 Lihat
                                             </button>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endfor
+                                    </td>
+                                </tr>
+                            @endfor
+                        @endforeach
                     </tbody>
+
                 </table>
             </div>
 
-            <!-- Pagination + Rows per page -->
-            <div class="mt-6 flex justify-end items-center space-x-6 text-sm text-gray-600">
-                <div class="flex items-center">
-                    <span class="mr-1">Rows per page:</span>
-                    <button class="px-2 py-1 border border-gray-300 rounded">5 ▾</button>
+            <!-- Pagination Statis (Sekarang di dalam card) -->
+            <div class="flex justify-between items-center mt-6">
+                <div class="text-sm text-gray-600">
+                    Rows per page:
+                    <select id="rows-per-page"
+                        class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span>1–5 of 30</span>
-                    <button class="text-gray-400 hover:text-gray-700">&lt;</button>
-                    <button class="text-gray-400 hover:text-gray-700">&gt;</button>
+                <div id="pagination-info" class="text-sm text-gray-600">
+                    1-10 of 30
+                </div>
+                <div class="flex space-x-2">
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="arsip-popup-overlay"
+        class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
+            <i class="fas fa-archive text-yellow-500 text-6xl mb-4"></i>
+            <h2 class="text-base font-bold text-gray-800 mb-4">Apakah Anda yakin ingin mengarsipkan data ini?</h2>
+            <div class="flex justify-center space-x-4">
+                {{-- Tombol Batal --}}
+                <button
+                    class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
+                    onclick="hideArsipPopup()">Batal</button>
+                {{-- Tombol Arsipkan --}}
+                <button
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-4 rounded-lg transition duration-200 w-24"
+                    onclick="submitArsip()">Arsipkan</button>
+            </div>
+        </div>
+    </div>
+    <div id="hapus-popup-overlay"
+        class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
+            <i class="fas fa-trash-alt text-red-500 text-6xl mb-4"></i>
+            <h2 class="text-base font-bold text-gray-800 mb-4">Apakah Anda yakin ingin menghapus data ini?</h2>
+            <p class="text-sm text-gray-500 mb-4">Data yang dihapus tidak dapat dikembalikan.</p>
+            <div class="flex justify-center space-x-4">
+                <!-- Tombol Batal -->
+                <button
+                    class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
+                    onclick="hideHapusPopup()">Batal</button>
+                <!-- Tombol Hapus -->
+                <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded-lg transition duration-200 w-24"
+                    onclick="alert('Data berhasil dihapus!'); hideHapusPopup();">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function showArsipPopup() {
+            document.getElementById('arsip-popup-overlay').classList.remove('hidden');
+        }
+
+        function hideArsipPopup() {
+            document.getElementById('arsip-popup-overlay').classList.add('hidden');
+        }
+
+        function showHapusPopup() {
+            document.getElementById('hapus-popup-overlay').classList.remove('hidden');
+        }
+
+        function hideHapusPopup() {
+            document.getElementById('hapus-popup-overlay').classList.add('hidden');
+        }
+    </script>
 @endsection
