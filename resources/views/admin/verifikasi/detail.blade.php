@@ -1,6 +1,6 @@
 @extends('layouts.admin') {{-- Memastikan halaman ini menggunakan layout admin Anda --}}
 
-@section('title', 'Detail Arsip') {{-- INI YANG SAYA UBAH MENJADI 'Detail Arsip' UNTUK KONSISTENSI --}}
+@section('title', 'Detail Verifikasi') {{-- INI YANG SAYA UBAH MENJADI 'Detail Arsip' UNTUK KONSISTENSI --}}
 
 @section('content')
 <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
@@ -15,7 +15,7 @@
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
                     <li class="flex items-center">
-                        <a href="{{ route('admin.arsip.index') }}" class="hover:text-custom-primary-red">Arsip</a>
+                        <a href="{{ route('admin.riwayat.index') }}" class="hover:text-custom-primary-red">Verifikasi</a>
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
                     <li class="text-custom-primary-red" aria-current="page">Detail</li>
@@ -29,7 +29,7 @@
         {{-- Header: Kembali Button --}}
         {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
-        <a href="{{ route('admin.arsip.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+        <a href="{{ route('admin.riwayat.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -167,90 +167,6 @@
             </div>
         </div>
 
-        {{-- Rating and Reviews Section --}}
-        <div class="rating-reviews-section">
-            <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Ulasan</h2>
-
-            {{-- List of Reviews --}}
-            <div id="reviews-content" class="reviews-list space-y-6 overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 300px;">
-                {{-- Example Review 1 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Kim Sohun</p>
-                            <span class="text-gray-500 text-xs font-poppins">5 jam yang lalu</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 2 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Minho</p>
-                            <span class="text-gray-500 text-xs font-poppins">12 Maret 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 3 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">UI</p>
-                            <span class="text-gray-500 text-xs font-poppins">13 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 4 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Jongsuk</p>
-                            <span class="text-gray-500 text-xs font-poppins">01 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 5 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Dimas Bagus</p>
-                            <span class="text-gray-500 text-xs font-poppins">15 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya lumayan oke, tapi dari segi tampilan kurang</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 6 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Ari Sandi</p>
-                            <span class="text-gray-500 text-xs font-poppins">23 Desember 2025</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap seru banget</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-left mt-8">
-                <button id="toggle-reviews-btn" class="text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Lihat Semua Ulasan</button>
-            </div>
-        </div>
-
     </div>
 </div>
 
@@ -322,34 +238,6 @@
             } else {
                 descriptionContent.style.maxHeight = `${initialDescriptionHeight}px`;
                 readMoreBtn.textContent = 'Baca Selengkapnya';
-            }
-        });
-
-        // Read More/Less functionality for Reviews
-        const reviewsContent = document.getElementById('reviews-content');
-        const toggleReviewsBtn = document.getElementById('toggle-reviews-btn');
-        const initialReviewsHeight = 300; // Height to show a few reviews initially
-
-        // Check if reviews content overflows initially and set max-height
-        // Use setTimeout to ensure scrollHeight is calculated after content is rendered
-        setTimeout(() => {
-            if (reviewsContent.scrollHeight > initialReviewsHeight) {
-                reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
-                reviewsContent.style.transition = 'max-height 0.3s ease-out';
-                toggleReviewsBtn.style.display = 'block'; // Ensure button is visible if content overflows
-            } else {
-                toggleReviewsBtn.style.display = 'none'; // Hide button if content is short
-            }
-        }, 0);
-
-
-        toggleReviewsBtn.addEventListener('click', () => {
-            if (reviewsContent.style.maxHeight === `${initialReviewsHeight}px`) {
-                reviewsContent.style.maxHeight = reviewsContent.scrollHeight + 'px';
-                toggleReviewsBtn.textContent = 'Lihat Lebih Sedikit';
-            } else {
-                reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
-                toggleReviewsBtn.textContent = 'Lihat Semua Ulasan';
             }
         });
 
