@@ -96,7 +96,7 @@
                         <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
-                    <li class="text-custom-primary-red" aria-current="page">Dashboard</li> {{-- Breadcrumb untuk halaman dashboard --}}
+                    <li class="text-custom-primary-red" aria-current="page">Beranda</li> {{-- Breadcrumb untuk halaman dashboard --}}
                 </ol>
             </nav>
         </div>

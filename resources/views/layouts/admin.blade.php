@@ -48,23 +48,30 @@
         /* Header, Sidebar, Main Content */
         header {
             height: 102px; /* Atau tinggi header Anda yang sebenarnya */
-            position: fixed; /* Penting agar header tidak mengambil ruang dalam aliran dokumen */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 20;
             background-color: var(--color-topbar-bg);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem; /* Padding default */
+            padding-right: 1.5rem; /* Tambahkan padding kanan untuk menyeimbangkan layout */
+            display: flex; /* Tambahkan ini agar flexbox bekerja */
+            align-items: center; /* Vertically align items */
         }
 
         #sidebar {
-            flex: 0 0 256px;
+            width: 256px; /* Lebar default sidebar */
             position: fixed;
             top: 102px; /* Cocokkan dengan tinggi header */
             bottom: 0;
             left: 0;
             overflow-y: auto; /* Ini yang membuat sidebar bisa discroll */
             background-color: var(--color-sidebar-bg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tambahkan shadow pada sidebar */
+            z-index: 15; /* Pastikan sidebar di atas main content tapi di bawah header */
+            transition: width 0.3s ease-in-out; /* Pastikan transisi width ada */
         }
 
         #mainContent {
@@ -74,14 +81,14 @@
             height: calc(100vh - 102px); /* Mengisi sisa tinggi viewport di bawah header */
             padding: 1.5rem;
             background-color: var(--color-main-bg);
+            transition: margin-left 0.3s ease-in-out; /* Pastikan transisi margin-left ada */
         }
 
         /* New class for the subtle raised effect when active */
         .sidebar-item-active-raised {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            /* You can adjust these values for more or less prominence */
-            position: relative; /* Needed for z-index if you want it to truly "pop" above siblings */
-            z-index: 10; /* Make it slightly above other items */
+            position: relative;
+            z-index: 10;
         }
 
         /* Ensure active item's text/icon color is white */
@@ -97,7 +104,6 @@
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.12), 0 3px 6px -1px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow on hover */
         }
 
-
         .sidebar-scroll::-webkit-scrollbar {
             width: 6px;
         }
@@ -112,58 +118,84 @@
             background: var(--color-primary-red-darker);
         }
 
-        .sidebar-transition {
-            transition: width 0.3s ease-in-out;
-        }
-        .main-content-transition {
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        .sidebar-collapsed {
-            width: 64px; /* w-16 */
+        /* Aturan untuk Sidebar Collapsed */
+        #sidebar.sidebar-collapsed { /* Gunakan ID dan class secara bersamaan untuk spesifitas lebih tinggi */
+            width: 64px; /* Lebar w-16 di Tailwind */
             overflow: hidden;
         }
-        .sidebar-collapsed .sidebar-text,
-        .sidebar-collapsed .sidebar-logo-text {
+        #sidebar.sidebar-collapsed .sidebar-text,
+        #sidebar.sidebar-collapsed .sidebar-logo-text {
             display: none;
         }
-        .sidebar-collapsed .sidebar-item a {
+        #sidebar.sidebar-collapsed .sidebar-item a {
             justify-content: center;
         }
-        .sidebar-collapsed .sidebar-item a i {
+        #sidebar.sidebar-collapsed .sidebar-item a i {
             margin-right: 0 !important;
         }
-        .sidebar-collapsed .sidebar-panel-text {
+        #sidebar.sidebar-collapsed .sidebar-panel-text {
             display: none;
         }
-        .sidebar-collapsed .sidebar-footer {
+        #sidebar.sidebar-collapsed .sidebar-footer {
             display: none;
         }
-        .sidebar-collapsed .sidebar-item a {
+        #sidebar.sidebar-collapsed .sidebar-item a {
             padding-left: 0.5rem;
             padding-right: 0.5rem;
             padding-top: 0.75rem;
             padding-bottom: 0.75rem;
         }
 
-        .main-content-shifted {
-            margin-left: 64px;
+        /* Ini Kunci agar Main Content melebar */
+        #mainContent.main-content-shifted {
+            margin-left: 64px; /* Offset untuk sidebar saat diminimalkan (sesuai lebar sidebar-collapsed) */
+        }
+
+        /* Custom styles for logos to ensure sizing */
+        #fullLogo {
+            width: 180px; /* Sesuaikan ukuran logo penuh */
+            height: auto; /* Biarkan tinggi menyesuaikan agar tidak terdistorsi */
+            object-fit: contain; /* Ensures the whole logo is visible within the defined area */
+        }
+
+        #minimizedLogo {
+            width: 48px; /* Sesuaikan ukuran logo minimal */
+            height: 48px;
+            object-fit: contain;
         }
     </style>
 </head>
 <body class="flex flex-col min-h-screen bg-custom-main-bg font-sans">
     {{-- Header (Top Bar) --}}
-    <header class="bg-custom-topbar-bg shadow-md p-4 flex items-center justify-between z-10">
-        <div class="flex items-center space-x-4">
-            <button id="sidebarToggle" class="text-custom-primary-red hover:text-custom-primary-red focus:outline-none focus:text-custom-primary-red">
+    <header class="bg-custom-topbar-bg shadow-md p-4 flex items-center z-10">
+        {{-- Grup Logo dan Tombol Hamburger --}}
+        <div class="flex items-center">
+
+            <a href="{{ route('admin.dashboard') }}" id="logoLink">
+                {{-- Logo Penuh (awalnya terlihat) --}}
+                <img
+                    src="{{ asset('images/logo.png') }}"
+                    alt="Logo"
+                    id="fullLogo"
+                />
+
+                {{-- Logo Kecil (awalnya tersembunyi) --}}
+                <img
+                    src="{{ asset('images/logo2.png') }}"
+                    alt="Minimized Logo"
+                    id="minimizedLogo"
+                    class="hidden"
+                />
+            </a>
+
+            {{-- Tombol Hamburger dipindahkan ke sini, setelah logo --}}
+            <button id="sidebarToggle" class="text-custom-primary-red hover:text-custom-primary-red focus:outline-none focus:text-custom-primary-red ml-4">
                 <i class="fas fa-bars text-xl"></i>
             </button>
-            <a href="{{ route('admin.dashboard') }}">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width:150px; height:70px; object-fit: cover; border-radius: 9999px;" />
-            </a>
         </div>
 
-        <div class="flex-grow flex justify-start ml-16">
+        {{-- Search Bar --}}
+        <div class="flex mx-8">
             <div class="flex w-64 md:w-80">
                 <input
                     type="text"
@@ -178,6 +210,7 @@
             </div>
         </div>
 
+        {{-- Dropdown Profil --}}
         <div class="flex items-center space-x-4 ml-auto">
             <div class="relative">
                 <button id="profileDropdownBtn" class="flex items-center space-x-2 focus:outline-none">
@@ -238,7 +271,7 @@
     <div class="flex flex-1">
         <aside
             id="sidebar"
-            class="w-64 bg-custom-sidebar-bg text-custom-sidebar flex flex-col p-4 shadow-lg overflow-y-auto sidebar-scroll sidebar-transition"
+            class="w-64 bg-custom-sidebar-bg text-custom-sidebar flex flex-col p-4 shadow-lg overflow-y-auto sidebar-scroll"
         >
             <nav class="flex-grow">
                 <ul>
@@ -251,47 +284,47 @@
                             <i class="fas fa-home mr-3 text-lg"></i> <span class="sidebar-text">Beranda</span>
                         </a>
                     </li>
-                    <li class="mb-2 sidebar-item"> {{-- Tambahkan class sidebar-item di sini --}}
+                    <li class="mb-2 sidebar-item">
                         <a
-                            href="{{ route('admin.verifikasi') }}" {{-- <-- PERBAIKAN DI SINI --}}
+                            href="{{ route('admin.verifikasi') }}"
                             class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
-                            {{ request()->routeIs('admin.verifikasi') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}" {{-- <-- Tambahkan logika active --}}
+                            {{ request()->routeIs('admin.verifikasi') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
                         >
                             <i class="fas fa-check-circle mr-3 text-lg"></i> <span class="sidebar-text">Verifikasi</span>
                         </a>
                     </li>
                     <li class="mb-2 sidebar-item">
                         <a
-                            href="{{ route('admin.riwayat.index') }}" {{-- <-- PERBAIKAN DI SINI --}}
+                            href="{{ route('admin.riwayat.index') }}"
                             class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
-                            {{ request()->routeIs('admin.riwayat.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}" {{-- <-- Tambahkan logika active dengan wildcard --}}
+                            {{ request()->routeIs('admin.riwayat.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
                         >
                             <i class="fas fa-history mr-3 text-lg"></i> <span class="sidebar-text">Riwayat</span>
                         </a>
                     </li>
                     <li class="mb-2 sidebar-item">
                         <a
-                            href="{{ route('admin.berita.index') }}" {{-- <-- PERBAIKAN DI SINI --}}
+                            href="{{ route('admin.berita.index') }}"
                             class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
-                            {{ request()->routeIs('admin.berita.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}" {{-- <-- Tambahkan logika active dengan wildcard --}}
+                            {{ request()->routeIs('admin.berita.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
                         >
                             <i class="fas fa-newspaper mr-3 text-lg"></i> <span class="sidebar-text">Berita</span>
                         </a>
                     </li>
                     <li class="mb-2 sidebar-item">
                         <a
-                            href="{{ route('admin.kategori.index') }}" {{-- <-- PERBAIKAN DI SINI --}}
+                            href="{{ route('admin.kategori.index') }}"
                             class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
-                            {{ request()->routeIs('admin.kategori.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}" {{-- <-- Tambahkan logika active dengan wildcard --}}
+                            {{ request()->routeIs('admin.kategori.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
                         >
                             <i class="fas fa-th-list mr-3 text-lg"></i> <span class="sidebar-text">Kategori</span>
                         </a>
                     </li>
                     <li class="mb-2 sidebar-item">
                         <a
-                            href="{{ route('admin.arsip.index') }}" {{-- <-- PERBAIKAN DI SINI --}}
+                            href="{{ route('admin.arsip.index') }}"
                             class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
-                            {{ request()->routeIs('admin.arsip.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}" {{-- <-- Tambahkan logika active dengan wildcard --}}
+                            {{ request()->routeIs('admin.arsip.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
                         >
                             <i class="fas fa-archive mr-3 text-lg"></i> <span class="sidebar-text">Arsip</span>
                         </a>
@@ -300,8 +333,8 @@
             </nav>
         </aside>
 
-          {{-- MAIN CONTENT --}}
-        <main id="mainContent" class="flex-grow p-6 overflow-y-auto bg-custom-main-bg main-content-transition">
+        {{-- MAIN CONTENT --}}
+        <main id="mainContent" class="flex-grow p-6 overflow-y-auto bg-custom-main-bg">
                 @yield('content')
 
                 {{-- FOOTER --}}
@@ -312,6 +345,7 @@
         </main>
     </div>
 
+    {{-- JavaScript --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const profileDropdownBtn = document.getElementById('profileDropdownBtn');
@@ -319,6 +353,9 @@
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
+            const fullLogo = document.getElementById('fullLogo');
+            const minimizedLogo = document.getElementById('minimizedLogo');
+
 
             // --- Profile Dropdown Toggle ---
             if (profileDropdownBtn && profileDropdownMenu) {
@@ -336,10 +373,19 @@
             }
 
             // --- Sidebar Toggle ---
-            if (sidebarToggle && sidebar && mainContent) {
+            if (sidebarToggle && sidebar && mainContent && fullLogo && minimizedLogo) {
                 sidebarToggle.addEventListener('click', function () {
                     sidebar.classList.toggle('sidebar-collapsed');
                     mainContent.classList.toggle('main-content-shifted');
+
+                    // Logika untuk mengubah logo berdasarkan status sidebar
+                    if (sidebar.classList.contains('sidebar-collapsed')) {
+                        fullLogo.classList.add('hidden');
+                        minimizedLogo.classList.remove('hidden');
+                    } else {
+                        fullLogo.classList.remove('hidden');
+                        minimizedLogo.classList.add('hidden');
+                    }
                 });
             }
         });
