@@ -58,6 +58,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Rute Resource untuk Riwayat (akan membuat rute seperti admin.riwayat.index, admin.riwayat.show, dll.)
     // Asumsi RiwayatController adalah resource controller
     Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']); // Umumnya riwayat tidak ada create/edit
+    Route::get('/aplikasi/{id}', function() {
+        return view('admin.riwayat.detail');
+    })->name('aplikasi.show');
 
     // Rute Resource untuk Berita
     // Asumsi BeritaController adalah resource controller
