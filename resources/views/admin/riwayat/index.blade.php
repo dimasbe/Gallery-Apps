@@ -6,7 +6,7 @@
         <!-- Navbar Riwayat + Breadcrumbs -->
         <div class="bg-white shadow-md rounded-lg p-6 mb-6">
             <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-red-700">Riwayat</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Riwayat</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="flex items-center text-sm text-gray-600">
                         <li class="flex items-center">
@@ -18,7 +18,7 @@
                             <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                         </li>
                         <li class="text-custom-primary-red capitalize" aria-current="page">
-                            {{ request('status', 'semua') }}
+                            {{ request('status', 'diterima') }}
                         </li>
                     </ol>
                 </nav>

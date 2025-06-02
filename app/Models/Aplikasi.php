@@ -20,7 +20,6 @@ class Aplikasi extends Model
         'nama_pemilik',
         'tanggal_rilis',
         'versi',
-        'rating_konten',
         'tautan_aplikasi',
         'deskripsi',
         'fitur',
@@ -39,7 +38,7 @@ class Aplikasi extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(Kategori::class, 'id_kategori');
+        return $this->belongsTo(KategoriAplikasi::class, 'id_kategori', 'id_kategori');
     }
 
     public function user()
@@ -49,12 +48,12 @@ class Aplikasi extends Model
 
     public function ulasan()
     {
-        return $this->hasMany(Ulasan::class, 'id_aplikasi');
+        return $this->hasMany(Ulasan::class, 'id_aplikasi', 'id_aplikasi');
     }
 
-    public function fotoAplikasi()
+    public function foto()
     {
-        return $this->hasMany(FotoAplikasi::class, 'id_aplikasi');
+        return $this->hasMany(FotoAplikasi::class, 'id_aplikasi', 'id_aplikasi');
     }
 
 }

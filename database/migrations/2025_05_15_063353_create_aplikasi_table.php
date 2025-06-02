@@ -21,7 +21,6 @@ return new class extends Migration
             $table->date('tanggal_rilis');
             $table->date('tanggal_update')->nullable();
             $table->string('versi');
-            $table->string('rating_konten');
             $table->string('tautan_aplikasi');
             $table->text('deskripsi');
             $table->text('fitur');

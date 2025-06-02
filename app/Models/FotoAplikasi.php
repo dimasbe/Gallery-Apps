@@ -18,5 +18,5 @@ class FotoAplikasi extends Model
 
     public function aplikasi()
     {
-        return $this->belongsTo(Aplikasi::class, 'id_aplikasi');
+        return $this->belongsTo(Aplikasi::class, 'id_aplikasi', 'id_aplikasi');
     }}

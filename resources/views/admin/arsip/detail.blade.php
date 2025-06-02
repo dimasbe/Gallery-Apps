@@ -7,7 +7,7 @@
     {{-- Konten halaman riwayat Anda di sini --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Detail</h1>
+            <h1 class="text-3xl font-bold text-gray-800">Detail</h1>
             <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">

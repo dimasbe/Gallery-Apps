@@ -163,32 +163,6 @@
             height: 48px;
             object-fit: contain;
         }
-
-        /* --- FIXED FOOTER STYLES --- */
-        #footer {
-            position: fixed;
-            bottom: 0;
-            left: 256px; /* Initial offset for sidebar */
-            right: 0;
-            height: 70px; /* Set a fixed height for the footer */
-            z-index: 10;
-            background-color: white; /* Ensure background color */
-            box-shadow: 0 -2px 4px rgba(0,0,0,0.1); /* Optional: add shadow to the top of the footer */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 1.5rem; /* Padding for the content inside the footer */
-            transition: left 0.3s ease-in-out; /* Smooth transition for sidebar toggle */
-        }
-
-        #footer.footer-shifted {
-            left: 64px; /* Shift when sidebar is collapsed */
-        }
-
-        /* Ensure body has padding at the bottom to prevent content from being hidden by the fixed footer */
-        body {
-            padding-bottom: 70px; /* Adjust this value to match your footer's height */
-        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen bg-custom-main-bg font-sans">
@@ -364,7 +338,7 @@
             @yield('content')
 
             {{-- FOOTER --}}
-            <div class="flex justify-between items-center text-gray-500 text-sm border-t border-gray-100 mt-4 bg-white px-10 py-10"
+            <div class="flex justify-between items-center text-gray-500 text-sm border-t border-gray-100 mt-4 bg-white px-6 py-1"
             style="margin-left: -1.5rem; margin-right: -1.5rem; width: calc(100% + 3rem);">
             <p>2025 Hummatech All Rights Reserved</p>
             <p>Copyright By GalleryApp</p>
@@ -404,7 +378,6 @@
                 sidebarToggle.addEventListener('click', function () {
                     sidebar.classList.toggle('sidebar-collapsed');
                     mainContent.classList.toggle('main-content-shifted');
-                    footer.classList.toggle('footer-shifted'); // Toggle footer shift
 
                     // Logika untuk mengubah logo berdasarkan status sidebar
                     if (sidebar.classList.contains('sidebar-collapsed')) {

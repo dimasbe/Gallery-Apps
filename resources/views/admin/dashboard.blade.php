@@ -89,7 +89,7 @@
     {{-- KARTU PUTIH UNTUK HEADER & BREADCRUMB --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6"> {{-- Card putih baru untuk header, dengan bayangan dan sudut membulat --}}
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Beranda</h1> {{-- Judul utama halaman --}}
+            <h1 class="text-3xl font-bold text-gray-800">Beranda</h1> {{-- Judul utama halaman --}}
             <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">

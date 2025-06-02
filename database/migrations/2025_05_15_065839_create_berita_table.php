@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('berita', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_berita');
+            $table->string('thumbnail');
             $table->string('judul_berita');
-            $table->string('penulis');
-            $table->text('isi_berita');
+            $table->foreignId('penulis')->constrained('users')->onDelete('cascade');
+            $table->longText('isi_berita');
             $table->timestamp('tanggal_dibuat')->useCurrent();
-            $table->timestamp('tanggal_diedit')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('tanggal_terbit')->nullable();
+            $table->boolean('status')->default(false); // false = draft, true = published
+            $table->timestamps();
         });
     }
 

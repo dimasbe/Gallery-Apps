@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('kategori_aplikasi', function (Blueprint $table) {
             $table->id();
-            $table->string('sub_kategori')->default('Aplikasi');
             $table->string('nama_kategori');
-            $table->string('gambar_kategori_aplikasi')->nullable();
-            $table->timestamp('tanggal_dibuat')->useCurrent();
-            $table->timestamp('tanggal_diedit')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
         });
     }
 
