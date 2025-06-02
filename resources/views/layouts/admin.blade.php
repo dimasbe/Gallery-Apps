@@ -337,8 +337,8 @@
         <main id="mainContent" class="flex-grow p-6 overflow-y-auto bg-custom-main-bg">
             @yield('content')
 
-            {{-- FOOTER --}}
-            <div class="flex justify-between items-center text-gray-500 text-sm border-t border-gray-100 mt-4 bg-white px-6 py-1"
+        {{-- FOOTER --}}
+        <div class="flex justify-between items-center text-gray-500 text-sm border-t border-gray-100 mt-4 px-6 py-1"
             style="margin-left: -1.5rem; margin-right: -1.5rem; width: calc(100% + 3rem);">
             <p>2025 Hummatech All Rights Reserved</p>
             <p>Copyright By GalleryApp</p>
