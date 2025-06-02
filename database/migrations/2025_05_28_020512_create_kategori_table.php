@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('berita', function (Blueprint $table) {
+        Schema::create('kategori', function (Blueprint $table) {
             $table->id();
-            $table->string('judul_berita');
-            $table->string('penulis');
-            $table->text('isi_berita');
+            $table->enum('sub_kategori', ['aplikasi', 'berita']);
+            $table->string('nama_kategori');
+            $table->string('gambar')->nullable(); // untuk menyimpan nama file atau URL gambar
             $table->timestamp('tanggal_dibuat')->useCurrent();
             $table->timestamp('tanggal_diedit')->useCurrent()->useCurrentOnUpdate();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('berita');
+        Schema::dropIfExists('kategori');
     }
 };
