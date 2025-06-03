@@ -10,7 +10,8 @@ use App\Contracts\Repositories\FotoAplikasiRepository;
 use App\Contracts\Repositories\KategoriRepository; // <- pastikan ini ada
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\Interfaces\UserInterface;
-use App\Contracts\Repositories\UserRepository; 
+use App\Contracts\Repositories\UserRepository;
+use App\Contracts\Repository\UserRepository as RepositoryUserRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
