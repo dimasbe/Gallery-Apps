@@ -372,8 +372,8 @@
         </main>
     </div>
 
-    {{-- JavaScript --}}
-    <script>
+        {{-- JavaScript --}}
+        <script>
         document.addEventListener('DOMContentLoaded', function () {
             const profileDropdownBtn = document.getElementById('profileDropdownBtn');
             const profileDropdownMenu = document.getElementById('profileDropdownMenu');
@@ -382,16 +382,15 @@
             const mainContent = document.getElementById('mainContent');
             const fullLogo = document.getElementById('fullLogo');
             const minimizedLogo = document.getElementById('minimizedLogo');
-
+            const footer = document.getElementById('footer'); // ✅ tambahkan ini
 
             // --- Profile Dropdown Toggle ---
             if (profileDropdownBtn && profileDropdownMenu) {
                 profileDropdownBtn.addEventListener('click', function (event) {
-                    event.stopPropagation(); // Prevents the click from immediately closing the dropdown if body listener is present
+                    event.stopPropagation();
                     profileDropdownMenu.classList.toggle('hidden');
                 });
 
-                // Close the dropdown if the user clicks outside of it
                 document.addEventListener('click', function (event) {
                     if (!profileDropdownMenu.contains(event.target) && !profileDropdownBtn.contains(event.target)) {
                         profileDropdownMenu.classList.add('hidden');
@@ -404,9 +403,11 @@
                 sidebarToggle.addEventListener('click', function () {
                     sidebar.classList.toggle('sidebar-collapsed');
                     mainContent.classList.toggle('main-content-shifted');
-                    footer.classList.toggle('footer-shifted'); // Toggle footer shift
+                    
+                    if (footer) {
+                        footer.classList.toggle('footer-shifted');
+                    }
 
-                    // Logika untuk mengubah logo berdasarkan status sidebar
                     if (sidebar.classList.contains('sidebar-collapsed')) {
                         fullLogo.classList.add('hidden');
                         minimizedLogo.classList.remove('hidden');
