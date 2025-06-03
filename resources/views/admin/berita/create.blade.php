@@ -96,6 +96,8 @@
                         <label for="paragraf_0_content" class="block text-sm font-medium text-gray-700">Isi Paragraf 1</label>
                         <textarea name="paragrafs[0][content]" id="paragraf_0_content" rows="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
                     </div>
+                </div>
+            </div>
 
             {{-- Tombol Submit dan Batal --}}
             <div class="pt-6 flex justify-end space-x-4">

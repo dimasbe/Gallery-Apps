@@ -4,7 +4,7 @@
 <div class="mb-10 bg-white mx-auto px-4 py-8 sm:px-6 lg:px-8">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <h1 class="text-2xl font-semibold text-gray-900 mb-4 sm:mb-0">Daftar Aplikasi Anda</h1>
-        <a href="#" class="bg-red-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-3xl font-semibold shadow-lg hover:bg-red-700 transition-all duration-300 transform hover:scale-105" aria-label="Tambah Aplikasi Baru">
+        <a href="{{ route('user_login.aplikasi.create') }}" class="bg-red-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-3xl font-semibold shadow-lg hover:bg-red-700 transition-all duration-300 transform hover:scale-105" aria-label="Tambah Aplikasi Baru">
             +
         </a>
     </div>

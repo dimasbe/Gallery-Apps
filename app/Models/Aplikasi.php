@@ -10,7 +10,7 @@ class Aplikasi extends Model
     use HasFactory;
 
     protected $table = 'aplikasi';
-    protected $primaryKey = 'id_aplikasi';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'id_user',

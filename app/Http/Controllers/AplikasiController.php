@@ -39,14 +39,14 @@ class AplikasiController extends Controller
         $kategorisAplikasi = $this->kategoriAplikasi->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
 
-        return view('aplikasi.create', compact('kategoriAplikasi'));
+        return view('tambah-aplikasi.create', compact('kategoriAplikasi'));
     }
 
     public function store(StoreAplikasiRequest $request): RedirectResponse {
         try {
             $this->aplikasi->store($request->validated());
             Alert::success('Berhasil', 'Aplikasi Berhasil Ditambahkan');
-            return redirect()->route('aplikasi.index');
+            return redirect()->route('tambah-aplikasi.index');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Alert::error('Gagal', 'Silakan periksa kembali form Anda');
             return back()->withErrors($e->validator)->withInput();
@@ -66,14 +66,14 @@ class AplikasiController extends Controller
         $kategorisAplikasi = $this->kategoriAplikasi->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
 
-        return view('aplikasi.edit', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
+        return view('tambah-aplikasi.edit', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
     }
 
     public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi) {
         try {
             $this->aplikasi->update($aplikasi->id, $request->validated());
             Alert::success('Berhasil', 'Aplikasi Berhasil Diperbarui');
-            return redirect()->route('aplikasi.index');
+            return redirect()->route('tambah-aplikasi.index');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Alert::error('Gagal', 'Silakan periksa kembali form Anda');
             return back()->withErrors($e->validator)->withInput();
@@ -88,11 +88,11 @@ class AplikasiController extends Controller
         } catch (QueryException $e) {
             if ($e->errorInfo[1] == 1451) {
                 Alert::error('Gagal', 'Aplikasi Belum Dihapus');
-                return to_route('aplikasi.index');
+                return to_route('tambah-aplikasi.index');
             }
         }
         Alert::success('Berhasil', 'Aplikasi Berhasil Dihapus');
-        return redirect()->route('aplikasi.index');
+        return redirect()->route('tambah-aplikasi.index');
     }
     public function search(Request $request): View
     {

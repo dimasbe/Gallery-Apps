@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-purple-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+<div class="min-h-screen bg-grey-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
     <div class="max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-6">
         <h2 class="text-xl font-semibold text-gray-900 text-center">
             Tambah Aplikasi
@@ -45,10 +45,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="jenis_kategori" class="block text-sm font-medium text-gray-700">Jenis Kategori</label>
+                    <label for="jenis_kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
                     <div class="mt-1">
                         <select id="jenis_kategori" name="jenis_kategori" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                            <option value="">Pilih jenis kategori</option>
+                            <option value="">Pilih kategori</option>
                             <option value="game">Game</option>
                             <option value="produktifitas">Produktifitas</option>
                             <option value="hiburan">Hiburan</option>
@@ -91,17 +91,21 @@
                 </div>
             </div>
 
-            <div>
-                <label for="deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi</label>
-                <div class="mt-1">
-                    <textarea id="deskripsi" name="deskripsi" rows="4" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
+            <div id="dynamic-content" class="space-y-6">
+                {{-- Paragraf dan gambar akan ditambahkan di sini oleh JavaScript --}}
+                <div id="block-0">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Deskripsi</h3>
+                    <div class="mt-4">
+                        <textarea name="paragrafs[0][content]" id="paragraf_0_content" rows="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
+                    </div>
                 </div>
             </div>
 
+            {{-- Tambahkan bagian untuk Fitur di sini, mirip dengan Deskripsi --}}
             <div>
-                <label for="fitur" class="block text-sm font-medium text-gray-700">Fitur</label>
-                <div class="mt-1">
-                    <textarea id="fitur" name="fitur" rows="4" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Fitur</h3>
+                <div class="mt-4">
+                    <textarea id="fitur_content" name="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
                 </div>
             </div>
 
@@ -117,11 +121,143 @@
     </div>
 </div>
 
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 <script>
     // Menampilkan nama file yang dipilih untuk input logo
     document.getElementById('logo').addEventListener('change', function() {
         var fileName = this.files[0] ? this.files[0].name : 'No file chosen';
         document.getElementById('file-chosen').textContent = fileName;
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let blockCount = 1;
+        const dynamicContent = document.getElementById('dynamic-content');
+        const addBlockButton = document.getElementById('add-block'); // Pastikan tombol ini ada di HTML jika ingin berfungsi
+
+        const editors = {};
+
+        // Fungsi untuk membuat CKEditor dengan konfigurasi yang diinginkan
+        function createCKEditor(elementId, initialContent = '') {
+            ClassicEditor
+                .create(document.querySelector(elementId), {
+                    removePlugins: [
+                        'Image',
+                        'ImageCaption',
+                        'ImageStyle',
+                        'ImageToolbar',
+                        'ImageUpload',
+                        'EasyImage',
+                        'Base64UploadAdapter',
+                        'CKFinder',
+                        'MediaEmbed',
+                        'Link'
+                    ],
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            'bulletedList',
+                            'numberedList',
+                            '|',
+                            'outdent',
+                            'indent',
+                            '|',
+                            'blockQuote',
+                            'undo',
+                            'redo'
+                        ]
+                    }
+                })
+                .then(editor => {
+                    editors[elementId.replace('#', '')] = editor; // Store by full ID for easy lookup
+                    editor.setData(initialContent); // Set initial content if provided
+                })
+                .catch(error => {
+                    console.error('There was an error initializing the CKEditor for ' + elementId + ':', error);
+                });
+        }
+
+        // Inisialisasi CKEditor untuk textarea Deskripsi
+        createCKEditor('#paragraf_0_content');
+
+        // Inisialisasi CKEditor untuk textarea Fitur
+        // Ambil konten yang mungkin sudah ada di textarea Fitur jika ada
+        const fiturTextarea = document.getElementById('fitur_content');
+        const initialFiturContent = fiturTextarea ? fiturTextarea.value : '';
+        createCKEditor('#fitur_content', initialFiturContent);
+
+
+        // Ini adalah bagian untuk menambahkan blok dinamis (paragraf/gambar)
+        // Saya asumsikan Anda telah menghapus atau akan menghapus fungsionalitas ini
+        // jika Anda hanya membutuhkan deskripsi dan fitur statis.
+        // Jika Anda masih ingin menambahkan paragraf dinamis untuk deskripsi, biarkan kode ini.
+        if (addBlockButton) {
+            addBlockButton.addEventListener('click', function() {
+                if (blockCount >= 5) {
+                    const modalDiv = document.createElement('div');
+                    modalDiv.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50';
+                    modalDiv.innerHTML = `
+                        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm mx-auto">
+                            <h2 class="text-xl font-bold mb-4 text-center">Batas Maksimal Terlampaui</h2>
+                            <p class="text-gray-700 mb-6">Maksimal 5 paragraf dan gambar tambahan dapat ditambahkan.</p>
+                            <div class="flex justify-end">
+                                <button type="button" id="close-modal" class="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700">Tutup</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modalDiv);
+
+                    document.getElementById('close-modal').addEventListener('click', function() {
+                        modalDiv.remove();
+                    });
+                    return;
+                }
+
+                const newBlock = document.createElement('div');
+                newBlock.id = `block-${blockCount}`;
+                newBlock.className = 'border border-gray-200 p-4 rounded-md bg-gray-50 relative';
+                newBlock.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Paragraf ${blockCount + 1}</h3>
+                    <button type="button" class="remove-block absolute top-2 right-2 text-red-600 hover:text-red-800 text-xl font-bold">&times;</button>
+                    <div>
+                        <label for="paragraf_${blockCount}_short_title" class="block text-sm font-medium text-gray-700">Judul Singkat Paragraf ${blockCount + 1}</label>
+                        <input type="text" name="paragrafs[${blockCount}][short_title]" id="paragraf_${blockCount}_short_title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    </div>
+                    <div class="mt-4">
+                        <label for="paragraf_${blockCount}_content" class="block text-sm font-medium text-gray-700">Isi Paragraf ${blockCount + 1}</label>
+                        <textarea name="paragrafs[${blockCount}][content]" id="paragraf_${blockCount}_content" rows="5" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
+                    </div>
+                `;
+                // Saya menghapus bagian gambar dinamis di sini
+                dynamicContent.appendChild(newBlock);
+
+                createCKEditor(`#paragraf_${blockCount}_content`); // Panggil fungsi dengan ID elemen
+
+                newBlock.querySelector('.remove-block').addEventListener('click', function() {
+                    const blockId = `paragraf_${newBlock.id.split('-')[1]}_content`; // Adjust ID for lookup
+                    if (editors[blockId]) {
+                        editors[blockId].destroy()
+                            .catch(error => console.error('Error destroying editor:', error));
+                        delete editors[blockId];
+                    }
+                    newBlock.remove();
+                });
+
+                blockCount++;
+            });
+        }
+
+
+        // Handle form submission to ensure CKEditor content is updated
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function() {
+            for (const id in editors) {
+                const editorInstance = editors[id];
+                document.getElementById(id).value = editorInstance.getData();
+            }
+        });
     });
 </script>
 @endsection
