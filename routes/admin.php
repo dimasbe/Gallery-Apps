@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminRegisterController;
 use App\Http\Controllers\Admin\AdminVerifikasiController;
 use App\Http\Controllers\Admin\RiwayatController;
-use App\Http\Controllers\Admin\BeritaController;
+use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ArsipController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -71,7 +71,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Rute Resource untuk Berita
     // Asumsi BeritaController adalah resource controller
-    Route::resource('berita', BeritaController::class);
+    Route::resource('berita', AdminBeritaController::class);
 
     // Rute Resource untuk Kategori
     // Asumsi KategoriController adalah resource controller
