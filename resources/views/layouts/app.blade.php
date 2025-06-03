@@ -430,7 +430,7 @@
 
             <div class="mt-6 text-center text-sm text-black">
                 Belum punya akun?
-                <a href="{{ route('register') }}" class="text-[#0500FF] hover:underline font-medium">Daftar</a>
+                <a href="{{ route('register') }}" class="text-[#0500FF] hover:underline font-medium">Register</a>
             </div>
         </div>
     </div>

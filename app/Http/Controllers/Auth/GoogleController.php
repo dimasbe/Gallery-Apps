@@ -42,6 +42,12 @@ class GoogleController extends Controller
      */
     public function callback()
     {
+
+        if (request()->has('error') || !request()->has('code')) {
+            $from = session('google_from', 'login');
+            return redirect()->route('google.redirect', ['from' => $from]);
+        }
+
         /** @var GoogleProvider $driver */
         $driver = Socialite::driver('google');
 
