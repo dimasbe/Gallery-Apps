@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ArsipController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
+// in routes/web.php or routes/admin.php if you have a separate admin routes file
+Route::post('/admin/berita/upload-ckeditor-image', [App\Http\Controllers\Admin\BeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
+//use App\Http\Controllers\Admin\CKEditorUploadController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -55,13 +58,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/aplikasi/{id}/terima', [AdminVerifikasiController::class, 'terima'])->name('admin.aplikasi.terima');
     Route::post('/admin/aplikasi/{id}/tolak', [AdminVerifikasiController::class, 'tolak'])->name('admin.aplikasi.tolak');
 
+    Route::get('/verifikasi/{id}/detail', function($id) {
+        // Untuk tampilan statis, ID ini tidak akan digunakan secara dinamis
+        // Namun, rute ini membutuhkan parameter {id}
+        // Pastikan view `detail.blade.php` ada di `resources/views/admin/verifikasi/`
+        return view('admin.verifikasi.detail', ['appId' => $id]);
+    })->name('verifikasi.detail');
+
     // Rute Resource untuk Riwayat (akan membuat rute seperti admin.riwayat.index, admin.riwayat.show, dll.)
     // Asumsi RiwayatController adalah resource controller
     Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']); // Umumnya riwayat tidak ada create/edit
+    Route::get('/aplikasi/{id}', function() {
+        return view('admin.riwayat.detail');
+    })->name('aplikasi.show');
 
     // Rute Resource untuk Berita
     // Asumsi BeritaController adalah resource controller
-    Route::resource('berita', BeritaController::class)->only(['index', 'create', 'edit', 'show', 'store','destroy', 'update']);
+    Route::resource('berita', BeritaController::class);
 
     // Rute Resource untuk Kategori
     // Asumsi KategoriController adalah resource controller
@@ -72,4 +85,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('arsip', ArsipController::class);
 
     // Anda bisa tambahkan rute-rute admin lainnya di sini
+
+    //Route::post('/admin/berita/upload', [\App\Http\Controllers\Admin\CKEditorUploadController::class, 'upload'])->name('admin.berita.upload');
+    // Inside your admin routes group
+
 });

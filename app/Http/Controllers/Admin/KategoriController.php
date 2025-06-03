@@ -2,26 +2,40 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\Interfaces\KategoriInterface;
+use App\Enums\KategoriTypeEnum; // Import the enum
 use App\Http\Controllers\Controller;
-use App\Models\Kategori;
+use App\Http\Requests\StoreKategoriRequest; // Import new request
+use App\Http\Requests\UpdateKategoriRequest; // Import new request
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // For file storage
+use Illuminate\View\View;
+use RealRashid\SweetAlert\Facades\Alert; // Assuming SweetAlert is used
 
 class KategoriController extends Controller
 {
+    private KategoriInterface $kategori;
+
+    public function __construct(KategoriInterface $kategori)
+    {
+        $this->kategori = $kategori;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $filter = $request->query('filter', 'semua'); // Default filter is 'semua'
+        $filter = $request->query('filter', 'semua');
+        $kategoris = collect(); // Initialize an empty collection
 
-        if ($filter === 'aplikasi') {
-            $kategoris = Kategori::where('sub_kategori', 'aplikasi')->orderBy('tanggal_dibuat', 'desc')->get();
-        } elseif ($filter === 'berita') {
-            $kategoris = Kategori::where('sub_kategori', 'berita')->orderBy('tanggal_dibuat', 'desc')->get();
+        if ($filter === KategoriTypeEnum::APLIKASI->value) {
+            $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::APLIKASI->value);
+        } elseif ($filter === KategoriTypeEnum::BERITA->value) {
+            $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::BERITA->value);
         } else {
-            $kategoris = Kategori::orderBy('tanggal_dibuat', 'desc')->get();
+            $kategoris = $this->kategori->get();
         }
 
         return view('admin.kategori.index', compact('kategoris', 'filter'));
@@ -30,77 +44,40 @@ class KategoriController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreKategoriRequest $request): JsonResponse
     {
-        $request->validate([
-            'sub_kategori' => 'required|in:aplikasi,berita',
-            'nama_kategori' => 'required|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        $this->kategori->store($request->validated());
 
-        $gambarPath = null;
-        if ($request->hasFile('gambar')) {
-            $gambarPath = $request->file('gambar')->store('public/kategori_gambar');
-            $gambarPath = str_replace('public/', 'storage/', $gambarPath); // Adjust path for public access
-        }
-
-        Kategori::create([
-            'sub_kategori' => $request->sub_kategori,
-            'nama_kategori' => $request->nama_kategori,
-            'gambar' => $gambarPath,
-        ]);
-
+        // You might want to use SweetAlert for JSON responses differently,
+        // or just return JSON and handle alerts on the frontend.
+        // For simplicity, we'll keep the JSON response as requested.
         return response()->json(['message' => 'Kategori berhasil ditambahkan!']);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Kategori $kategori)
+    public function edit(string $id): JsonResponse
     {
+        $kategori = $this->kategori->show($id);
         return response()->json($kategori);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Kategori $kategori)
+    public function show(string $id): JsonResponse
     {
+        $kategori = $this->kategori->show($id);
         return response()->json($kategori);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Kategori $kategori)
+    public function update(UpdateKategoriRequest $request, string $id): JsonResponse
     {
-        $request->validate([
-            'sub_kategori' => 'required|in:aplikasi,berita',
-            'nama_kategori' => 'required|string|max:255',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $gambarPath = $kategori->gambar;
-        if ($request->hasFile('gambar')) {
-            // Delete old image if exists
-            if ($gambarPath) {
-                Storage::delete(str_replace('storage/', 'public/', $gambarPath));
-            }
-            $gambarPath = $request->file('gambar')->store('public/kategori_gambar');
-            $gambarPath = str_replace('public/', 'storage/', $gambarPath);
-        } elseif ($request->input('remove_gambar') == 'true') {
-            // Option to remove existing image without uploading new one
-            if ($gambarPath) {
-                Storage::delete(str_replace('storage/', 'public/', $gambarPath));
-            }
-            $gambarPath = null;
-        }
-
-        $kategori->update([
-            'sub_kategori' => $request->sub_kategori,
-            'nama_kategori' => $request->nama_kategori,
-            'gambar' => $gambarPath,
-        ]);
+        $this->kategori->update($id, $request->validated());
 
         return response()->json(['message' => 'Kategori berhasil diupdate!']);
     }
@@ -108,12 +85,9 @@ class KategoriController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Kategori $kategori)
+    public function destroy(string $id): JsonResponse
     {
-        if ($kategori->gambar) {
-            Storage::delete(str_replace('storage/', 'public/', $kategori->gambar));
-        }
-        $kategori->delete();
+        $this->kategori->delete($id);
         return response()->json(['message' => 'Kategori berhasil dihapus!']);
     }
 }

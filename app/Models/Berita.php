@@ -4,34 +4,33 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Berita extends Model
 {
     use HasFactory;
 
-    // Nama tabel yang terkait dengan model
     protected $table = 'berita';
 
-    // Kolom yang dapat diisi secara massal
     protected $fillable = [
         'judul_berita',
         'penulis',
         'isi_berita',
+        'tanggal_dibuat',
+        'tanggal_diedit',
     ];
 
-    // Kolom tanggal yang akan secara otomatis dikelola oleh Eloquent
-    // Nonaktifkan timestamps bawaan karena kita punya kolom kustom
-    public $timestamps = false; // Nonaktifkan timestamps bawaan Laravel
+    // Matikan timestamps default
+    public $timestamps = false;
 
-    // Atribut yang harus di-cast ke tipe data tertentu
+    // Cast kolom tanggal agar otomatis menjadi instance Carbon
     protected $casts = [
-        'tanggal_dibuat' => 'datetime',
-        'tanggal_diedit' => 'datetime',
+        'tanggal_dibuat' => 'datetime:Y-m-d H:i:s',
+        'tanggal_diedit' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
-     * Relasi one-to-many dengan FotoBerita.
-     * Sebuah berita bisa memiliki banyak foto.
+     * Relasi one-to-many: berita memiliki banyak foto
      */
     public function fotoBeritas()
     {
@@ -39,8 +38,7 @@ class Berita extends Model
     }
 
     /**
-     * Relasi many-to-many dengan Kategori.
-     * Sebuah berita bisa memiliki banyak kategori.
+     * Relasi many-to-many: berita memiliki banyak kategori
      */
     public function kategoris()
     {
@@ -48,12 +46,22 @@ class Berita extends Model
     }
 
     /**
-     * Ambil URL thumbnail berita.
-     * Mengambil foto dengan tipe 'thumbnail' jika ada.
+     * Akses custom untuk thumbnail
      */
-    public function getThumbnailUrlAttribute()
+    public function getThumbnailUrlAttribute(): string
     {
         $thumbnail = $this->fotoBeritas()->where('tipe', 'thumbnail')->first();
-        return $thumbnail ? asset('storage/' . $thumbnail->nama_gambar) : 'https://placehold.co/100x100/A0AEC0/FFFFFF?text=No+Thumbnail'; // Placeholder jika tidak ada thumbnail
+
+        return $thumbnail
+            ? asset('storage/' . $thumbnail->nama_gambar)
+            : 'https://placehold.co/100x100/A0AEC0/FFFFFF?text=No+Thumbnail';
+    }
+
+    /**
+     * Akses custom untuk ringkasan isi berita
+     */
+    public function getRingkasanAttribute(): string
+    {
+        return \Str::limit(strip_tags($this->isi_berita), 150, '...');
     }
 }

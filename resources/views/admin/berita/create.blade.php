@@ -82,18 +82,12 @@
             {{-- Bagian Dinamis untuk Paragraf dan Gambar --}}
             <div class="pt-4 flex justify-between items-center">
                 <h1 class="text-xl font-bold text-black">Isi Berita</h1>
-                <button type="button" id="add-block"
-                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700">
-                    Tambah Paragraf & Gambar
-                </button>
             </div>
 
             <div id="dynamic-content" class="space-y-6">
                 {{-- Paragraf dan gambar akan ditambahkan di sini oleh JavaScript --}}
                 <div class="border border-gray-300 p-4 rounded-md bg-white" id="block-0">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Paragraf 1 & Gambar 1</h3>
                     <div class="mt-4">
-                        <label for="paragraf_0_content" class="block text-sm font-medium text-gray-700">Isi Paragraf 1</label>
                         <textarea name="paragrafs[0][content]" id="paragraf_0_content" rows="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
                     </div>
                 </div>
