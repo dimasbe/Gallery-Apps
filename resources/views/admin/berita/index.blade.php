@@ -50,30 +50,31 @@
                 {{ session('error') }}
             </div>
         @endif
-
+        
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white rounded-lg overflow-hidden">
                 <thead>
                     <tr>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider rounded-tl-lg">No.</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider">Thumbnail</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider">Judul Berita</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider">Penulis</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider">Tanggal Dibuat</th>
-                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider rounded-tr-lg">Aksi</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider rounded-tl-lg text-center">No.</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider text-center">Thumbnail</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider text-center">Judul Berita</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider text-center">Penulis</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider text-center">Tanggal Rilis</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider text-center">Tanggal Update</th>
+                        <th class="py-3 px-4 bg-gray-50 text-left text-s font-semibold text-black tracking-wider rounded-tr-lg text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($beritas as $berita)
                         <tr>
-                            <td class="py-4 px-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
-                            <td class="py-4 px-4 text-sm text-gray-700">
+                            <td class="text-center py-4 px-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
+                            <td class="text-center py-4 px-4 text-sm text-gray-700">
                                 <img src="{{ $berita->thumbnail_url }}" alt="Thumbnail Berita" class="w-16 h-16 object-cover rounded-md shadow-sm">
                             </td>
-                            <td class="py-4 px-4 text-sm text-gray-700 font-medium">{{ $berita->judul_berita }}</td>
-                            <td class="py-4 px-4 text-sm text-gray-700">{{ $berita->penulis }}</td>
-                            <td class="py-4 px-4 text-sm text-gray-700">{{ $berita->tanggal_dibuat->format('d M Y H:i') }}</td>
-                            <td class="py-4 px-4 text-sm text-gray-700">
+                            <td class="text-center py-4 px-4 text-sm text-gray-700 font-medium">{{ $berita->judul_berita }}</td>
+                            <td class="text-center py-4 px-4 text-sm text-gray-700">{{ $berita->penulis }}</td>
+                            <td class="text-center py-4 px-4 text-sm text-gray-700">{{ $berita->tanggal_dibuat->format('d M Y H:i') }}</td>
+                            <td class="text-center py-4 px-4 text-sm text-gray-700">
                                 <div class="action-buttons">
                                     <a href="{{ route('admin.berita.show', $berita->id) }}" class="btn btn-info text-s">Detail</a>
                                     <a href="{{ route('admin.berita.edit', $berita->id) }}" class="btn btn-warning text-s">Edit</a>
@@ -93,6 +94,30 @@
                 </tbody>
             </table>
         </div>
+        {{-- Bagian Pagination (Statis) --}}
+        <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-600">
+                Rows per page:
+                <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-2 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </select>
+            </div>
+            <div id="pagination-info" class="text-sm text-gray-600">
+                1-10 of 30
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     </div>
 </div>
 @endsection

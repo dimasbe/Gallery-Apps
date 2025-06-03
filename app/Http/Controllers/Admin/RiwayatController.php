@@ -13,5 +13,4 @@ class RiwayatController extends Controller
         // Tidak perlu mengambil data dari database atau menggunakan model Riwayat dulu.
         return view('admin.riwayat.index'); // Pastikan path view ini benar
     }
-
 }

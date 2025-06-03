@@ -200,11 +200,11 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm text-center">Tanggal Dibuat</p>
+                        <p class="text-gray-600 text-sm text-center">Rilis</p>
                         <p id="detailTanggalDibuat" class="text-gray-800 font-semibold text-center"></p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm text-center">Tanggal Diedit</p>
+                        <p class="text-gray-600 text-sm text-center">Update</p>
                         <p id="detailTanggalDiedit" class="text-gray-800 font-semibold text-center"></p>
                     </div>
                 </div>
@@ -234,31 +234,31 @@
                 <thead>
                     <tr>
                         <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
                             No.
                         </th>
                         <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
-                            Sub Kategori
-                        </th>
-                        <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
-                            Nama Kategori
-                        </th>
-                        <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
                             Gambar
                         </th>
                         <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
-                            Tanggal Dibuat
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                            Nama Kategori
                         </th>
                         <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
-                            Tanggal Diedit
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                            Sub Kategori
                         </th>
                         <th
-                            class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                            Rilis
+                        </th>
+                        <th
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                            Update
+                        </th>
+                        <th
+                            class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Aksi
                         </th>
                     </tr>
@@ -266,19 +266,19 @@
                 <tbody>
                     @forelse($kategoris as $category)
                     <tr>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $loop->iteration }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm capitalize">{{ $category->sub_kategori }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm kategori-nama">{{ $category->nama_kategori }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">{{ $loop->iteration }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                             @if($category->gambar)
                                 <img src="{{ asset($category->gambar) }}" alt="{{ $category->nama_kategori }}" class="w-16 h-16 object-cover rounded-md">
                             @else
                                 <span class="text-gray-500">Tidak ada gambar</span>
                             @endif
                         </td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ \Carbon\Carbon::parse($category->tanggal_dibuat)->format('d - m - Y') }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ \Carbon\Carbon::parse($category->tanggal_diedit)->format('d - m - Y') }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm kategori-nama">{{ $category->nama_kategori }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm capitalize">{{ $category->sub_kategori }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm">{{ \Carbon\Carbon::parse($category->tanggal_dibuat)->format('d - m - Y') }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm">{{ \Carbon\Carbon::parse($category->tanggal_diedit)->format('d - m - Y') }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm text-center">
                             <div class="flex space-x-2 justify-center">
                                 <button class="btnDetail bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm" data-id="{{ $category->id }}">Detail</button>
                                 <button class="btnEdit bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm" data-id="{{ $category->id }}">Edit</button>

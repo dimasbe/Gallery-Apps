@@ -34,8 +34,7 @@
                     <img src="{{ asset('images/game' . $i . '.png') }}" alt="Game {{ $i }}" class="w-10 h-10 rounded-md" />
                     <div class="flex-1">
                         <p class="text-sm font-medium">Hay Day</p>
-                        <p class="text-xs text-gray-500">Belanja</p>
-                        <p class="text-xs text-gray-500">4.7 ★</p>
+                        <p class="text-xs text-gray-500">MOONTOON</p>
                     </div>
                 </div>
             @endforeach
@@ -49,8 +48,7 @@
                     <img src="{{ asset('images/game' . $i . '.png') }}" alt="Game {{ $i }}" class="w-10 h-10 rounded-md" />
                     <div class="flex-1">
                         <p class="text-sm font-medium">Genshin Impact</p>
-                        <p class="text-xs text-gray-500">Belanja</p>
-                        <p class="text-xs text-gray-500">4.7 ★</p>
+                        <p class="text-xs text-gray-500">MOONTOON</p>
                     </div>
                 </div>
             @endforeach
@@ -64,8 +62,7 @@
                     <img src="{{ asset('images/game' . $i . '.png') }}" alt="Game {{ $i }}" class="w-10 h-10 rounded-md" />
                     <div class="flex-1">
                         <p class="text-sm font-medium">Alpaca Clicker</p>
-                        <p class="text-xs text-gray-500">Belanja</p>
-                        <p class="text-xs text-gray-500">4.7 ★</p>
+                        <p class="text-xs text-gray-500">MOONTOON</p>
                     </div>
                 </div>
             @endforeach

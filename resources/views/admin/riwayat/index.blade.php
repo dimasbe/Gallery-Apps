@@ -27,34 +27,38 @@
 
         <!-- Card Riwayat -->
         <div class="bg-white shadow-md rounded-xl p-6">
-            <!-- Tombol Switch Status -->
-            <div class="flex justify-end mb-4">
+            <!-- Header dengan judul di kiri dan tombol filter di kanan -->
+            <div class="flex justify-between items-center mb-4">
+                <!-- Judul -->
+                <h1 class="text-2xl font-bold text-custom-primary-red">Manajemen Riwayat</h1>
+
+                <!-- Tombol Switch Status -->
                 <div class="flex items-center space-x-3">
                     <a href="?status=semua">
                         <button
                             class="px-5 py-2 rounded-2xl font-semibold 
-                {{ request('status') == 'semua' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                    {{ request('status', 'semua') == 'semua' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
                             Semua
                         </button>
                     </a>
                     <a href="?status=diterima">
                         <button
                             class="px-5 py-2 rounded-2xl font-semibold 
-                {{ request('status', 'diterima') == 'diterima' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
-                            Diterima
+                    {{ request('status') == 'diterima' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                            Terima
                         </button>
                     </a>
                     <a href="?status=ditolak">
                         <button
                             class="px-5 py-2 rounded-2xl font-semibold 
-                {{ request('status') == 'ditolak' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
-                            Ditolak
+                    {{ request('status') == 'ditolak' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                            Tolak
                         </button>
                     </a>
                     <a href="?status=arsip">
                         <button
                             class="px-5 py-2 rounded-2xl font-semibold 
-                {{ request('status') == 'arsip' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                    {{ request('status') == 'arsip' ? 'bg-red-700 text-white' : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
                             Arsip
                         </button>
                     </a>
