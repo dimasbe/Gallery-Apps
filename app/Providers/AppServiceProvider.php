@@ -4,13 +4,13 @@ namespace App\Providers;
 
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Contracts\Interfaces\FotoAplikasiInterface;
-use App\Contracts\Interfaces\KategoriAplikasiInterface;
+use App\Contracts\Interfaces\KategoriInterface;
 use App\Contracts\Repositories\AplikasiRepository;
 use App\Contracts\Repositories\FotoAplikasiRepository;
-use App\Contracts\Repositories\KategoriAplikasiRepository; // <- pastikan ini ada
+use App\Contracts\Repositories\KategoriRepository; // <- pastikan ini ada
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\Interfaces\UserInterface;
-use App\Contracts\Repositories\UserRepository; // Perbaiki namespace jadi Repositories (jamak)
+use App\Contracts\Repositories\UserRepository; 
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,11 +21,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(AplikasiInterface::class, AplikasiRepository::class);
 
-        // Binding interface KategoriAplikasi ke repository, bukan controller
-        $this->app->bind(
-            \App\Contracts\Interfaces\KategoriInterface::class,
-            \App\Repositories\KategoriRepository::class
-        );
+        $this->app->bind(KategoriInterface::class, KategoriRepository::class);
+        // ... other bindings
 
         $this->app->bind(FotoAplikasiInterface::class, FotoAplikasiRepository::class);
 
