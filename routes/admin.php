@@ -30,56 +30,47 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('l
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 
 // Rute Register Admin (tidak dilindungi middleware 'auth' atau 'admin')
-// Nama rute akan menjadi 'admin.register' karena RouteServiceProvider
 Route::get('/register', [AdminRegisterController::class, 'showForm'])->name('register');
-Route::post('/register', [AdminRegisterController::class, 'register'])->name('register.store'); // Menambahkan nama untuk rute POST register admin
+Route::post('/register', [AdminRegisterController::class, 'register'])->name('register.store');
 
 // Grup Rute Admin yang memerlukan autentikasi DAN memiliki role 'admin'
 Route::middleware(['auth', 'admin'])->group(function () {
 
     // 📊 Dashboard Admin
-    // Nama rute akan menjadi 'admin.dashboard' karena RouteServiceProvider
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    // ⛔ Logout Admin (dilindungi oleh middleware 'auth')
-    // Nama rute akan menjadi 'admin.logout' karena RouteServiceProvider
+    // ⛔ Logout Admin
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    // =============================================================
-    //           PERBAIKAN / PENAMBAHAN RUTE DI SINI
-    // =============================================================
-
-    // Rute untuk halaman verifikasi
-    // Nama rute akan menjadi 'admin.verifikasi'
+    // Rute Verifikasi
     Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
-    Route::post('/admin/aplikasi/{id}/terima', [AdminVerifikasiController::class, 'terima'])->name('admin.aplikasi.terima');
-    Route::post('/admin/aplikasi/{id}/tolak', [AdminVerifikasiController::class, 'tolak'])->name('admin.aplikasi.tolak');
+    
+    // Perhatikan prefix /admin sudah otomatis, jadi cukup tulis seperti ini:
+    Route::post('/aplikasi/{id}/terima', [AdminVerifikasiController::class, 'terima'])->name('aplikasi.terima');
+    Route::post('/aplikasi/{id}/tolak', [AdminVerifikasiController::class, 'tolak'])->name('aplikasi.tolak');
 
     Route::get('/verifikasi/{id}/detail', function($id) {
-        // Untuk tampilan statis, ID ini tidak akan digunakan secara dinamis
-        // Namun, rute ini membutuhkan parameter {id}
-        // Pastikan view `detail.blade.php` ada di `resources/views/admin/verifikasi/`
+        // Pastikan view 'admin.verifikasi.detail' ada
         return view('admin.verifikasi.detail', ['appId' => $id]);
     })->name('verifikasi.detail');
 
-    // Rute Resource untuk Riwayat (akan membuat rute seperti admin.riwayat.index, admin.riwayat.show, dll.)
-    // Asumsi RiwayatController adalah resource controller
-    Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']); // Umumnya riwayat tidak ada create/edit
-    Route::get('/aplikasi/{id}', function() {
-        return view('admin.riwayat.detail');
+    // Rute Resource untuk Riwayat (index, show, destroy)
+    Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);
+
+    // Jika ingin menampilkan detail aplikasi di riwayat atau sejenisnya:
+    Route::get('/aplikasi/{id}', function($id) {
+        // Biasanya Anda perlu passing data $id ke view
+        return view('admin.riwayat.detail', ['appId' => $id]);
     })->name('aplikasi.show');
 
-    // Rute Resource untuk Berita
-    // Asumsi BeritaController adalah resource controller
+    // Resource Controller Berita
     Route::resource('berita', AdminBeritaController::class);
 
-    // Rute Resource untuk Kategori
-    // Asumsi KategoriController adalah resource controller
+    // Resource Controller Kategori
     Route::resource('kategori', KategoriController::class);
 
-    // Rute Resource untuk Arsip
-    // Asumsi ArsipController adalah resource controller
+    // Resource Controller Arsip
     Route::resource('arsip', ArsipController::class);
 
-    // Anda bisa tambahkan rute-rute admin lainnya di sini
+    // Tambah rute admin lainnya di sini...
 });

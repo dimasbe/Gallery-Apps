@@ -7,8 +7,8 @@ use App\Contracts\Interfaces\Eloquent\FilterInterface;
 
 interface KategoriInterface extends BaseInterface
 {
-     // You can add specific methods for Kategori if needed,
-    // otherwise, the Eloquent interfaces cover CRUD operations.
-    // The FilterInterface would be for methods like filterBySubKategori.
+    // Anda dapat menambahkan metode spesifik untuk Kategori jika diperlukan,
+    // jika tidak, antarmuka Eloquent mencakup operasi CRUD.
+    // FilterInterface akan digunakan untuk metode seperti filterBySubKategori.
     public function filterBySubKategori(string $subKategori): mixed;
 }

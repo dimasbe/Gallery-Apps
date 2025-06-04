@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Contracts\Interfaces\FotoAplikasiInterface;
-use App\Contracts\Interfaces\KategoriAplikasiInterface;
+use App\Contracts\Interfaces\KategoriInterface;
 use App\Http\Requests\StoreAplikasiRequest;
 use App\Http\Requests\UpdateAplikasiRequest;
 use App\Models\Aplikasi;
@@ -17,106 +17,89 @@ use RealRashid\SweetAlert\Facades\Alert;
 class AplikasiController extends Controller
 {
     private AplikasiInterface $aplikasi;
-    private KategoriAplikasiInterface $kategoriAplikasi;
+    private KategoriInterface $kategoriAplikasi;
     private FotoAplikasiInterface $fotoAplikasi;
 
-    public function __construct(AplikasiInterface $aplikasi, FotoAplikasiInterface $fotoAplikasi, KategoriAplikasiInterface $kategoriAplikasi) {
+    public function __construct(AplikasiInterface $aplikasi, FotoAplikasiInterface $fotoAplikasi, KategoriInterface $kategoriAplikasi)
+    {
         $this->aplikasi = $aplikasi;
         $this->kategoriAplikasi = $kategoriAplikasi;
         $this->fotoAplikasi = $fotoAplikasi;
     }
 
-    public function index(): View {
-        $aplikasi = $this->aplikasi->get();
-        $kategorisAplikasi = $this->kategoriAplikasi->get();
-        $fotoAplikasi = $this->fotoAplikasi->get();
-        
-        return view('aplikasi.index', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
-    }
-
-    public function create(): View {
+    public function index(): View
+    {
         $aplikasi = $this->aplikasi->get();
         $kategorisAplikasi = $this->kategoriAplikasi->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
 
-        return view('tambah-aplikasi.create', compact('kategoriAplikasi'));
+        return view('aplikasi.index', compact('aplikasi', 'kategorisAplikasi', 'fotoAplikasi'));
     }
 
-    public function store(StoreAplikasiRequest $request): RedirectResponse {
+    public function create(): View
+    {
+        $kategorisAplikasi = $this->kategoriAplikasi->get();
+
+        return view('aplikasi.create', compact('kategorisAplikasi'));
+    }
+
+    public function store(StoreAplikasiRequest $request): RedirectResponse
+    {
         try {
             $this->aplikasi->store($request->validated());
             Alert::success('Berhasil', 'Aplikasi Berhasil Ditambahkan');
-            return redirect()->route('tambah-aplikasi.index');
+            return redirect()->route('aplikasi.index');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Alert::error('Gagal', 'Silakan periksa kembali form Anda');
             return back()->withErrors($e->validator)->withInput();
         }
-    }    
+    }
 
-    public function showAplikasi(Aplikasi $aplikasi): View {
-        $aplikasi = $this->aplikasi->get();
+    public function show(Aplikasi $aplikasi): View
+    {
+        // Mengambil detail aplikasi berdasarkan ID
+        return view('aplikasi.detail', compact('aplikasi'));
+    }
+
+    public function edit(Aplikasi $aplikasi): View
+    {
         $kategorisAplikasi = $this->kategoriAplikasi->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
 
-        return view('aplikasi.index', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi', 'aplikasi.detail'));
+        return view('aplikasi.edit', compact('aplikasi', 'kategorisAplikasi', 'fotoAplikasi'));
     }
 
-    public function edit(Aplikasi $aplikasi): View {
-        $aplikasi = $this->aplikasi->get();
-        $kategorisAplikasi = $this->kategoriAplikasi->get();
-        $fotoAplikasi = $this->fotoAplikasi->get();
-
-        return view('tambah-aplikasi.edit', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi'));
-    }
-
-    public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi) {
+    public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): RedirectResponse
+    {
         try {
             $this->aplikasi->update($aplikasi->id, $request->validated());
             Alert::success('Berhasil', 'Aplikasi Berhasil Diperbarui');
-            return redirect()->route('tambah-aplikasi.index');
+            return redirect()->route('aplikasi.index');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Alert::error('Gagal', 'Silakan periksa kembali form Anda');
             return back()->withErrors($e->validator)->withInput();
         }
-    }    
+    }
 
-    public function destroy(Aplikasi $aplikasi) {
+    public function destroy(Aplikasi $aplikasi): RedirectResponse
+    {
         try {
             $this->aplikasi->delete($aplikasi->id);
             Alert::success('Berhasil', 'Aplikasi Berhasil Dihapus');
-            return back();
+            return redirect()->route('aplikasi.index');
         } catch (QueryException $e) {
             if ($e->errorInfo[1] == 1451) {
-                Alert::error('Gagal', 'Aplikasi Belum Dihapus');
-                return to_route('tambah-aplikasi.index');
+                Alert::error('Gagal', 'Aplikasi Belum Dihapus karena masih terhubung dengan data lain');
+                return redirect()->route('aplikasi.index');
             }
         }
         Alert::success('Berhasil', 'Aplikasi Berhasil Dihapus');
-        return redirect()->route('tambah-aplikasi.index');
+        return redirect()->route('aplikasi.index');
     }
+
     public function search(Request $request): View
     {
-        $keyword = $request->input('keyword');  // pakai 'keyword' sebagai key
-        
-        $aplikasi = $this->aplikasi->search($keyword);
-    
-        $kategoriAplikasi = $this->kategoriAplikasi->get();
-        $fotoAplikasi = $this->fotoAplikasi->get();
-    
-        // Kirim variabel ke view, gunakan nama yang konsisten (misal $aplikasi)
-        return view('aplikasi.search', compact('aplikasi', 'kategoriAplikasi', 'fotoAplikasi', 'keyword'));
+        $aplikasi = $this->aplikasi->search($request);
+        return view('aplikasi.search', compact('aplikasi'));
     }
-    
-   
-
-    
-    public function detail(): View
-    {
-        // Anda bisa tetap mengambil data kategori dan foto jika view detail Anda memerlukannya
-        $kategoriAplikasi = $this->kategoriAplikasi->get();
-        $fotoAplikasi = $this->fotoAplikasi->get();
-
-        // PENTING: Hapus 'aplikasi' dari compact karena variabel $aplikasi tidak didefinisikan di sini
-        return view('aplikasi.detail', compact('kategoriAplikasi', 'fotoAplikasi'));
-    }
-}                  
+}
