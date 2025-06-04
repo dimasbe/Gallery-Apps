@@ -4,7 +4,7 @@ namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\KategoriInterface;
 use App\Models\Kategori;
-use Illuminate\Support\Facades\Storage; // For file storage operations
+use Illuminate\Support\Facades\Storage;
 
 class KategoriRepository extends BaseRepository implements KategoriInterface
 {
@@ -14,93 +14,93 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     }
 
     /**
-     * Handle the Get all data event from models.
+     * Get all kategori data ordered by tanggal_dibuat descending.
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function get(): mixed
     {
-        return $this->model->query()->orderBy('tanggal_dibuat', 'desc')->get();
+        return $this->model->orderBy('tanggal_dibuat', 'desc')->get();
     }
 
     /**
-     * Handle filtering data based on sub_kategori.
+     * Filter kategori berdasarkan sub_kategori.
      *
      * @param string $subKategori
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function filterBySubKategori(string $subKategori): mixed
     {
-        return $this->model->query()
+        return $this->model
             ->where('sub_kategori', $subKategori)
             ->orderBy('tanggal_dibuat', 'desc')
             ->get();
     }
 
     /**
-     * Handle the Store data event from models.
+     * Simpan data kategori baru, termasuk upload gambar jika ada.
      *
      * @param array $data
-     * @return mixed
+     * @return Kategori
      */
     public function store(array $data): mixed
     {
         if (isset($data['gambar'])) {
             $data['gambar'] = $this->uploadImage($data['gambar']);
         }
-        return $this->model->query()->create($data);
+        return $this->model->create($data);
     }
 
     /**
-     * Handle the Show data event from models.
+     * Ambil data kategori berdasarkan id.
      *
      * @param mixed $id
-     * @return mixed
+     * @return Kategori
      */
     public function show(mixed $id): mixed
     {
-        return $this->model->query()->findOrFail($id);
+        return $this->model->findOrFail($id);
     }
 
     /**
-     * Handle the Update data event from models.
+     * Update data kategori, termasuk mengelola gambar lama dan baru.
      *
      * @param mixed $id
      * @param array $data
-     * @return mixed
+     * @return bool
      */
     public function update(mixed $id, array $data): mixed
     {
-        $kategori = $this->show($id); // Find the Kategori first
+        $kategori = $this->show($id);
 
         if (isset($data['gambar'])) {
-            $this->deleteImage($kategori->gambar); // Delete old image
-            $data['gambar'] = $this->uploadImage($data['gambar']); // Upload new image
-        } elseif (isset($data['remove_gambar']) && $data['remove_gambar'] === 'true') {
+            $this->deleteImage($kategori->gambar);
+            $data['gambar'] = $this->uploadImage($data['gambar']);
+        } elseif (!empty($data['remove_gambar']) && $data['remove_gambar'] === 'true') {
             $this->deleteImage($kategori->gambar);
             $data['gambar'] = null;
         } else {
-            unset($data['gambar']); // Ensure image isn't set to null if not changing/removing
+            unset($data['gambar']);
         }
 
         return $kategori->update($data);
     }
 
     /**
-     * Handle the Delete data event from models.
+     * Hapus data kategori dan gambar terkait.
      *
      * @param mixed $id
-     * @return mixed
+     * @return bool|null
      */
     public function delete(mixed $id): mixed
     {
-        $kategori = $this->show($id); // Find the Kategori first
-        $this->deleteImage($kategori->gambar); // Delete associated image
+        $kategori = $this->show($id);
+        $this->deleteImage($kategori->gambar);
         return $kategori->delete();
     }
 
     /**
-     * Upload the image to storage.
+     * Upload gambar ke storage dan kembalikan path publik.
      *
      * @param \Illuminate\Http\UploadedFile $file
      * @return string
@@ -112,7 +112,7 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     }
 
     /**
-     * Delete the image from storage.
+     * Hapus gambar dari storage.
      *
      * @param string|null $path
      * @return void

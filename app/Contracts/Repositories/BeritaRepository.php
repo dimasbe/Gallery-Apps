@@ -5,6 +5,7 @@ namespace App\Contracts\Repositories;
 use App\Contracts\Interfaces\BeritaInterface;
 use App\Models\Berita;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 
 class BeritaRepository extends BaseRepository implements BeritaInterface
 {
@@ -13,47 +14,84 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
         $this->model = $berita;
     }
 
-    public function get(): mixed
+    /**
+     * Ambil semua berita dengan relasi.
+     *
+     * @return Collection
+     */
+    public function get(): Collection
     {
-        return $this->model->query()
-            ->with('kategori', 'penulis', 'foto_berita') // sesuaikan dengan relasi di model Berita
-            ->orderBy('id', 'DESC')
+        return $this->model->with(['kategori', 'penulis', 'foto_berita'])
+            ->orderByDesc('id')
             ->get();
     }
 
-    public function show(mixed $id): mixed
+    /**
+     * Ambil satu berita berdasarkan ID.
+     *
+     * @param mixed $id
+     * @return Berita
+     */
+    public function show(mixed $id): Berita
     {
-        return $this->model->query()
-            ->with('kategori', 'penulis', 'foto_berita') // sesuaikan dengan relasi di model Berita
+        return $this->model->with(['kategori', 'penulis', 'foto_berita'])
             ->findOrFail($id);
     }
 
-    public function store(array $data): mixed
+    /**
+     * Simpan berita baru.
+     *
+     * @param array $data
+     * @return Berita
+     */
+    public function store(array $data): Berita
     {
         return $this->model->create($data);
     }
 
-    public function update(mixed $id, array $data): mixed
+    /**
+     * Perbarui berita berdasarkan ID.
+     *
+     * @param mixed $id
+     * @param array $data
+     * @return bool
+     */
+    public function update(mixed $id, array $data): bool
     {
-        return $this->model->query()->findOrFail($id)->update($data);
+        $berita = $this->model->findOrFail($id);
+        return $berita->update($data);
     }
 
-    public function delete(mixed $id): mixed
+    /**
+     * Hapus berita berdasarkan ID.
+     *
+     * @param mixed $id
+     * @return bool
+     */
+    public function delete(mixed $id): bool
     {
-        return $this->model->query()->findOrFail($id)->delete();
+        $berita = $this->model->findOrFail($id);
+        return $berita->delete();
     }
 
-    public function search(Request $request): mixed
+    /**
+     * Cari berita berdasarkan keyword di judul atau kategori.
+     *
+     * @param Request $request
+     * @return Collection
+     */
+    public function search(Request $request): Collection
     {
         $keyword = $request->input('keyword');
 
-        return $this->model->query()
-            ->with('kategori', 'penulis', 'foto_berita')
-            ->where('judul', 'like', "%{$keyword}%")
-            ->orWhereHas('kategori', function ($query) use ($keyword) {
-                $query->where('nama_kategori', 'like', "%{$keyword}%");
+        return $this->model->with(['kategori', 'penulis', 'foto_berita'])
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%{$keyword}%")
+                      ->orWhereHas('kategori', function ($q) use ($keyword) {
+                          $q->where('nama_kategori', 'like', "%{$keyword}%");
+                      });
             })
-            ->orderBy('id', 'DESC')
+            ->orderByDesc('id')
             ->get();
     }
 }
