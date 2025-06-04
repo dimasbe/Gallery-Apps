@@ -4,17 +4,19 @@ namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\KategoriInterface;
 use App\Models\Kategori;
-use Illuminate\Support\Facades\Storage; // For file storage operations
+use Illuminate\Database\Eloquent\Model; // Import Model
 
 class KategoriRepository extends BaseRepository implements KategoriInterface
 {
+    protected Model $model;
+
     public function __construct(Kategori $kategori)
     {
         $this->model = $kategori;
     }
 
     /**
-     * Handle the Get all data event from models.
+     * Mengambil semua kategori dengan relasi yang diperlukan.
      *
      * @return mixed
      */
@@ -24,35 +26,7 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     }
 
     /**
-     * Handle filtering data based on sub_kategori.
-     *
-     * @param string $subKategori
-     * @return mixed
-     */
-    public function filterBySubKategori(string $subKategori): mixed
-    {
-        return $this->model->query()
-            ->where('sub_kategori', $subKategori)
-            ->orderBy('tanggal_dibuat', 'desc')
-            ->get();
-    }
-
-    /**
-     * Handle the Store data event from models.
-     *
-     * @param array $data
-     * @return mixed
-     */
-    public function store(array $data): mixed
-    {
-        if (isset($data['gambar'])) {
-            $data['gambar'] = $this->uploadImage($data['gambar']);
-        }
-        return $this->model->query()->create($data);
-    }
-
-    /**
-     * Handle the Show data event from models.
+     * Menampilkan kategori berdasarkan ID.
      *
      * @param mixed $id
      * @return mixed
@@ -63,7 +37,18 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     }
 
     /**
-     * Handle the Update data event from models.
+     * Menyimpan kategori baru.
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function store(array $data): mixed
+    {
+        return $this->model->create($data);
+    }
+
+    /**
+     * Memperbarui kategori berdasarkan ID.
      *
      * @param mixed $id
      * @param array $data
@@ -71,56 +56,44 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
      */
     public function update(mixed $id, array $data): mixed
     {
-        $kategori = $this->show($id); // Find the Kategori first
-
-        if (isset($data['gambar'])) {
-            $this->deleteImage($kategori->gambar); // Delete old image
-            $data['gambar'] = $this->uploadImage($data['gambar']); // Upload new image
-        } elseif (isset($data['remove_gambar']) && $data['remove_gambar'] === 'true') {
-            $this->deleteImage($kategori->gambar);
-            $data['gambar'] = null;
-        } else {
-            unset($data['gambar']); // Ensure image isn't set to null if not changing/removing
-        }
-
+        $kategori = $this->show($id);
         return $kategori->update($data);
     }
 
     /**
-     * Handle the Delete data event from models.
+     * Menghapus kategori berdasarkan ID.
      *
      * @param mixed $id
      * @return mixed
      */
     public function delete(mixed $id): mixed
     {
-        $kategori = $this->show($id); // Find the Kategori first
-        $this->deleteImage($kategori->gambar); // Delete associated image
+        $kategori = $this->show($id);
         return $kategori->delete();
     }
 
     /**
-     * Upload the image to storage.
+     * Menemukan kategori berdasarkan ID.
      *
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return string
+     * @param mixed $id
+     * @return mixed
      */
-    protected function uploadImage($file): string
+    public function find(mixed $id): mixed
     {
-        $path = $file->store('public/kategori_gambar');
-        return str_replace('public/', 'storage/', $path);
+        return $this->model->query()->findOrFail($id); // Implementasi metode find
     }
 
     /**
-     * Delete the image from storage.
+     * Memfilter kategori berdasarkan sub_kategori.
      *
-     * @param string|null $path
-     * @return void
+     * @param string $subKategori
+     * @return mixed
      */
-    protected function deleteImage(?string $path): void
+    public function filterBySubKategori(string $subKategori): mixed
     {
-        if ($path) {
-            Storage::delete(str_replace('storage/', 'public/', $path));
-        }
+        return $this->model->query()
+            ->where('sub_kategori', $subKategori)
+            ->orderBy('tanggal_dibuat', 'desc')
+            ->get();
     }
 }

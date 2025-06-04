@@ -13,5 +13,6 @@ class DatabaseSeeder extends Seeder
     {
         // Jalankan seeder Admin saja
         $this->call(AdminUserSeeder::class);
+        $this->call(AplikasiSeeder::class);
     }
 }
