@@ -3,37 +3,17 @@
 @section('content')
 <section class="w-full flex flex-col items-center pt-4 md:pt-6 pb-6 md:pb-10 px-4 bg-gray-100 min-h-screen">
 
-    {{-- Top Navbar/Header --}}
-    <div class="w-full max-w-7xl bg-white rounded-lg shadow-md mb-8 py-4 px-6 flex flex-col sm:flex-row items-center justify-between">
-        <div class="flex items-center space-x-2 mb-4 sm:mb-0">
-            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-lg">G</div>
-            <span class="text-2xl font-bold text-gray-800 font-poppins">gallery</span>
-        </div>
-        <nav class="flex-grow flex justify-center sm:justify-start">
-            <ul class="flex space-x-6 text-gray-700 font-medium text-sm font-poppins">
-                <li><a href="#" class="hover:text-red-600">Beranda</a></li>
-                <li><a href="#" class="text-red-600 border-b-2 border-red-600 pb-1">Aplikasi</a></li>
-                <li><a href="#" class="hover:text-red-600">Kategori</a></li>
-                <li><a href="#" class="hover:text-red-600">Berita</a></li>
-            </ul>
-        </nav>
-        <div class="flex space-x-3">
-            <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-poppins">Login</button>
-            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-poppins">Register</button>
-        </div>
-    </div>
-
     <div class="max-w-7xl w-full bg-white p-6 rounded-lg shadow-md">
 
         {{-- Header: Judul + Form Pencarian --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
             <h2 class="text-2xl md:text-3xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4 sm:mb-0">
-                Hasil Pencarian Game
+                Hasil Pencarian
             </h2>
 
             <form action="{{ route('search') }}" method="GET" class="w-full sm:w-auto">
                 <div class="relative max-w-sm ml-auto">
-                    <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="Game"
+                    <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="Cari di sini..."
                         class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-red-500 text-sm text-gray-800 font-poppins">
                     <button type="submit"
                         class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 flex items-center justify-center">

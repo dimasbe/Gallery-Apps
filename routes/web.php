@@ -110,10 +110,8 @@ Route::get('/aplikasi/detail', function () {
 })->name('aplikasi.detail');
 // Route::get('/aplikasi/detail', [AplikasiController::class, 'detail'])->name('aplikasi.detail');
 
-Route::get('/search', function () {
-    return view('aplikasi.search');
-})->name('search');
-
+Route::get('/search', [AplikasiController::class, 'search'])->name('search');
+   
 //Route::post('/berita/upload-ckeditor-image', [App\Http\Controllers\Admin\BeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 require __DIR__.'/auth.php';

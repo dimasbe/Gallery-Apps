@@ -38,8 +38,8 @@
                     </div>
                     {{-- Ubah ini untuk bisa diklik --}}
                     <a href="/aplikasi/detail" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Mobile Legends Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
+    <img src="{{ asset('images/icon_ml.png') }}" alt="Mobile Legends Icon" class="w-12 h-12 rounded-lg" />
+</a>
 
                     <div class="flex flex-col">
                         <span class="font-semibold">Mobile Legends: Bang Bang</span>
