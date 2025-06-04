@@ -34,30 +34,13 @@
 
             <div id="category-group" class="grid grid-cols-3 gap-2 overflow-hidden transition-all duration-300"
                 style="max-height: 10rem;">
-                <a href="{{ route('kategori.show', ['slug' => 'permainan']) }}"
-                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Permainan</a>
-                <a href="{{ route('kategori.show', ['slug' => 'belanja']) }}"
-                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Belanja</a>
-                <a href="{{ route('kategori.show', ['slug' => 'pendidikan']) }}"
-                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Pendidikan</a>
-                <a href="{{ route('kategori.show', ['slug' => 'olahraga']) }}"
-                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Olahraga</a>
-                <a href="{{ route('kategori.show', ['slug' => 'Fashion']) }}"
-                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Fashion</a>
-                <a href="{{ route('kategori.show', ['slug' => 'kesehatan']) }}"
-                    class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kesehatan</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Teknologi</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kuliner</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Travel</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Fotografi</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Musik</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Finansial</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Bisnis</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Hobi</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Kecantikan</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Lingkungan</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Games</a>
-                <a href="" class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">Komunitas</a>
+                {{-- Loop through the categories passed from the controller --}}
+                @foreach ($categories as $category)
+                    <a href="{{ route('kategori.show', ['slug' => Str::slug($category->nama_kategori)]) }}"
+                        class="bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">
+                        {{ $category->nama_kategori }}
+                    </a>
+                @endforeach
             </div>
             <div class="relative mt-5 border-t-2 border-gray mb-10">
                 <button id="toggle-button"
@@ -71,6 +54,7 @@
 
     </footer>
 @endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const categoryGroup = document.getElementById('category-group');
@@ -78,12 +62,12 @@
         let expanded = false;
 
         toggleButton.addEventListener('click', () => {
-            console.log('click')
+            console.log('click'); // For debugging
             if (expanded) {
-                categoryGroup.style.maxHeight = '10rem'; // collapse
+                categoryGroup.style.maxHeight = '10rem'; // collapse to initial height
                 toggleButton.textContent = 'Tampilkan Semua';
             } else {
-                categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // expand
+                categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // expand to full height
                 toggleButton.textContent = 'Sembunyikan';
             }
             expanded = !expanded;

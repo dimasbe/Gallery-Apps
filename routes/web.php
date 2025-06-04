@@ -7,7 +7,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AplikasiController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\Pengguna\KategoriController;
 use App\Http\Controllers\Admin\BeritaController;
 //use App\Http\Controllers\Admin\CKEditorUploadController;
 
@@ -87,7 +87,8 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Rute untuk Kategori
+
+// Route untuk kategori
 Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 Route::get('/kategori/{slug}', [KategoriController::class, 'show'])->name('kategori.show');
 

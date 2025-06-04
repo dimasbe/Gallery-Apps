@@ -13,7 +13,8 @@ class UpdateKategoriRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // Set to true if authorization isn't complex, otherwise add logic
+        // Adjust authorization logic if necessary
+        return true;
     }
 
     /**
@@ -27,7 +28,7 @@ class UpdateKategoriRequest extends FormRequest
             'sub_kategori' => ['required', Rule::in(KategoriTypeEnum::values())],
             'nama_kategori' => 'required|string|max:255',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'remove_gambar' => 'nullable|boolean', // To handle removal of existing image
+            'remove_gambar' => 'nullable|boolean',
         ];
     }
 

@@ -1,126 +1,43 @@
 <?php
 
-namespace App\Contracts\Repositories;
+namespace App\Repositories;
 
 use App\Contracts\Interfaces\KategoriInterface;
+use App\Contracts\Repositories\BaseRepository;
 use App\Models\Kategori;
-use Illuminate\Support\Facades\Storage; // For file storage operations
 
-class KategoriRepository extends BaseRepository implements KategoriInterface
+class KategoriRepository implements KategoriInterface
 {
-    public function __construct(Kategori $kategori)
+    public function all()
     {
-        $this->model = $kategori;
+        return Kategori::all();
     }
 
-    /**
-     * Handle the Get all data event from models.
-     *
-     * @return mixed
-     */
-    public function get(): mixed
+    public function find($id)
     {
-        return $this->model->query()->orderBy('tanggal_dibuat', 'desc')->get();
+        return Kategori::findOrFail($id);
     }
 
-    /**
-     * Handle filtering data based on sub_kategori.
-     *
-     * @param string $subKategori
-     * @return mixed
-     */
-    public function filterBySubKategori(string $subKategori): mixed
+    public function create(array $data)
     {
-        return $this->model->query()
-            ->where('sub_kategori', $subKategori)
-            ->orderBy('tanggal_dibuat', 'desc')
-            ->get();
+        return Kategori::create($data);
     }
 
-    /**
-     * Handle the Store data event from models.
-     *
-     * @param array $data
-     * @return mixed
-     */
-    public function store(array $data): mixed
+    public function update($id, array $data)
     {
-        if (isset($data['gambar'])) {
-            $data['gambar'] = $this->uploadImage($data['gambar']);
-        }
-        return $this->model->query()->create($data);
+        $kategori = Kategori::findOrFail($id);
+        $kategori->update($data);
+        return $kategori;
     }
 
-    /**
-     * Handle the Show data event from models.
-     *
-     * @param mixed $id
-     * @return mixed
-     */
-    public function show(mixed $id): mixed
+    public function delete($id)
     {
-        return $this->model->query()->findOrFail($id);
-    }
-
-    /**
-     * Handle the Update data event from models.
-     *
-     * @param mixed $id
-     * @param array $data
-     * @return mixed
-     */
-    public function update(mixed $id, array $data): mixed
-    {
-        $kategori = $this->show($id); // Find the Kategori first
-
-        if (isset($data['gambar'])) {
-            $this->deleteImage($kategori->gambar); // Delete old image
-            $data['gambar'] = $this->uploadImage($data['gambar']); // Upload new image
-        } elseif (isset($data['remove_gambar']) && $data['remove_gambar'] === 'true') {
-            $this->deleteImage($kategori->gambar);
-            $data['gambar'] = null;
-        } else {
-            unset($data['gambar']); // Ensure image isn't set to null if not changing/removing
-        }
-
-        return $kategori->update($data);
-    }
-
-    /**
-     * Handle the Delete data event from models.
-     *
-     * @param mixed $id
-     * @return mixed
-     */
-    public function delete(mixed $id): mixed
-    {
-        $kategori = $this->show($id); // Find the Kategori first
-        $this->deleteImage($kategori->gambar); // Delete associated image
+        $kategori = Kategori::findOrFail($id);
         return $kategori->delete();
     }
 
-    /**
-     * Upload the image to storage.
-     *
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return string
-     */
-    protected function uploadImage($file): string
+    public function getBySubKategori(string $subKategori)
     {
-        $path = $file->store('public/kategori_gambar');
-        return str_replace('public/', 'storage/', $path);
-    }
-
-    /**
-     * Delete the image from storage.
-     *
-     * @param string|null $path
-     * @return void
-     */
-    protected function deleteImage(?string $path): void
-    {
-        if ($path) {
-            Storage::delete(str_replace('storage/', 'public/', $path));
-        }
+        return Kategori::where('sub_kategori', $subKategori)->get();
     }
 }

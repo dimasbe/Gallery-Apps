@@ -7,7 +7,7 @@ use App\Contracts\Interfaces\FotoAplikasiInterface;
 use App\Contracts\Interfaces\KategoriInterface;
 use App\Contracts\Repositories\AplikasiRepository;
 use App\Contracts\Repositories\FotoAplikasiRepository;
-use App\Contracts\Repositories\KategoriRepository; // <- pastikan ini ada
+use App\Contracts\Repositories\KategoriRepository; 
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\Interfaces\UserInterface;
 use App\Contracts\Repositories\UserRepository;
