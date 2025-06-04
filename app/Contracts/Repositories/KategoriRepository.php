@@ -6,6 +6,7 @@ use App\Contracts\Interfaces\KategoriInterface;
 use App\Contracts\Repositories\BaseRepository;
 use App\Models\Kategori;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 use Illuminate\Support\Facades\Storage;
@@ -13,13 +14,19 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model; // Import Model
 >>>>>>> 91423f7eaaa252aedf9527efc3977ade08b48c3e
 >>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
+=======
+use Illuminate\Support\Facades\Storage;
+>>>>>>> 4b724a089016ff2e5e624444ee13ed01328f82fb
 
 class KategoriRepository implements KategoriInterface
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     public function all()
 =======
     protected Model $model;
+=======
+>>>>>>> 4b724a089016ff2e5e624444ee13ed01328f82fb
 
     public function __construct(Kategori $kategori)
 >>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
@@ -54,11 +61,7 @@ class KategoriRepository implements KategoriInterface
     public function getBySubKategori(string $subKategori)
 =======
     /**
-<<<<<<< HEAD
      * Get all kategori data ordered by tanggal_dibuat descending.
-=======
-     * Mengambil semua kategori dengan relasi yang diperlukan.
->>>>>>> 91423f7eaaa252aedf9527efc3977ade08b48c3e
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -68,69 +71,7 @@ class KategoriRepository implements KategoriInterface
     }
 
     /**
-<<<<<<< HEAD
      * Filter kategori berdasarkan sub_kategori.
-=======
-     * Menampilkan kategori berdasarkan ID.
-     *
-     * @param mixed $id
-     * @return mixed
-     */
-    public function show(mixed $id): mixed
-    {
-        return $this->model->query()->findOrFail($id);
-    }
-
-    /**
-     * Menyimpan kategori baru.
-     *
-     * @param array $data
-     * @return mixed
-     */
-    public function store(array $data): mixed
-    {
-        return $this->model->create($data);
-    }
-
-    /**
-     * Memperbarui kategori berdasarkan ID.
-     *
-     * @param mixed $id
-     * @param array $data
-     * @return mixed
-     */
-    public function update(mixed $id, array $data): mixed
-    {
-        $kategori = $this->show($id);
-        return $kategori->update($data);
-    }
-
-    /**
-     * Menghapus kategori berdasarkan ID.
-     *
-     * @param mixed $id
-     * @return mixed
-     */
-    public function delete(mixed $id): mixed
-    {
-        $kategori = $this->show($id);
-        return $kategori->delete();
-    }
-
-    /**
-     * Menemukan kategori berdasarkan ID.
-     *
-     * @param mixed $id
-     * @return mixed
-     */
-    public function find(mixed $id): mixed
-    {
-        return $this->model->query()->findOrFail($id); // Implementasi metode find
-    }
-
-    /**
-     * Memfilter kategori berdasarkan sub_kategori.
->>>>>>> 91423f7eaaa252aedf9527efc3977ade08b48c3e
      *
      * @param string $subKategori
      * @return \Illuminate\Database\Eloquent\Collection
@@ -142,7 +83,6 @@ class KategoriRepository implements KategoriInterface
             ->orderBy('tanggal_dibuat', 'desc')
             ->get();
     }
-<<<<<<< HEAD
 
     /**
      * Simpan data kategori baru, termasuk upload gambar jika ada.
@@ -232,7 +172,10 @@ class KategoriRepository implements KategoriInterface
             Storage::delete(str_replace('storage/', 'public/', $path));
         }
     }
+<<<<<<< HEAD
 =======
 >>>>>>> 91423f7eaaa252aedf9527efc3977ade08b48c3e
 >>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
+=======
+>>>>>>> 4b724a089016ff2e5e624444ee13ed01328f82fb
 }
