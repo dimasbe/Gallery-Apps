@@ -52,9 +52,6 @@
                             Judul Berita
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
-                            Penulis
-                        </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
                             Tanggal Rilis
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
@@ -73,7 +70,6 @@
                                 <img src="{{ $item->thumbnail_url }}" alt="Thumbnail Berita" class="w-16 h-16 object-cover rounded-md shadow-sm">
                             </td>
                             <td class="text-center py-4 px-4 text-sm text-gray-700 font-medium">{{ $item->judul_berita }}</td>
-                            <td class="text-center py-4 px-4 text-sm text-gray-700">{{ $item->penulis }}</td>
                             <td class="text-center py-4 px-4 text-sm text-gray-700">
                                 {{ $item->tanggal_dibuat ? $item->tanggal_dibuat->format('d M Y') : '-' }}
                             </td>

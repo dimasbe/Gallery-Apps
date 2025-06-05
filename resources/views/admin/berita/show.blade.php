@@ -30,11 +30,6 @@
             </div>
 
             <div>
-                <h2 class="font-semibold text-red-800 mb-1">Penulis</h2>
-                <p class="text-gray-700">{{ $berita->penulis }}</p>
-            </div>
-
-            <div>
                 <h2 class="font-semibold text-red-800 mb-1">Kategori</h2>
                 <p class="text-gray-700">{{ $berita->kategori->nama_kategori ?? 'N/A' }}</p>
             </div>

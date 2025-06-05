@@ -93,30 +93,46 @@ class BeritaService
     }
 
     public function getAllPaginated($perPage = null, $kategoriId = null)
-{
-    $query = Berita::with([
-        'kategoris',
-        'fotoBerita' => function ($query) {
-            $query->where('tipe', 'thumbnail');
+    {
+        $query = Berita::with([
+            'kategori',
+            'fotoBerita' => function ($query) {
+                $query->where('tipe', 'thumbnail');
+            }
+        ])->orderBy('tanggal_dibuat', 'desc');
+    
+        // Filter berdasarkan kategori jika ada
+        if ($kategoriId) {
+            $query->whereHas('kategori', function ($q) use ($kategoriId) {
+                $q->where('kategori_id', $kategoriId);
+            });
         }
-    ])->orderBy('tanggal_dibuat', 'desc');
-
-    if ($kategoriId) {
-        $query->whereHas('kategoris', function ($q) use ($kategoriId) {
-            $q->where('kategori_id', $kategoriId);
-        });
-    }
-
-    if ($perPage) {
-        return $query->paginate($perPage);
-    } else {
+    
+        // Kembalikan hasil paginate jika perPage diisi
+        if ($perPage) {
+            return $query->paginate($perPage)->withQueryString(); // agar query ?kategori tetap ada saat pagination
+        }
+    
+        // Kalau tidak, ambil semua
         return $query->get();
-    }
-}
+    }    
 
     
     public function findById($id)
     {
-        return Berita::with(['kategoris', 'fotoBerita'])->findOrFail($id);
+        return Berita::with(['kategori', 'fotoBerita'])->findOrFail($id);
     }
+
+    public function getBeritaTerkait($kategoriId, $excludeBeritaId, $limit = 5)
+    {
+        return Berita::with(['kategori', 'fotoBerita' => function ($q) {
+                $q->where('tipe', 'thumbnail');
+            }])
+            ->where('kategori_id', $kategoriId)          // berita dari kategori yang sama
+            ->where('id', '!=', $excludeBeritaId)       // kecuali berita yang sedang dibuka
+            ->orderBy('tanggal_dibuat', 'desc')
+            ->limit($limit)
+            ->get();
+    }
+
 }

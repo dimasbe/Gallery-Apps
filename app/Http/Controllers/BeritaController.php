@@ -15,20 +15,26 @@ class BeritaController extends Controller
     {
         $this->beritaService = $beritaService;
     }
+
     public function index(Request $request)
     {
         $kategoriId = $request->query('kategori');
-    
-        $beritas = $this->beritaService->getAllPaginated(null, $kategoriId); // null berarti ambil semua
-        $kategoris = Kategori::all();
-    
+
+        // Kirim filter kategori ke service
+        $beritas = $this->beritaService->getAllPaginated(10, $kategoriId);
+
+        // Ambil semua kategori khusus 'berita'
+        $kategoris = Kategori::where('sub_kategori', 'berita')->get();
+
         return view('berita.index', compact('beritas', 'kategoris'));
     }
-    
 
     public function show($id)
     {
         $berita = $this->beritaService->findById($id);
-        return view('berita.show', compact('berita'));
+
+        $beritaTerkait = $this->beritaService->getBeritaTerkait($berita->kategori_id, $berita->id);
+
+        return view('berita.show', compact('berita', 'beritaTerkait'));
     }
 }

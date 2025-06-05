@@ -39,17 +39,6 @@
         @enderror
     </div>
 
-    <!-- Penulis -->
-    <div>
-        <label for="penulis" class="block text-sm font-medium text-gray-700">Penulis</label>
-        <input type="text" name="penulis" id="penulis"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            value="{{ old('penulis') }}" required>
-        @error('penulis')
-            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-        @enderror
-    </div>
-
     <!-- Kategori -->
     <div>
         <label for="kategori_id" class="block text-sm font-medium text-gray-700">Kategori</label>
