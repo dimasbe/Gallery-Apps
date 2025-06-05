@@ -3,24 +3,33 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Berita;
-use App\Models\Kategori;
-use App\Models\FotoBerita;
+use App\Models\Berita; // Mungkin tidak lagi diperlukan langsung di sini setelah service
+use App\Models\Kategori; // Tetap diperlukan untuk form
+use App\Models\FotoBerita; // Tetap diperlukan untuk manipulasi foto langsung
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Services\BeritaService; // <-- Tambahkan ini
 
 class BeritaController extends Controller
 {
-    /**
-     * Menampilkan daftar berita.
-     */
-    public function index()
+    protected $beritaService; // <-- Tambahkan properti service
+
+    // Injeksi BeritaService melalui konstruktor
+    public function __construct(BeritaService $beritaService)
     {
-        // Ambil semua berita dengan eager loading fotoBeritas untuk thumbnail
-        $beritas = Berita::with(['fotoBeritas' => function($query) {
-            $query->where('tipe', 'thumbnail');
-        }])->latest('tanggal_dibuat')->get();
+        $this->beritaService = $beritaService;
+    }
+
+    /**
+     * Menampilkan daftar berita untuk halaman admin.
+     */
+    public function index(Request $request) // Tambahkan Request jika ada filter/search
+    {
+        // Menggunakan BeritaService untuk mendapatkan semua berita dengan paginasi
+        // Anda bisa menambahkan parameter 'perPage' jika ingin mengontrol jumlah item per halaman
+        // Anda juga bisa menambahkan filter kategori jika ada di UI admin Anda
+        $beritas = $this->beritaService->getAllPaginated(10, $request->query('kategori')); // Contoh: 10 item per halaman
 
         return view('admin.berita.index', compact('beritas'));
     }
@@ -52,6 +61,7 @@ class BeritaController extends Controller
     public function create()
     {
         // Ambil kategori dengan sub_kategori 'berita' saja
+        // Anda bisa memindahkan ini ke KategoriService jika ada.
         $kategoris = Kategori::where('sub_kategori', 'berita')->get();
         return view('admin.berita.create', compact('kategoris'));
     }
@@ -73,35 +83,16 @@ class BeritaController extends Controller
         DB::beginTransaction();
 
         try {
-            // Simpan berita
-            $berita = Berita::create([
-                'judul_berita' => $request->judul_berita,
-                'penulis' => $request->penulis,
-                'isi_berita' => $request->isi_berita, // Directly use the HTML content from CKEditor
-                'tanggal_dibuat' => now(),
-                'tanggal_diedit' => now(),
-            ]);
-
-            // Sync categories (assuming a many-to-many relationship through a pivot table)
-            // If it's a one-to-many, you'd set kategori_id directly on the Berita model.
-            // Based on your current migration, kategori_id is on Berita, so we'll update that.
-            $berita->kategori_id = $request->kategori_id;
-            $berita->save();
-
-
-            // Simpan thumbnail
-            if ($request->hasFile('thumbnail')) {
-                $path = $request->file('thumbnail')->store('berita/thumbnails', 'public'); // Store in public/berita/thumbnails
-                FotoBerita::create([
-                    'berita_id' => $berita->id,
-                    'nama_gambar' => str_replace('public/', '', $path), // Store path without 'public/' prefix
-                    'keterangan_gambar' => $request->keterangan_thumbnail,
-                    'tipe' => 'thumbnail',
-                ]);
-            }
-
-            // Note: Additional images for the content itself are handled by CKEditor's uploadCkeditorImage
-            // and are embedded directly in the isi_berita HTML. You don't need to save them separately here.
+            // Menggunakan BeritaService untuk membuat berita
+            $berita = $this->beritaService->createBerita(
+                $request->only([
+                    'judul_berita',
+                    'penulis',
+                    'isi_berita',
+                    'kategori_id', // Pastikan kategori_id di-handle di createBerita service
+                ]),
+                $request->file('thumbnail')
+            );
 
             DB::commit();
 
@@ -116,24 +107,25 @@ class BeritaController extends Controller
     /**
      * Menampilkan detail berita tertentu.
      */
-    public function show(Berita $berita)
+    public function show($id) // Parameter diubah menjadi $id untuk konsistensi dengan findById service
     {
-        // Eager load fotoBeritas dan kategoris
-        $berita->load('fotoBeritas', 'kategori'); // Assuming one-to-many with 'kategori'
+        // Menggunakan BeritaService untuk menemukan berita berdasarkan ID
+        $berita = $this->beritaService->findById($id);
         return view('admin.berita.show', compact('berita'));
     }
 
     /**
      * Menampilkan form untuk mengedit berita tertentu.
      */
-    public function edit(Berita $berita)
+    public function edit($id) // Parameter diubah menjadi $id
     {
-        // Eager load fotoBeritas and kategori
-        $berita->load('fotoBeritas', 'kategori');
+        // Menggunakan BeritaService untuk menemukan berita
+        $berita = $this->beritaService->findById($id);
+
         // Ambil kategori dengan sub_kategori 'berita' saja
+        // Ini mungkin bisa di KategoriService juga
         $kategoris = Kategori::where('sub_kategori', 'berita')->get();
-        // Ambil ID kategori yang sudah terpilih untuk berita ini
-        $selectedKategoriId = $berita->kategori_id; // For one-to-many
+        $selectedKategoriId = $berita->kategori_id;
 
         return view('admin.berita.edit', compact('berita', 'kategoris', 'selectedKategoriId'));
     }
@@ -141,14 +133,14 @@ class BeritaController extends Controller
     /**
      * Memperbarui berita tertentu di database.
      */
-    public function update(Request $request, Berita $berita)
+    public function update(Request $request, $id) // Parameter diubah menjadi $id
     {
         // Validasi input
         $request->validate([
             'judul_berita' => 'required|string|max:255',
             'penulis' => 'required|string|max:255',
             'isi_berita' => 'required|string',
-            'kategori_id' => 'required|exists:kategori,id', // For one-to-many
+            'kategori_id' => 'required|exists:kategori,id',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'keterangan_thumbnail' => 'nullable|string|max:255',
         ]);
@@ -156,39 +148,24 @@ class BeritaController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update data berita
-            $berita->update([
-                'judul_berita' => $request->judul_berita,
-                'penulis' => $request->penulis,
-                'isi_berita' => $request->isi_berita,
-                'kategori_id' => $request->kategori_id, // For one-to-many
-                // tanggal_diedit akan diupdate otomatis oleh database
-            ]);
-
-            // Update thumbnail if a new one is provided
-            if ($request->hasFile('thumbnail')) {
-                // Hapus thumbnail lama jika ada
-                $oldThumbnail = $berita->fotoBeritas()->where('tipe', 'thumbnail')->first();
-                if ($oldThumbnail) {
-                    Storage::delete('public/' . $oldThumbnail->nama_gambar);
-                    $oldThumbnail->delete();
-                }
-
-                $thumbnailPath = $request->file('thumbnail')->store('berita/thumbnails', 'public');
-                FotoBerita::create([
-                    'berita_id' => $berita->id,
-                    'nama_gambar' => str_replace('public/', '', $thumbnailPath),
-                    'keterangan_gambar' => $request->keterangan_thumbnail,
-                    'tipe' => 'thumbnail',
-                ]);
-            } else if ($request->has('keterangan_thumbnail')) {
-                // Update caption even if no new image
-                $thumbnail = $berita->fotoBeritas()->where('tipe', 'thumbnail')->first();
-                if ($thumbnail) {
-                    $thumbnail->update(['keterangan_gambar' => $request->keterangan_thumbnail]);
-                }
+            // Mengambil instance berita yang akan diupdate
+            $berita = $this->beritaService->findById($id);
+            if (!$berita) {
+                return redirect()->back()->with('error', 'Berita tidak ditemukan.');
             }
 
+            // Menggunakan BeritaService untuk memperbarui berita
+            $this->beritaService->updateBerita(
+                $berita, // Teruskan instance berita yang sudah ditemukan
+                $request->only([
+                    'judul_berita',
+                    'penulis',
+                    'isi_berita',
+                    'kategori_id',
+                    'keterangan_thumbnail' // Ini perlu di-handle di service jika ada
+                ]),
+                $request->file('thumbnail')
+            );
 
             DB::commit();
 
@@ -203,25 +180,26 @@ class BeritaController extends Controller
     /**
      * Menghapus berita tertentu dari database.
      */
-    public function destroy(Berita $berita)
+    public function destroy($id) // Parameter diubah menjadi $id
     {
-        DB::beginTransaction(); // Mulai transaksi database
+        DB::beginTransaction();
 
         try {
-            // Hapus semua foto terkait dari storage
-            foreach ($berita->fotoBeritas as $foto) {
-                Storage::delete('public/' . $foto->nama_gambar);
+            // Mengambil instance berita yang akan dihapus
+            $berita = $this->beritaService->findById($id);
+            if (!$berita) {
+                return redirect()->back()->with('error', 'Berita tidak ditemukan.');
             }
 
-            // Hapus berita (ini juga akan menghapus fotoBeritas karena onDelete('cascade'))
-            $berita->delete();
+            // Menggunakan BeritaService untuk menghapus berita
+            $this->beritaService->deleteBerita($berita);
 
-            DB::commit(); // Commit transaksi
+            DB::commit();
 
             return redirect()->route('admin.berita.index')->with('success', 'Berita berhasil dihapus!');
 
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback transaksi jika terjadi error
+            DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus berita: ' . $e->getMessage());
         }
     }
