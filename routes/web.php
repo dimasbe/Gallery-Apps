@@ -9,6 +9,7 @@ use App\Http\Controllers\AplikasiController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\Admin\AdminBeritaController;
+use App\Http\Controllers\BeritaController;
 //use App\Http\Controllers\Admin\CKEditorUploadController;
 
 //Route::post('/admin/berita/upload', [CKEditorUploadController::class, 'upload'])->name('admin.berita.upload');
@@ -59,9 +60,6 @@ Route::get('/aplikasi/populer', function () {
     return view('aplikasi.populer');
 })->name('aplikasi.populer');
 
-Route::get('/berita/detail', function () {
-    return view('berita.detail');
-});
 
 
 
@@ -112,6 +110,9 @@ Route::get('/aplikasi/detail', function () {
 
 Route::get('/search', [AplikasiController::class, 'search'])->name('search');
    
+Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show');
+
 //Route::post('/berita/upload-ckeditor-image', [App\Http\Controllers\Admin\BeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 require __DIR__.'/auth.php';

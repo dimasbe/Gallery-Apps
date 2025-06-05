@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\Interfaces\BeritaInterface;
 use App\Contracts\Interfaces\FotoBeritaInterface;
 use App\Contracts\Interfaces\KategoriInterface;
+use App\Models\Berita;
 use Illuminate\Support\Facades\Storage;
 
 class BeritaService
@@ -89,5 +90,33 @@ class BeritaService
     public function searchBerita(string $keyword)
     {
         return $this->berita->search(['keyword' => $keyword]);
+    }
+
+    public function getAllPaginated($perPage = null, $kategoriId = null)
+{
+    $query = Berita::with([
+        'kategoris',
+        'fotoBerita' => function ($query) {
+            $query->where('tipe', 'thumbnail');
+        }
+    ])->orderBy('tanggal_dibuat', 'desc');
+
+    if ($kategoriId) {
+        $query->whereHas('kategoris', function ($q) use ($kategoriId) {
+            $q->where('kategori_id', $kategoriId);
+        });
+    }
+
+    if ($perPage) {
+        return $query->paginate($perPage);
+    } else {
+        return $query->get();
+    }
+}
+
+    
+    public function findById($id)
+    {
+        return Berita::with(['kategoris', 'fotoBerita'])->findOrFail($id);
     }
 }
