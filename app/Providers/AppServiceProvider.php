@@ -15,10 +15,10 @@ use App\Contracts\Interfaces\FotoBeritaInterface;
 // Import Repositories
 use App\Contracts\Repositories\AplikasiRepository;
 use App\Contracts\Repositories\FotoAplikasiRepository;
-use App\Contracts\Repositories\KategoriRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Contracts\Repositories\BeritaRepository;
 use App\Contracts\Repositories\FotoBeritaRepository;
+use App\Contracts\Repositories\KategoriRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
