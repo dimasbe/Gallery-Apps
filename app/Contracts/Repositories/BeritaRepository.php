@@ -74,6 +74,12 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
         return $berita->delete();
     }
 
+    public function getAllWithKategori()
+    {
+        // Contoh menggunakan Eloquent relationship 'kategori'
+        return Berita::with('kategori')->get();
+    }
+
     /**
      * Cari berita berdasarkan keyword di judul atau kategori.
      *
