@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Contracts\Interfaces\KategoriInterface;
-use App\Enums\KategoriTypeEnum; // Import the enum
+use App\Enums\KategoriTypeEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreKategoriRequest; // Import new request
-use App\Http\Requests\UpdateKategoriRequest; // Import new request
+use App\Http\Requests\StoreKategoriRequest;
+use App\Http\Requests\UpdateKategoriRequest; 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use RealRashid\SweetAlert\Facades\Alert; // Assuming SweetAlert is used
+use RealRashid\SweetAlert\Facades\Alert; 
 
 class KategoriController extends Controller
 {

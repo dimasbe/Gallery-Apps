@@ -7,13 +7,9 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AplikasiController;
 use App\Http\Controllers\SearchController;
-<<<<<<< HEAD
 use App\Http\Controllers\Pengguna\KategoriController;
 use App\Http\Controllers\Admin\BeritaController;
-=======
-use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\Admin\AdminBeritaController;
->>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
 //use App\Http\Controllers\Admin\CKEditorUploadController;
 
 //Route::post('/admin/berita/upload', [CKEditorUploadController::class, 'upload'])->name('admin.berita.upload');
@@ -92,10 +88,10 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
-// Route untuk kategori
+// routes kategori
 Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
-Route::get('/kategori/{slug}', [KategoriController::class, 'show'])->name('kategori.show');
+Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show');
+
 
 
 Route::get('/aplikasi/populer', function () {
@@ -120,5 +116,7 @@ Route::get('/search', [AplikasiController::class, 'search'])->name('search');
    
 //Route::post('/berita/upload-ckeditor-image', [App\Http\Controllers\Admin\BeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
+
+
 require __DIR__.'/auth.php';
 require __DIR__.'/user_login.php';

@@ -18,6 +18,7 @@ use App\Contracts\Repositories\FotoAplikasiRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Contracts\Repositories\BeritaRepository;
 use App\Contracts\Repositories\FotoBeritaRepository;
+use App\Contracts\Repositories\KategoriRepository;
 
 class AppServiceProvider extends ServiceProvider
 {

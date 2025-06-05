@@ -1,65 +1,19 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\KategoriInterface;
-use App\Contracts\Repositories\BaseRepository;
 use App\Models\Kategori;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 use Illuminate\Support\Facades\Storage;
-=======
-use Illuminate\Database\Eloquent\Model; // Import Model
->>>>>>> 91423f7eaaa252aedf9527efc3977ade08b48c3e
->>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
-=======
-use Illuminate\Support\Facades\Storage;
->>>>>>> 4b724a089016ff2e5e624444ee13ed01328f82fb
 
-class KategoriRepository implements KategoriInterface
+class KategoriRepository extends BaseRepository implements KategoriInterface
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public function all()
-=======
-    protected Model $model;
-=======
->>>>>>> 4b724a089016ff2e5e624444ee13ed01328f82fb
 
     public function __construct(Kategori $kategori)
->>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
     {
-        return Kategori::all();
+        $this->model = $kategori;
     }
 
-<<<<<<< HEAD
-    public function find($id)
-    {
-        return Kategori::findOrFail($id);
-    }
-
-    public function create(array $data)
-    {
-        return Kategori::create($data);
-    }
-
-    public function update($id, array $data)
-    {
-        $kategori = Kategori::findOrFail($id);
-        $kategori->update($data);
-        return $kategori;
-    }
-
-    public function delete($id)
-    {
-        $kategori = Kategori::findOrFail($id);
-        return $kategori->delete();
-    }
-
-    public function getBySubKategori(string $subKategori)
-=======
     /**
      * Get all kategori data ordered by tanggal_dibuat descending.
      *
@@ -110,6 +64,19 @@ class KategoriRepository implements KategoriInterface
     }
 
     /**
+     * Ambil data kategori berdasarkan nama dengan aplikasi terkait.
+     *
+     * @param string $namaKategori
+     * @return Kategori
+     */
+    public function getByNameWithAplikasi(string $namaKategori): mixed
+    {
+        // Asumsi ada relasi 'aplikasi' di model Kategori
+        return $this->model->where('nama_kategori', $namaKategori)->with('aplikasi')->firstOrFail();
+    }
+
+
+    /**
      * Update data kategori, termasuk mengelola gambar lama dan baru.
      *
      * @param mixed $id
@@ -153,12 +120,10 @@ class KategoriRepository implements KategoriInterface
      * @return string
      */
     protected function uploadImage($file): string
->>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
     {
-        return Kategori::where('sub_kategori', $subKategori)->get();
+        $path = $file->store('public/kategori_gambar');
+        return str_replace('public/', 'storage/', $path);
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Hapus gambar dari storage.
@@ -172,10 +137,4 @@ class KategoriRepository implements KategoriInterface
             Storage::delete(str_replace('storage/', 'public/', $path));
         }
     }
-<<<<<<< HEAD
-=======
->>>>>>> 91423f7eaaa252aedf9527efc3977ade08b48c3e
->>>>>>> 4843355f112b0d9509923708636ccbd06a4bee32
-=======
->>>>>>> 4b724a089016ff2e5e624444ee13ed01328f82fb
 }
