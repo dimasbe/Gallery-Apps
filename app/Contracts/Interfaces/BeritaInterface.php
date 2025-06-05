@@ -7,5 +7,7 @@ use App\Contracts\Interfaces\Eloquent\SearchInterface;
 
 interface BeritaInterface extends BaseInterface, SearchInterface
 {
-    // Jika ada fungsi khusus di berita, bisa ditambahkan di sini.
+    public function getAllWithKategori();
+
+    // method khusus berita lainnya jika perlu
 }

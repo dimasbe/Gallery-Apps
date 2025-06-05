@@ -64,7 +64,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     })->name('aplikasi.show');
 
     // Resource Controller Berita
-    Route::resource('berita', AdminBeritaController::class);
+    Route::resource('berita', AdminBeritaController::class, [
+        'parameters' => [
+            'berita' => 'berita'  // agar parameternya {berita}, bukan {beritum}
+        ]
+    ]);
 
     // Resource Controller Kategori
     Route::resource('kategori', KategoriController::class);
