@@ -10,10 +10,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Pengguna\KategoriController;
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\BeritaController;
-//use App\Http\Controllers\Admin\CKEditorUploadController;
-
-//Route::post('/admin/berita/upload', [CKEditorUploadController::class, 'upload'])->name('admin.berita.upload');
-
+use App\Models\Berita; // Penting: Import model Berita untuk mengakses data
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +23,7 @@ use App\Http\Controllers\BeritaController;
 |
 */
 
-// 🏠 Rute utama (root) - Mengarahkan user yang sudah login
+// 🏠 Rute utama (root) - Mengarahkan user yang sudah login, ATAU menampilkan homepage dengan berita terbaru
 Route::get('/', function () {
     if (Auth::check()) {
         if (Auth::user()->role === 'admin') {
@@ -35,16 +32,24 @@ Route::get('/', function () {
             return redirect()->route('dashboard');
         }
     }
-    return view('welcome');
+    // Jika user belum login, panggil metode controller untuk menampilkan homepage dengan berita terbaru
+    return app(BeritaController::class)->homepageLatestNews();
 })->name('welcome');
 
-
 // 📊 Dashboard user biasa (memerlukan autentikasi dan verifikasi email)
+// Rute ini sekarang mengambil data berita dan mengirimkannya ke view
 Route::get('/dashboard', function () {
+    // Jika user adalah admin, alihkan ke dashboard admin
     if (Auth::check() && Auth::user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
-    return view('dashboard');
+
+    // Ambil 3 berita terbaru dari database
+    // Pastikan model Berita Anda sudah benar dan memiliki kolom 'tanggal_dibuat'
+    $beritas = Berita::orderBy('tanggal_dibuat', 'desc')->limit(3)->get();
+
+    // Kirim variabel $beritas ke view 'dashboard'
+    return view('dashboard', compact('beritas'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -56,12 +61,10 @@ Route::get('/aplikasi', function () {
 Route::get('/aplikasi/detail', function () {
     return view('aplikasi.detail');
 })->name('aplikasi.detail');
+
 Route::get('/aplikasi/populer', function () {
     return view('aplikasi.populer');
 })->name('aplikasi.populer');
-
-
-
 
 
 // 🔐 Login via Google (untuk user biasa)
@@ -85,36 +88,19 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// routes kategori
+// Rute kategori
 Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show');
 
 
-
-Route::get('/aplikasi/populer', function () {
-    return view('aplikasi.populer');
-});
-
-
-//Route::middleware(['auth'])->group(function () {
-   // Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    //Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-//});
-
-// Rute search (Pilih salah satu)
-// Route::get('/search', [AplikasiController::class, 'index'])->name('search');
-
-Route::get('/aplikasi/detail', function () {
-    return view('aplikasi.detail');
-})->name('aplikasi.detail');
-// Route::get('/aplikasi/detail', [AplikasiController::class, 'detail'])->name('aplikasi.detail');
-
+// Rute search
 Route::get('/search', [AplikasiController::class, 'search'])->name('search');
-   
+
+// Rute Berita (public)
 Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
 Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show');
 
-//Route::post('/berita/upload-ckeditor-image', [App\Http\Controllers\Admin\BeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
+// Rute Admin Berita (untuk CKEditor upload)
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 
 

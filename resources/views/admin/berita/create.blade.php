@@ -33,7 +33,7 @@
         <label for="judul_berita" class="block text-sm font-medium text-gray-700">Judul Berita</label>
         <input type="text" name="judul_berita" id="judul_berita"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            value="{{ old('judul_berita') }}" required>
+            value="{{ old('judul_berita') }}">
         @error('judul_berita')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
@@ -43,7 +43,7 @@
     <div>
         <label for="kategori_id" class="block text-sm font-medium text-gray-700">Kategori</label>
         <select name="kategori_id" id="kategori_id"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required>
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
             <option value="">Pilih Kategori</option>
             @foreach($kategori as $item)
                 <option value="{{ $item->id }}" {{ old('kategori_id') == $item->id ? 'selected' : '' }}>
@@ -61,7 +61,7 @@
         <label for="thumbnail" class="block text-sm font-medium text-gray-700">Unggah Thumbnail Berita</label>
         <input type="file" name="thumbnail" id="thumbnail"
             class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none"
-            accept="image/*" required>
+            accept="image/*">
         @error('thumbnail')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
@@ -72,7 +72,7 @@
         <label for="isi_berita" class="block text-sm font-medium text-gray-700">Isi Berita</label>
         <textarea name="isi_berita" id="isi_berita" rows="4"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            required>{{ old('isi_berita') }}</textarea>
+            >{{ old('isi_berita') }}</textarea>
         @error('isi_berita')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
