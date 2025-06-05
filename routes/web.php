@@ -8,7 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AplikasiController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Pengguna\KategoriController;
-use App\Http\Controllers\Admin\BeritaController;
+// use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\BeritaController;
 //use App\Http\Controllers\Admin\CKEditorUploadController;
