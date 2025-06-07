@@ -1,13 +1,31 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Edit Berita</h1>
+<div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-red-800">Edit Berita</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="flex items-center text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
+                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                    </li>
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.berita.index') }}" class="hover:text-custom-primary-red">Berita</a>
+                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                    </li>
+                    <li class="text-custom-primary-red" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         {{-- Validasi Error --}}
         @if ($errors->any())
-            <div class="alert alert-error mb-4">
-                <ul class="list-disc list-inside text-red-600">
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <ul class="list-disc list-inside">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -17,133 +35,90 @@
 
         {{-- Flash Error --}}
         @if (session('error'))
-            <div class="alert alert-error mb-4 text-red-600">
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                 {{ session('error') }}
             </div>
         @endif
 
-        <form action="{{ route('admin.berita.update', $berita->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.berita.update', $berita) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
 
-            {{-- Judul Berita --}}
-            <div class="form-group mb-4">
-                <label for="judul_berita" class="form-label font-semibold">Judul Berita</label>
-                <input type="text" name="judul_berita" id="judul_berita" class="form-input w-full"
+            <!-- Judul Berita -->
+            <div>
+                <label for="judul_berita" class="block text-sm font-medium text-gray-700">Judul Berita</label>
+                <input type="text" name="judul_berita" id="judul_berita"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                     value="{{ old('judul_berita', $berita->judul_berita) }}" required>
             </div>
 
-            {{-- Penulis --}}
-            <div class="form-group mb-4">
-                <label for="penulis" class="form-label font-semibold">Penulis</label>
-                <input type="text" name="penulis" id="penulis" class="form-input w-full"
-                    value="{{ old('penulis', $berita->penulis) }}" required>
+            <!-- Kategori (multiple) -->
+            <div>
+    <label for="kategori_id" class="block text-sm font-medium text-gray-700">Kategori</label>
+    <select name="kategori_id" id="kategori_id"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+        required>
+        <option value="" disabled {{ old('kategori_id', $berita->kategori_id ?? '') == '' ? 'selected' : '' }}>-- Pilih Kategori --</option>
+        @foreach ($kategori as $item)
+            <option value="{{ $item->id }}"
+                {{ old('kategori_id', $berita->kategori_id ?? '') == $item->id ? 'selected' : '' }}>
+                {{ $item->nama_kategori }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+
+            <!-- Thumbnail -->
+            <div>
+                <label for="thumbnail" class="block text-sm font-medium text-gray-700">Unggah Thumbnail Berita</label>
+                <input type="file" name="thumbnail" id="thumbnail"
+                    class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none"
+                    accept="image/*" onchange="previewImage(event, 'thumbnail-preview')">
+                @php
+                    $currentThumbnail = $berita->fotoBeritas->where('tipe', 'thumbnail')->first();
+                @endphp
+                <div id="thumbnail-preview" class="mt-2">
+                    <img src="{{ $currentThumbnail ? asset('storage/' . $currentThumbnail->nama_gambar) : 'https://placehold.co/100x100?text=No+Thumbnail' }}"
+                        alt="Thumbnail" class="w-24 h-24 object-cover rounded-md">
+                </div>
             </div>
 
-            {{-- Isi Berita --}}
-            <div class="form-group mb-4">
-                <label for="isi_berita" class="form-label font-semibold">Isi Berita</label>
-                <textarea name="isi_berita" id="isi_berita" class="form-textarea w-full" rows="8"
+            <!-- Isi Berita -->
+            <div>
+                <label for="isi_berita" class="block text-sm font-medium text-gray-700">Isi Berita</label>
+                <textarea name="isi_berita" id="isi_berita" rows="4"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                     required>{{ old('isi_berita', $berita->isi_berita) }}</textarea>
             </div>
 
-            {{-- Kategori --}}
-            <div class="form-group mb-4">
-                <label for="kategori_ids" class="form-label font-semibold">Kategori</label>
-                <select name="kategori_ids[]" id="kategori_ids" class="form-select w-full" multiple required>
-                    @foreach ($kategoris as $kategori)
-                        <option value="{{ $kategori->id }}"
-                            {{ in_array($kategori->id, old('kategori_ids', $selectedKategoris)) ? 'selected' : '' }}>
-                            {{ $kategori->nama_kategori }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            {{-- Thumbnail --}}
-            <div class="form-group mb-6">
-                <label for="thumbnail" class="form-label font-semibold">Thumbnail Berita</label>
-                <input type="file" name="thumbnail" id="thumbnail" class="form-input w-full" accept="image/*"
-                    onchange="previewImage(event, 'thumbnail-preview')">
-                <div id="thumbnail-preview" class="mt-2">
-                    @php
-                        $currentThumbnail = $berita->fotoBeritas->where('tipe', 'thumbnail')->first();
-                    @endphp
-                    <img src="{{ $currentThumbnail ? asset('storage/' . $currentThumbnail->nama_gambar) : 'https://placehold.co/100x100?text=No+Thumbnail' }}"
-                         alt="Thumbnail"
-                         class="w-24 h-24 object-cover mt-2">
-                </div>
-            </div>
-
-            {{-- Gambar Tambahan --}}
-            <div class="form-group mb-6">
-                <label class="form-label font-semibold">Gambar Tambahan</label>
-
-                {{-- Gambar Tambahan Lama --}}
-                <div class="grid grid-cols-3 gap-4 mb-4" id="existing-additional-images">
-                    @foreach ($berita->fotoBeritas->where('tipe', 'tambahan') as $foto)
-                        <div class="relative border p-2 rounded" id="existing-image-{{ $foto->id }}">
-                            <img src="{{ asset('storage/' . $foto->nama_gambar) }}" alt="Gambar Tambahan"
-                                 class="w-full h-32 object-cover">
-                            <p class="text-sm mt-1">{{ $foto->keterangan_gambar }}</p>
-                            <button type="button" class="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded"
-                                onclick="markImageForDeletion({{ $foto->id }})">X</button>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Gambar Tambahan Baru --}}
-                <div id="additional-images-container"></div>
-                <button type="button" class="btn btn-secondary mt-4" onclick="addAdditionalImageField()">Tambah Gambar</button>
-                <input type="hidden" name="deleted_image_ids" id="deleted_image_ids" value="[]">
-            </div>
-
-            {{-- Tombol --}}
-            <div class="flex justify-end space-x-4">
-                <a href="{{ route('admin.berita.show', $berita->id) }}" class="btn btn-secondary">Batal</a>
-                <button type="submit" class="btn btn-primary">Perbarui</button>
+            <!-- Tombol -->
+            <div class="pt-6 flex justify-end space-x-4">
+            <a href="{{ route('admin.berita.index') }}"
+        class="inline-flex justify-center py-2 px-5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2">
+        Batal
+    </a>
+                <button type="submit"
+                    class="inline-flex justify-center py-2 px-5 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-800 hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-800">
+                    Perbarui
+                </button>
             </div>
         </form>
     </div>
+</div>
 
-    {{-- Script Tambahan --}}
-    <script>
-        let additionalImageCount = 0;
-        let deletedImageIds = [];
+<script>
+    function previewImage(event, previewId) {
+        const previewContainer = document.getElementById(previewId);
+        previewContainer.innerHTML = '';
 
-        function previewImage(event, previewId) {
-            const previewContainer = document.getElementById(previewId);
-            previewContainer.innerHTML = '';
-
-            if (event.target.files && event.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-24 h-24 object-cover mt-2">`;
-                }
-                reader.readAsDataURL(event.target.files[0]);
+        if (event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-24 h-24 object-cover rounded-md mt-2">`;
             }
+            reader.readAsDataURL(event.target.files[0]);
         }
-
-        function addAdditionalImageField() {
-            additionalImageCount++;
-            const container = document.getElementById('additional-images-container');
-            const fieldHTML = `
-                <div class="flex items-center gap-4 mb-4">
-                    <input type="file" name="nama_gambar_tambahan[]" class="form-input w-1/2" accept="image/*"
-                        onchange="previewImage(event, 'preview-${additionalImageCount}')">
-                    <input type="text" name="keterangan_gambar_tambahan[]" class="form-input w-1/2" placeholder="Keterangan">
-                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Hapus</button>
-                </div>
-                <div id="preview-${additionalImageCount}" class="mb-4"></div>
-            `;
-            container.insertAdjacentHTML('beforeend', fieldHTML);
-        }
-
-        function markImageForDeletion(imageId) {
-            deletedImageIds.push(imageId);
-            document.getElementById('deleted_image_ids').value = JSON.stringify(deletedImageIds);
-            const imageDiv = document.getElementById(`existing-image-${imageId}`);
-            if (imageDiv) imageDiv.remove();
-        }
-    </script>
+    }
+</script>
 @endsection

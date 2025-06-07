@@ -64,6 +64,19 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     }
 
     /**
+     * Ambil data kategori berdasarkan nama dengan aplikasi terkait.
+     *
+     * @param string $namaKategori
+     * @return Kategori
+     */
+    public function getByNameWithAplikasi(string $namaKategori): mixed
+    {
+        // Asumsi ada relasi 'aplikasi' di model Kategori
+        return $this->model->where('nama_kategori', $namaKategori)->with('aplikasi')->firstOrFail();
+    }
+
+
+    /**
      * Update data kategori, termasuk mengelola gambar lama dan baru.
      *
      * @param mixed $id

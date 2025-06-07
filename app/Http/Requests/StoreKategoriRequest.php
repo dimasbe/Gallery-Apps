@@ -13,7 +13,8 @@ class StoreKategoriRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // Set to true if authorization isn't complex, otherwise add logic
+        // Adjust authorization logic if necessary (e.g., check user roles/permissions)
+        return true;
     }
 
     /**
