@@ -52,10 +52,10 @@ class Berita extends Model
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
     }
-    public function kategoris()
-{
-    return $this->belongsToMany(Kategori::class, 'berita_kategori', 'berita_id', 'kategori_id');
-}
+//     public function kategoris()
+// {
+//     return $this->belongsToMany(Kategori::class, 'berita_kategori', 'berita_id', 'kategori_id');
+// }
 
     
 

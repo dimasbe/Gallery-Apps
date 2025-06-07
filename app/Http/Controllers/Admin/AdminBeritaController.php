@@ -39,7 +39,7 @@ class AdminBeritaController extends Controller
     public function edit(Berita $berita)
     {
         $kategori = $this->beritaService->getKategoriBerita();
-        $selectedKategoris = $berita->kategoris->pluck('id')->toArray(); // Ambil ID kategori yang terkait
+        $selectedKategoris = $berita->kategori->pluck('id')->toArray(); // Ambil ID kategori yang terkait
     
         return view('admin.berita.edit', compact('berita', 'kategori', 'selectedKategoris'));
     }

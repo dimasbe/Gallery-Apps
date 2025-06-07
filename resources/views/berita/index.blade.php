@@ -9,20 +9,20 @@
             <div class="bg-white rounded-lg shadow p-3 max-h-[30rem] overflow-y-auto sticky top-10">
                 <h3 class="text-lg font-semibold border-b-2 border-[#AD1500] pb-2 mb-5">Kategori Berita</h3>
                 <ul class="space-y-3 text-sm font-medium text-gray-700">
+                <li>
+                    <a href="{{ route('berita.index') }}" class="hover:text-[#AD1500] transition-colors">
+                        Semua
+                    </a>
+                </li>
+                @foreach ($kategoris as $kategori)
                     <li>
-                        <a href="{{ route('berita.index') }}" class="hover:text-[#AD1500] transition-colors">
-                            Semua
-                        </a>
-                    </li>
-                    @foreach ($kategoris as $kategori)
-                    <li>
-                        <a href="{{ route('berita.index', ['kategori' => $kategori->id]) }}"
-                           class="hover:text-[#AD1500] {{ request('kategori') == $kategori->id ? 'text-[#AD1500] font-semibold' : '' }}">
+                        <a href="{{ route('berita.index', ['kategori' => $kategori->id]) }}" 
+                        class="hover:text-[#AD1500] transition-colors {{ request('kategori') == $kategori->id ? 'font-bold text-[#AD1500]' : '' }}">
                             {{ $kategori->nama_kategori }}
                         </a>
                     </li>
-                    @endforeach
-                </ul>
+                @endforeach
+            </ul>
             </div>
         </aside>
 
@@ -38,11 +38,9 @@
                     />
                     <div class="flex flex-col justify-start flex-1">
                         <div>
-                            <div class="mb-1">
-                                @foreach ($berita->kategoris as $kategori)
-                                <span class="text-xs uppercase text-[#AD1500] font-bold mr-2">{{ $kategori->nama_kategori }}</span>
-                                @endforeach
-                            </div>
+                        <div class="mb-1">
+                            <span class="font-bold" style="color: #AD1500;">{{ $berita->kategori->nama_kategori }}</span>
+                        </div>
                             <h2 class="text-lg font-semibold text-gray-800 mt-1">{{ $berita->judul_berita }}</h2>
                             <p class="text-xs text-gray-600 mt-1">{{ $berita->tanggal_dibuat->format('d F Y') }}</p>
                             <p class="text-gray-700 mt-2 text-sm leading-relaxed">{{ Str::limit(strip_tags($berita->isi_berita), 120) }}</p>

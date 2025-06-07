@@ -15,7 +15,6 @@ class UpdateBeritaRequest extends FormRequest
     {
         return [
             'judul_berita' => 'required|string|max:255',
-            'penulis' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategori,id',
             'isi_berita' => 'required|string',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Tidak wajib diunggah
@@ -26,7 +25,6 @@ class UpdateBeritaRequest extends FormRequest
     {
         return [
             'judul_berita.required' => 'Judul berita wajib diisi.',
-            'penulis.required' => 'Nama penulis wajib diisi.',
             'kategori_id.required' => 'Kategori wajib dipilih.',
             'kategori_id.exists' => 'Kategori tidak valid.',
             'isi_berita.required' => 'Isi berita wajib diisi.',
