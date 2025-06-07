@@ -46,7 +46,9 @@
                     <h3 class="font-bold text-gray-900 text-lg mb-2">{{ $app->nama_aplikasi }}</h3>
                     {{-- Format tanggal upload (created_at) --}}
                     <p class="text-xs text-gray-500 mb-4">Upload: {{ $app->created_at->format('d-m-Y') }}</p>
-                    <p class="text-xs text-gray-500 mb-4">Verifikasi: {{ $app->tanggal_verifikasi ? $app->tanggal_verifikasi->format('Y-m-d') : 'Menunggu' }}</p>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Verifikasi: {{ $app->tanggal_verifikasi ? \Carbon\Carbon::parse($app->tanggal_verifikasi)->format('d-m-Y') : 'Menunggu' }}
+                    </p>
 
                     <div class="flex justify-between items-center mt-auto">
                         <div class="flex items-center text-sm text-gray-600">

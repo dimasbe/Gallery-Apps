@@ -5,43 +5,96 @@ namespace App\Contracts\Repositories;
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Models\Aplikasi;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model; // Import Model
 
-class AplikasiRepository extends BaseRepository implements AplikasiInterface {
+class AplikasiRepository extends BaseRepository implements AplikasiInterface
+{
+    protected Model $model; // Ubah tipe menjadi Model
 
-    public function __construct(Aplikasi $aplikasi) {
+    public function __construct(Aplikasi $aplikasi)
+    {
         $this->model = $aplikasi;
     }
 
     public function get(): mixed {
         return $this->model->query()->with('kategori', 'fotoAplikasi', 'users')->orderBy('id','DESC')->get();
     }
+    /**
+     * Mengambil semua aplikasi dengan relasi yang diperlukan.
+     *
+     * @return mixed
+     */
 
     public function show(mixed $id): mixed {
         return $this->model->query()->with('kategori.fotoAplikasi', 'foto_aplikasi', 'users')->findOrFail($id);
     }
 
-    public function store(array $data): mixed {
+    /**
+     * Menyimpan aplikasi baru.
+     *
+     * @param array $data
+     * @return mixed
+     */
+    public function store(array $data): mixed
+    {
         return $this->model->create($data);
     }
 
-    public function update(mixed $id, array $data): mixed {
-        return $this->model->query()->findOrFail($id)->update($data);
+    /**
+     * Memperbarui aplikasi berdasarkan ID.
+     *
+     * @param mixed $id
+     * @param array $data
+     * @return mixed
+     */
+    public function update(mixed $id, array $data): mixed
+    {
+        $aplikasi = $this->model->query()->findOrFail($id);
+        $aplikasi->update($data);
+        return $aplikasi; // Mengembalikan aplikasi yang diperbarui
     }
 
-    public function delete(mixed $id): mixed {
-        return $this->model->query()->findOrFail($id)->delete();
+    /**
+     * Menghapus aplikasi berdasarkan ID.
+     *
+     * @param mixed $id
+     * @return mixed
+     */
+    public function delete(mixed $id): mixed
+    {
+        $aplikasi = $this->model->query()->findOrFail($id);
+        return $aplikasi->delete(); // Mengembalikan hasil penghapusan
     }
 
-    public function search(Request $request): mixed {
-        $keyword = $request->input('keyword');
+    /**
+     * Mencari aplikasi berdasarkan kata kunci.
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function search(Request $request): mixed
+    {
+        $keyword = $request->input('q');
 
         return $this->model->query()
-            ->with('kategori', 'foto_aplikasi', 'users')
+            ->with('kategori', 'fotoAplikasi', 'user')
             ->where('nama_aplikasi', 'like', "%{$keyword}%")
+            ->orWhere('nama_pemilik', 'like', "%{$keyword}%")
             ->orWhereHas('kategori', function ($query) use ($keyword) {
                 $query->where('nama_kategori', 'like', "%{$keyword}%");
             })
             ->orderBy('id', 'DESC')
             ->get();
+    }
+
+    /**
+     * Menemukan aplikasi berdasarkan ID.
+     *
+     * @param mixed $id
+     * @return mixed
+     */
+    public function find(mixed $id): mixed
+    {
+        return $this->model->query()->findOrFail($id); // Implementasi metode find
     }
 }

@@ -8,38 +8,43 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class FotoAplikasiRepository extends BaseRepository implements FotoAplikasiInterface
 {
-  public function __construct(FotoAplikasi $fotoAplikasi)
-  {
-    $this->model = $fotoAplikasi;
-  }
+    public function __construct(FotoAplikasi $fotoAplikasi)
+    {
+        $this->model = $fotoAplikasi;
+    }
 
-  public function get(): mixed
-  {
-    return $this->model->query()->get();
-  }
+    public function get(): mixed
+    {
+        return $this->model->query()->get();
+    }
 
-  public function store(array $data): mixed
-  {
-    return $this->model->query()->create($data);
-  }
+    public function store(array $data): mixed
+    {
+        return $this->model->query()->create($data);
+    }
 
-  public function show(mixed $id): mixed
-  {
-    return $this->model->query()->findOrFail($id);
-  }
+    public function show(mixed $id): mixed
+    {
+        return $this->model->query()->findOrFail($id);
+    }
 
-  public function update(mixed $id, array $data): mixed 
-  {
-    return $this->model->query()->findOrFail($id)->update($data);
-  }
+    public function update(mixed $id, array $data): mixed 
+    {
+        return $this->model->query()->findOrFail($id)->update($data);
+    }
 
-  public function delete(mixed $id): mixed
-  {
-    return $this->model->query()->findOrFail($id)->delete($id);
-  }
+    public function delete(mixed $id): mixed
+    {
+        return $this->model->query()->findOrFail($id)->delete();
+    }
 
-  public function paginate(int $pagination = 4): LengthAwarePaginator
-  {
-    return $this->model->query()->paginate(4);
-  }
+    public function paginate(int $pagination = 4): LengthAwarePaginator
+    {
+        return $this->model->query()->paginate($pagination);
+    }
+
+    public function find(mixed $id): mixed
+    {
+        return $this->model->query()->find($id);
+    }
 }

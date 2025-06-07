@@ -4,23 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class Berita extends Model
 {
     use HasFactory;
 
+    // Nama tabel di database Anda (pastikan ini sesuai, yaitu 'berita')
     protected $table = 'berita';
 
+    // Kolom-kolom yang boleh diisi secara massal
     protected $fillable = [
         'judul_berita',
         'penulis',
         'isi_berita',
-        'tanggal_dibuat',
-        'tanggal_diedit',
+        'kategori_id',
     ];
 
-    // Matikan timestamps default
+    // Matikan timestamps default Laravel karena Anda pakai kolom kustom
     public $timestamps = false;
 
     // Cast kolom tanggal agar otomatis menjadi instance Carbon
@@ -30,27 +31,41 @@ class Berita extends Model
     ];
 
     /**
-     * Relasi one-to-many: berita memiliki banyak foto
+     * Relasi one-to-many: berita memiliki banyak foto.
+     * Kita asumsikan tabel foto adalah 'foto_berita' dan Model 'FotoBerita'.
      */
-    public function fotoBeritas()
+    public function fotoBerita() // Menggunakan singular 'fotoBerita'
     {
         return $this->hasMany(FotoBerita::class, 'berita_id');
     }
+    public function fotoBeritas()
+{
+    return $this->hasMany(FotoBerita::class);
+}
+
 
     /**
-     * Relasi many-to-many: berita memiliki banyak kategori
+     * Relasi many-to-one: berita dimiliki oleh satu kategori.
+     * Menggunakan foreign key 'kategori_id' di tabel 'berita'.
      */
-    public function kategoris()
+    public function kategori()
     {
-        return $this->belongsToMany(Kategori::class, 'berita_kategori', 'berita_id', 'kategori_id');
+        return $this->belongsTo(Kategori::class, 'kategori_id');
     }
+//     public function kategoris()
+// {
+//     return $this->belongsToMany(Kategori::class, 'berita_kategori', 'berita_id', 'kategori_id');
+// }
+
+    
 
     /**
-     * Akses custom untuk thumbnail
+     * Aksesor: Mendapatkan URL thumbnail berita.
      */
     public function getThumbnailUrlAttribute(): string
     {
-        $thumbnail = $this->fotoBeritas()->where('tipe', 'thumbnail')->first();
+        // Sesuaikan jika relasi Anda menggunakan nama 'fotoBerita' (singular)
+        $thumbnail = $this->fotoBerita()->where('tipe', 'thumbnail')->first();
 
         return $thumbnail
             ? asset('storage/' . $thumbnail->nama_gambar)
@@ -58,10 +73,10 @@ class Berita extends Model
     }
 
     /**
-     * Akses custom untuk ringkasan isi berita
+     * Aksesor: Mendapatkan ringkasan isi berita.
      */
     public function getRingkasanAttribute(): string
     {
-        return \Str::limit(strip_tags($this->isi_berita), 150, '...');
+        return Str::limit(strip_tags($this->isi_berita), 150, '...');
     }
 }

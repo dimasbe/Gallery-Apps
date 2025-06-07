@@ -2,10 +2,24 @@
 
 namespace App\Contracts\Interfaces;
 
-use App\Contracts\Interfaces\Eloquent\BaseInterface;
-use App\Contracts\Interfaces\Eloquent\SearchInterface;
+use App\Contracts\Interfaces\Eloquent\{
+    BaseInterface,
+    SearchInterface,
+    FindByIdInterface,
+    PaginateInterface,
+    BeritaPaginateInterface
+};
 
-interface BeritaInterface extends BaseInterface, SearchInterface
+use Illuminate\Database\Eloquent\Collection;
+
+interface BeritaInterface extends
+    BaseInterface,
+    SearchInterface,
+    FindByIdInterface,
+    PaginateInterface, // Umum
+    BeritaPaginateInterface // Khusus berita
 {
-    // Jika ada fungsi khusus di berita, bisa ditambahkan di sini.
+    public function getAllWithKategori();
+
+    public function getLatest(int $limit = 3): Collection;
 }

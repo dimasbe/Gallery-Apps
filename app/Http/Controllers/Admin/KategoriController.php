@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Contracts\Interfaces\KategoriInterface;
-use App\Enums\KategoriTypeEnum; // Import the enum
+use App\Enums\KategoriTypeEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreKategoriRequest; // Import new request
-use App\Http\Requests\UpdateKategoriRequest; // Import new request
+use App\Http\Requests\StoreKategoriRequest;
+use App\Http\Requests\UpdateKategoriRequest; 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use RealRashid\SweetAlert\Facades\Alert; // Assuming SweetAlert is used
+use RealRashid\SweetAlert\Facades\Alert; 
 
 class KategoriController extends Controller
 {
@@ -30,6 +29,7 @@ class KategoriController extends Controller
         $filter = $request->query('filter', 'semua');
         $kategoris = collect(); // Initialize an empty collection
 
+        // Filter categories based on the selected type
         if ($filter === KategoriTypeEnum::APLIKASI->value) {
             $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::APLIKASI->value);
         } elseif ($filter === KategoriTypeEnum::BERITA->value) {
@@ -48,10 +48,8 @@ class KategoriController extends Controller
     {
         $this->kategori->store($request->validated());
 
-        // You might want to use SweetAlert for JSON responses differently,
-        // or just return JSON and handle alerts on the frontend.
-        // For simplicity, we'll keep the JSON response as requested.
-        return response()->json(['message' => 'Kategori berhasil ditambahkan!']);
+        // Return a JSON response indicating success
+        return response()->json(['message' => 'Kategori berhasil ditambahkan!'], 201);
     }
 
     /**

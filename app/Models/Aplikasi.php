@@ -37,6 +37,10 @@ class Aplikasi extends Model
         'tanggal_verifikasi',
     ];
 
+    protected $casts = [
+        'tanggal_verifikasi' => 'datetime',
+    ];
+
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'id_kategori');

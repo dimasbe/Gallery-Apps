@@ -4,30 +4,54 @@ namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\FotoBeritaInterface;
 use App\Models\FotoBerita;
+use Illuminate\Database\Eloquent\Collection;
 
 class FotoBeritaRepository implements FotoBeritaInterface
 {
-    public function get()
+    /**
+     * Ambil semua data foto berita.
+     *
+     * @return Collection
+     */
+    public function get(): Collection
     {
         return FotoBerita::all();
     }
 
-    public function store(array $data)
+    /**
+     * Simpan data foto berita baru.
+     *
+     * @param array $data
+     * @return FotoBerita
+     */
+    public function store(array $data): FotoBerita
     {
         return FotoBerita::create($data);
     }
 
-    public function update(int $id, array $data)
+    /**
+     * Perbarui data foto berita berdasarkan ID.
+     *
+     * @param int $id
+     * @param array $data
+     * @return FotoBerita
+     */
+    public function update(int $id, array $data): FotoBerita
     {
         $foto = FotoBerita::findOrFail($id);
         $foto->update($data);
         return $foto;
     }
 
-    public function delete(int $id)
+    /**
+     * Hapus data foto berita berdasarkan ID.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
     {
         $foto = FotoBerita::findOrFail($id);
-        $foto->delete();
-        return true;
+        return $foto->delete();
     }
 }
