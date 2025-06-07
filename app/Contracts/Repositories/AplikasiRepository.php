@@ -13,11 +13,11 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface {
     }
 
     public function get(): mixed {
-        return $this->model->query()->with('kategori', 'foto_aplikasi', 'users')->orderBy('id','DESC')->get();
+        return $this->model->query()->with('kategori', 'fotoAplikasi', 'users')->orderBy('id','DESC')->get();
     }
 
     public function show(mixed $id): mixed {
-        return $this->model->query()->with('kategori.foto_aplikasi', 'foto_aplikasi', 'users')->findOrFail($id);
+        return $this->model->query()->with('kategori.fotoAplikasi', 'foto_aplikasi', 'users')->findOrFail($id);
     }
 
     public function store(array $data): mixed {
@@ -37,7 +37,7 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface {
 
         return $this->model->query()
             ->with('kategori', 'foto_aplikasi', 'users')
-            ->where('nama', 'like', "%{$keyword}%")
+            ->where('nama_aplikasi', 'like', "%{$keyword}%")
             ->orWhereHas('kategori', function ($query) use ($keyword) {
                 $query->where('nama_kategori', 'like', "%{$keyword}%");
             })

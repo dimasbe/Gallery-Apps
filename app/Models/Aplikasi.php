@@ -42,7 +42,7 @@ class Aplikasi extends Model
         return $this->belongsTo(Kategori::class, 'id_kategori');
     }
 
-    public function user()
+    public function users()
     {
         return $this->belongsTo(User::class, 'id_user');
     }
