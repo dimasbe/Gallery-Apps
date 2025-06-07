@@ -49,8 +49,8 @@
                 </thead>
                 <tbody>
                     {{-- Data Dummy untuk Tabel, diambil dari Controller --}}
-                    @if(count($verifikasiData) > 0)
-                        @foreach($verifikasiData as $data)
+                    @if(count($aplikasi) > 0)
+                        @foreach($aplikasi as $data)
                         <tr>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $loop->iteration }}</p>
@@ -59,23 +59,27 @@
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_aplikasi'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['pemilik'] }}</p>
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_pemilik'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $data['kategori'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['tanggal'] }}</p>
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['tanggal_ditambahkan'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                 <div class="flex space-x-2 justify-center">
                                     {{-- Tombol Diterima sekarang memicu pop-up `showAcceptPopup()` --}}
                                     <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
-                                            onclick="showAcceptPopup()">Terima</button>
+                                            data-id={{ $data['id'] }}
+                                            data-url="{{ route('admin.aplikasi.terima', ['id' => $data['id']]) }}"
+                                            onclick="showAcceptPopup(this)">Terima</button>
                                     <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
-                                            onclick="showRejectPopup()">Tolak</button>
+                                            data-id={{ $data['id'] }}
+                                            data-url="{{ route('admin.aplikasi.tolak', ['id' => $data['id']]) }}"
+                                            onclick="showRejectPopup(this)">Tolak</button>
                                     {{-- PERUBAHAN DI SINI: Mengubah button menjadi <a> dan menambahkan href --}}
-                                    <a href="{{ route('admin.verifikasi.detail', ['id' => $loop->iteration]) }}" {{-- Menggunakan route helper dengan ID dummy --}}
+                                    <a href="{{ route('admin.verifikasi.detail', ['id' => $data['id']]) }}" {{-- Menggunakan route helper dengan ID dummy --}}
                                        class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
                                         Lihat
                                     </a>
@@ -122,22 +126,24 @@
 {{-- Pop-up Tolak Ajuan --}}
 <div id="reject-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Tolak Ajuan</h2>
-        <div class="mb-4">
-            <label for="reject-notes" class="block text-gray-700 text-sm font-bold mb-2">Catatan</label>
-            <textarea id="reject-notes"
-                      rows="4"
-                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
-                      placeholder="Aplikasi tidak sesuai kriteria."></textarea>
-        </div>
-        <div class="flex justify-end space-x-4">
-            {{-- Tombol Batal --}}
-            <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
-                    onclick="hideRejectPopup()">Batal</button>
-            {{-- Tombol Kirim --}}
-            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20"
-                    onclick="submitReject()">Kirim</button>
-        </div>
+        <form id="reject-form" method="post">
+            @csrf
+
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Tolak Ajuan</h2>
+            <div class="mb-4">
+                <label for="reject-notes" class="block text-gray-700 text-sm font-bold mb-2">Catatan</label>
+                <textarea id="reject-notes" rows="4" name="alasan_penolakan" required
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
+                    placeholder="Aplikasi tidak sesuai kriteria."></textarea>
+            </div>
+            <div class="flex justify-end space-x-4">
+                {{-- Tombol Batal --}}
+                <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
+                        onclick="hideRejectPopup()">Batal</button>
+                {{-- Tombol Kirim --}}
+                <button type="submit" class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20">Kirim</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -151,8 +157,11 @@
             <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
                     onclick="hideAcceptPopup()">Batal</button>
             {{-- Tombol Terima --}}
-            <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20"
-                    onclick="submitAccept()">Terima</button>
+            <form id="accept-form" method="POST">
+                @csrf
+                <button class="bg-custom-primary-red hover:bg-custom-primary-red-darker text-white py-1 px-4 rounded-lg transition duration-200 w-20"
+                        onclick="submitAccept()" type="submit" data-url="{{ route('admin.aplikasi.terima', ['id' => 'ID_REPLACE']) }}">Terima</button>
+            </form>
         </div>
     </div>
 </div>
@@ -161,8 +170,17 @@
 
 @push('scripts')
 <script>
+    let selectedId = null;
+    let linkAction = '';
+
     // --- Fungsi untuk Pop-up Tolak Ajuan ---
-    function showRejectPopup() {
+    function showRejectPopup(button) {
+        selectedId = button.getAttribute('data-id') || null;
+        linkAction = button.getAttribute('data-url') || null;
+        
+        const form = document.getElementById('reject-form');
+        form.action = linkAction
+
         console.log('Tombol Ditolak diklik! Menampilkan pop-up...');
         document.getElementById('reject-popup-overlay').classList.remove('hidden');
     }
@@ -174,14 +192,21 @@
     }
 
     function submitReject() {
-        const notes = document.getElementById('reject-notes').value;
-        console.log('Catatan penolakan:', notes);
-        alert('Anda akan mengirim catatan penolakan: "' + notes + '"\n(Ini adalah simulasi statis.)');
+        const notes = document.getElementById('reject-notes').innerText;
+
+        console.log(notes)
+
         hideRejectPopup();
     }
 
     // --- Fungsi untuk Pop-up Terima Ajuan ---
-    function showAcceptPopup() {
+    function showAcceptPopup(button) {
+        selectedId = button.getAttribute('data-id') || null;
+        linkAction = button.getAttribute('data-url') || null;
+        
+        const form = document.getElementById('accept-form');
+        form.action = linkAction
+        
         console.log('Tombol Diterima diklik! Menampilkan pop-up...');
         document.getElementById('accept-popup-overlay').classList.remove('hidden');
     }
@@ -193,7 +218,8 @@
 
     function submitAccept() {
         console.log('Aplikasi diterima!');
-        alert('Aplikasi telah diterima!\n(Ini adalah simulasi statis.)'); // Contoh feedback
+
+        form.action = `{{ route('admin.aplikasi.terima', ['id' => '___']) }}`.replace('___', selectedId)
         hideAcceptPopup(); // Sembunyikan pop-up setelah "mengirim"
     }
 
