@@ -68,6 +68,7 @@ class KategoriController extends Controller
     {
         $kategori = $this->kategori->show($id);
         return response()->json($kategori);
+        
     }
 
     /**

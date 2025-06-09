@@ -4,56 +4,82 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Berita extends Model
 {
     use HasFactory;
 
-    // Nama tabel yang terkait dengan model
+    // Nama tabel di database Anda (pastikan ini sesuai, yaitu 'berita')
     protected $table = 'berita';
 
-    // Kolom yang dapat diisi secara massal
+    // Kolom-kolom yang boleh diisi secara massal
     protected $fillable = [
         'judul_berita',
         'penulis',
         'isi_berita',
+        'kategori_id',
     ];
 
-    // Kolom tanggal yang akan secara otomatis dikelola oleh Eloquent
-    // Nonaktifkan timestamps bawaan karena kita punya kolom kustom
-    public $timestamps = false; // Nonaktifkan timestamps bawaan Laravel
+    // Matikan timestamps default Laravel karena Anda pakai kolom kustom
+    public $timestamps = false;
 
-    // Atribut yang harus di-cast ke tipe data tertentu
+    // Cast kolom tanggal agar otomatis menjadi instance Carbon
     protected $casts = [
-        'tanggal_dibuat' => 'datetime',
-        'tanggal_diedit' => 'datetime',
+        'tanggal_dibuat' => 'datetime:Y-m-d H:i:s',
+        'tanggal_diedit' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
-     * Relasi one-to-many dengan FotoBerita.
-     * Sebuah berita bisa memiliki banyak foto.
+     * Relasi one-to-many: berita memiliki banyak foto.
+     * Kita asumsikan tabel foto adalah 'foto_berita' dan Model 'FotoBerita'.
      */
-    public function fotoBerita()
+    public function fotoBerita() // Menggunakan singular 'fotoBerita'
     {
         return $this->hasMany(FotoBerita::class, 'berita_id');
     }
+    public function fotoBeritas()
+{
+    return $this->hasMany(FotoBerita::class);
+}
+
 
     /**
-     * Relasi many-to-many dengan Kategori.
-     * Sebuah berita bisa memiliki banyak kategori.
+     * Relasi many-to-one: berita dimiliki oleh satu kategori.
+     * Menggunakan foreign key 'kategori_id' di tabel 'berita'.
      */
-    public function kategoris()
+    public function kategori()
     {
-        return $this->belongsToMany(Kategori::class, 'berita_kategori', 'berita_id', 'kategori_id');
+        return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+    
+     // Definisi relasi 'kategoris' untuk relasi Many-to-Many
+     public function kategoris() // Nama metode ini harus plural karena satu berita bisa punya banyak kategori
+     {
+         // Parameter: Model terkait, nama tabel pivot, foreign key di pivot untuk model ini, foreign key di pivot untuk model terkait
+         return $this->belongsToMany(Kategori::class, 'berita_kategori', 'berita_id', 'kategori_id');
+     }
+
+    
+
+    /**
+     * Aksesor: Mendapatkan URL thumbnail berita.
+     */
+    public function getThumbnailUrlAttribute(): string
+    {
+        // Sesuaikan jika relasi Anda menggunakan nama 'fotoBerita' (singular)
+        $thumbnail = $this->fotoBerita()->where('tipe', 'thumbnail')->first();
+
+        return $thumbnail
+            ? asset('storage/' . $thumbnail->nama_gambar)
+            : 'https://placehold.co/100x100/A0AEC0/FFFFFF?text=No+Thumbnail';
     }
 
     /**
-     * Ambil URL thumbnail berita.
-     * Mengambil foto dengan tipe 'thumbnail' jika ada.
+     * Aksesor: Mendapatkan ringkasan isi berita.
      */
-    public function getThumbnailUrlAttribute()
+    public function getRingkasanAttribute(): string
     {
-        $thumbnail = $this->fotoBeritas()->where('tipe', 'thumbnail')->first();
-        return $thumbnail ? asset('storage/' . $thumbnail->nama_gambar) : 'https://placehold.co/100x100/A0AEC0/FFFFFF?text=No+Thumbnail'; // Placeholder jika tidak ada thumbnail
+        return Str::limit(strip_tags($this->isi_berita), 150, '...');
     }
 }

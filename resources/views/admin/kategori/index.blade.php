@@ -8,29 +8,15 @@
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-700">Kategori</h1>
-            <div class="flex mx-8">
-            <div class="flex w-64 md:w-80">
-                <input
-                    type="text"
-                    placeholder="Cari di sini..."
-                    class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
-                />
-                <button
-                    class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
-                >
-                    <i class="fas fa-search text-custom-primary-red"></i>
-                </button>
-            </div>
-        </div>
-            <!-- <nav aria-label="breadcrumb">
-                 <ol class="flex items-center text-sm text-gray-600">
+            <nav aria-label="breadcrumb">
+                <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
                         <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
                     <li class="text-custom-primary-red" aria-current="page">Kategori</li>
-                </ol> -->
-            <!-- </nav>  -->
+                </ol>
+            </nav>
         </div>
     </div>
 
@@ -254,6 +240,9 @@
     </div>
 </div>
 
+{{-- SweetAlert2 CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     function tutupModal(id) {
         document.getElementById(id).classList.add('hidden');
@@ -285,17 +274,33 @@
                 } else if (errorData.message) {
                     errorMessage = errorData.message;
                 }
-                alert(errorMessage);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonColor: '#dc3545'
+                });
                 return;
             }
 
             const data = await response.json();
-            alert(data.message);
-            tutupModal('modalTambah');
-            window.location.reload(); // Reload to see the new data
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                confirmButtonColor: '#28a745'
+            }).then(() => {
+                tutupModal('modalTambah');
+                window.location.reload(); // Reload to see the new data
+            });
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan jaringan atau server.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Terjadi kesalahan jaringan atau server.',
+                confirmButtonColor: '#dc3545'
+            });
         }
     });
 
@@ -318,7 +323,12 @@
                 document.getElementById('modalEdit').classList.remove('hidden');
             } catch (error) {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat memuat data kategori.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat memuat data kategori.',
+                    confirmButtonColor: '#dc3545'
+                });
             }
         });
     });
@@ -335,7 +345,6 @@
                 body: formData,
                 headers: {
                     'Accept': 'application/json',
-                    // No 'Content-Type' header here, FormData sets it automatically
                 },
             });
 
@@ -347,17 +356,33 @@
                 } else if (errorData.message) {
                     errorMessage = errorData.message;
                 }
-                alert(errorMessage);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonColor: '#dc3545'
+                });
                 return;
             }
 
             const data = await response.json();
-            alert(data.message);
-            tutupModal('modalEdit');
-            window.location.reload(); // Reload to see the updated data
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                confirmButtonColor: '#28a745'
+            }).then(() => {
+                tutupModal('modalEdit');
+                window.location.reload(); // Reload to see the updated data
+            });
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan jaringan atau server.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Terjadi kesalahan jaringan atau server.',
+                confirmButtonColor: '#dc3545'
+            });
         }
     });
 
@@ -365,41 +390,61 @@
     document.querySelectorAll('.btnHapus').forEach(button => {
         button.addEventListener('click', function() {
             const kategoriId = this.dataset.id;
-            document.getElementById('deleteKategoriId').value = kategoriId;
-            document.getElementById('modalHapus').classList.remove('hidden');
-        });
-    });
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Anda tidak akan dapat mengembalikan ini!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/kategori/${kategoriId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Ensure CSRF token is sent
+                                'Accept': 'application/json',
+                            },
+                        });
 
-    document.getElementById('btnKonfirmasiHapus').addEventListener('click', async function() {
-        const kategoriId = document.getElementById('deleteKategoriId').value;
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            let errorMessage = 'Terjadi kesalahan saat menghapus kategori.';
+                            if (errorData.message) {
+                                errorMessage = errorData.message;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: errorMessage,
+                                confirmButtonColor: '#dc3545'
+                            });
+                            return;
+                        }
 
-        try {
-            const response = await fetch(`/admin/kategori/${kategoriId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}', // Ensure CSRF token is sent
-                    'Accept': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                let errorMessage = 'Terjadi kesalahan saat menghapus kategori.';
-                if (errorData.message) {
-                    errorMessage = errorData.message;
+                        const data = await response.json();
+                        Swal.fire(
+                            'Dihapus!',
+                            data.message,
+                            'success'
+                        ).then(() => {
+                            window.location.reload(); // Reload to see the updated data
+                        });
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan jaringan atau server.',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
                 }
-                alert(errorMessage);
-                return;
-            }
-
-            const data = await response.json();
-            alert(data.message);
-            tutupModal('modalHapus');
-            window.location.reload(); // Reload to see the updated data
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan jaringan atau server.');
-        }
+            });
+        });
     });
 
     // Tombol Detail
@@ -421,7 +466,12 @@
                 document.getElementById('modalDetail').classList.remove('hidden');
             } catch (error) {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat memuat detail kategori.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat memuat detail kategori.',
+                    confirmButtonColor: '#dc3545'
+                });
             }
         });
     });
