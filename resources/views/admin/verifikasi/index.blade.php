@@ -9,7 +9,26 @@
     <div class="bg-white shadow-md rounded-lg p-6 mb-6"> {{-- Card putih baru untuk header, dengan bayangan dan sudut membulat --}}
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-700">Verifikasi</h1> {{-- Judul utama halaman --}}
-            <nav aria-label="breadcrumb">
+            <div class="flex mx-8">
+    {{-- Form Pencarian --}}
+    <form id="search-form" action="{{ route('admin.verifikasi') }}" method="GET" class="flex w-64 md:w-80">
+        <input
+            type="text"
+            name="keyword" {{-- Ini penting! Untuk mengirim nilai ke controller --}}
+            id="search-input" {{-- Tambahkan ID untuk referensi JS jika dibutuhkan --}}
+            placeholder="Cari di sini..."
+            class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
+            value="{{ request('keyword') }}" {{-- Menjaga nilai input tetap ada setelah pencarian --}}
+        />
+        <button
+            type="submit" {{-- Ini penting! Agar tombol bisa mengirim form --}}
+            class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
+        >
+            <i class="fas fa-search text-custom-primary-red"></i>
+        </button>
+    </form>
+</div>
+            <!-- <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
                         <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
@@ -17,7 +36,7 @@
                     </li>
                     <li class="text-custom-primary-red" aria-current="page">Verifikasi</li>
                 </ol>
-            </nav>
+            </nav> -->
         </div>
     </div>
 

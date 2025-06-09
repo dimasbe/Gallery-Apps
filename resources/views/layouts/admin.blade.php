@@ -220,7 +220,7 @@
             </button>
         </div>
 
-        {{-- Search Bar --}}
+        <!-- {{-- Search Bar --}}
         <div class="flex mx-8">
             <div class="flex w-64 md:w-80">
                 <input
@@ -234,7 +234,7 @@
                     <i class="fas fa-search text-custom-primary-red"></i>
                 </button>
             </div>
-        </div>
+        </div> -->
 
         {{-- Dropdown Profil --}}
         <div class="flex items-center space-x-4 ml-auto">
@@ -330,15 +330,6 @@
                     </li>
                     <li class="mb-2 sidebar-item">
                         <a
-                            href="{{ route('admin.berita.index') }}"
-                            class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
-                            {{ request()->routeIs('admin.berita.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
-                        >
-                            <i class="fas fa-newspaper mr-3 text-lg"></i> <span class="sidebar-text">Berita</span>
-                        </a>
-                    </li>
-                    <li class="mb-2 sidebar-item">
-                        <a
                             href="{{ route('admin.kategori.index') }}"
                             class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
                             {{ request()->routeIs('admin.kategori.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
@@ -346,6 +337,16 @@
                             <i class="fas fa-th-list mr-3 text-lg"></i> <span class="sidebar-text">Kategori</span>
                         </a>
                     </li>
+                    <li class="mb-2 sidebar-item">
+                        <a
+                            href="{{ route('admin.berita.index') }}"
+                            class="flex items-center p-3 rounded-lg text-custom-sidebar hover:bg-custom-sidebar-hover transition duration-200
+                            {{ request()->routeIs('admin.berita.*') ? 'bg-custom-sidebar-active text-custom-light sidebar-item-active sidebar-item-active-raised' : '' }}"
+                        >
+                            <i class="fas fa-newspaper mr-3 text-lg"></i> <span class="sidebar-text">Berita</span>
+                        </a>
+                    </li>
+                  
                     <li class="mb-2 sidebar-item">
                         <a
                             href="{{ route('admin.arsip.index') }}"
