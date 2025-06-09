@@ -75,14 +75,14 @@
                         <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
                             <td class="px-5 py-4 text-center">{{ $no++ }}</td>
                             <td class="px-5 py-4">{{ $data['nama_aplikasi'] }}</td>
-                            <td class="px-5 py-4">{{ $data['pemilik'] }}</td>
-                            <td class="px-5 py-4">{{ $data['kategori'] }}</td>
-                            <td class="px-5 py-4">{{ $data['tanggal'] }}</td>
+                            <td class="px-5 py-4">{{ $data['nama_pemilik'] }}</td>
+                            <td class="px-5 py-4">{{ $data->kategori->nama_kategori ?? 'Tidak Ada Kategori' }}</td>
+                            <td class="px-5 py-4">{{ $data['tanggal_verifikasi'] }}</td>
                             <td class="px-5 py-4">
                                 <span class="text-xs font-medium px-3 py-1 rounded-full
-                                    {{ $data['status'] === 'diterima' ? 'bg-green-100 text-green-700' : 
-                                       ($data['status'] === 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-800') }}">
-                                    {{ ucfirst($data['status']) }}
+                                    {{ $data['status_verifikasi'] === 'diterima' ? 'bg-green-100 text-green-700' : 
+                                       ($data['status_verifikasi'] === 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-800') }}">
+                                    {{ ucfirst($data['status_verifikasi']) }}
                                 </span>
                             </td>
                             <td class="px-5 py-4">

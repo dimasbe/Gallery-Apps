@@ -5,8 +5,9 @@ namespace App\Services;
 use App\Contracts\Interfaces\BeritaInterface;
 use App\Contracts\Interfaces\FotoBeritaInterface;
 use App\Contracts\Interfaces\KategoriInterface;
-use App\Models\Berita;
+use App\Models\Berita; // Diperlukan untuk metode-metode yang langsung berinteraksi dengan model
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request; // Import kelas Request
 
 class BeritaService
 {
@@ -87,9 +88,16 @@ class BeritaService
         $this->berita->delete($berita->id);
     }
 
-    public function searchBerita(string $keyword)
+    /**
+     * Memperbaiki tipe parameter agar sesuai dengan yang diharapkan oleh BeritaInterface::search().
+     * Asumsi BeritaInterface::search() mengharapkan objek Request.
+     * @param  \Illuminate\Http\Request  $request Objek Request yang berisi keyword pencarian
+     * @return mixed
+     */
+    public function searchBerita(Request $request) // Mengubah tipe parameter menjadi Request
     {
-        return $this->berita->search(['keyword' => $keyword]);
+        // Meneruskan objek Request langsung ke metode search pada interface
+        return $this->berita->search($request);
     }
 
     public function getAllPaginated($perPage = null, $kategoriId = null)
@@ -115,8 +123,7 @@ class BeritaService
     
         // Kalau tidak, ambil semua
         return $query->get();
-    }    
-
+    }     
     
     public function findById($id)
     {
@@ -128,18 +135,10 @@ class BeritaService
         return Berita::with(['kategori', 'fotoBerita' => function ($q) {
                 $q->where('tipe', 'thumbnail');
             }])
-            ->where('kategori_id', $kategoriId)          // berita dari kategori yang sama
-            ->where('id', '!=', $excludeBeritaId)       // kecuali berita yang sedang dibuka
+            ->where('kategori_id', $kategoriId)        // berita dari kategori yang sama
+            ->where('id', '!=', $excludeBeritaId)      // kecuali berita yang sedang dibuka
             ->orderBy('tanggal_dibuat', 'desc')
             ->limit($limit)
             ->get();
     }
-
-    public function getLatest($jumlah = 3)
-{
-    return Berita::latest()->take($jumlah)->get();
-}
-
-
-
 }

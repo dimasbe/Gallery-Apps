@@ -1,70 +1,68 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-grey-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
     <div class="max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-6">
         <h2 class="text-xl font-semibold text-gray-900 text-center">
             Tambah Aplikasi
         </h2>
 
-        <form class="mt-8 space-y-6" action="#" method="POST" enctype="multipart/form-data">
-            @csrf
+        <form class="mt-8 space-y-6" id="aplikasiForm" action="{{ route('tambah_aplikasi.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf {{-- PENTING: Untuk CSRF Token --}}
+
+            {{-- Input Foto Aplikasi Multiple --}}
             <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-gray-400">
-                <input type="file" id="foto_aplikasi" name="foto_aplikasi" class="hidden">
-                <label for="foto_aplikasi" class="flex flex-col items-center justify-center h-80">
-                    <svg class="mx-auto h-20 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                <input type="file" id="foto_aplikasi" name="path_foto[]" class="hidden" multiple accept="image/*">
+                <label for="foto_aplikasi" class="flex flex-col items-center justify-center h-24">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L40 32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <span class="mt-2 block text-sm font-medium text-gray-900">
+                    <span class="mt-2 text-sm text-gray-700 font-medium">
                         Unggah Foto Aplikasi
                     </span>
                 </label>
             </div>
+            <div id="preview" class="mt-4 flex flex-wrap gap-4"></div>
 
+            {{-- Input Logo --}}
             <div>
-                <div class="mt-4">
-                    <label for="gambar_0_file" class="block text-sm font-medium text-gray-700">Logo</label>
-                    <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100" accept="image/*">
-                <div class="mt-1 flex items-center space-x-2"></div>
-                </div>
+                <label for="logo" class="block text-sm font-medium text-gray-700">Logo</label>
+                <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100" accept="image/*">
             </div>
 
+            {{-- Input Teks Lainnya --}}
             <div>
                 <label for="nama_aplikasi" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
                 <div class="mt-1">
                     <input id="nama_aplikasi" name="nama_aplikasi" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
                 </div>
             </div>
-
+            {{-- ... (input lainnya) ... --}}
             <div>
                 <label for="pemilik" class="block text-sm font-medium text-gray-700">Pemilik</label>
                 <div class="mt-1">
-                    <input id="pemilik" name="pemilik" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <input id="pemilik" name="nama_pemilik" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="jenis_kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
-                    <div class="mt-1">
-                        <select id="jenis_kategori" name="jenis_kategori" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                            <option value="">Pilih kategori</option>
-                            <option value="game">Game</option>
-                            <option value="produktifitas">Produktifitas</option>
-                            <option value="hiburan">Hiburan</option>
-                            <option value="sosial">Sosial</option>
-                            <option value="edukasi">Edukasi</option>
-                        </select>
-                    </div>
+                    <label for="id_kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
+                    <select name="id_kategori" id="id_kategori"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required>
+                        <option value="">Pilih Kategori</option>
+                        @foreach($kategori as $item) {{-- Hapus 's' jika variabel di controller adalah $kategori --}}
+                            <option value="{{ $item->id }}" {{ old('id_kategori') == $item->id ? 'selected' : '' }}>
+                                {{ $item->nama_kategori }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+
                 <div>
                     <label for="tanggal_rilis" class="block text-sm font-medium text-gray-700">Tanggal Rilis</label>
                     <div class="mt-1 relative">
                         <input id="tanggal_rilis" name="tanggal_rilis" type="date" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
                     </div>
                 </div>
             </div>
@@ -91,29 +89,22 @@
                 </div>
             </div>
 
-            <div id="dynamic-content" class="space-y-6">
-                {{-- Paragraf dan gambar akan ditambahkan di sini oleh JavaScript --}}
-                <div id="block-0">
-                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Deskripsi</h3>
-                    <div class="mt-4">
-                        <textarea name="paragrafs[0][content]" id="paragraf_0_content" rows="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
-                    </div>
-                </div>
+            <div class="mb-6">
+                <label for="deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                <textarea name="deskripsi" id="deskripsi" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
             </div>
 
-            {{-- Tambahkan bagian untuk Fitur di sini, mirip dengan Deskripsi --}}
-            <div>
-                <h3 class="text-lg font-semibold mb-3 text-gray-800">Fitur</h3>
-                <div class="mt-4">
-                    <textarea id="fitur_content" name="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
-                </div>
+            <div class="mb-6">
+                <label for="fitur" class="block text-sm font-medium text-gray-700">Fitur</label>
+                <textarea name="fitur" id="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required></textarea>
             </div>
+
 
             <div class="flex items-center justify-end space-x-4">
-                    <a href="{{ route('user_login.aplikasi.index') }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2">
-                        Batal
-                    </a>
-                <button type="submit" class="group relative flex justify-center py-2 px-6 border border-transparent text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 transition-all duration-200">
+                <a href="{{ route('tambah_aplikasi.index') }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2">
+                    Batal
+                </a>
+                <button type="submit" id="submitButton" class="group relative flex justify-center py-2 px-6 border border-transparent text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 transition-all duration-200">
                     Simpan
                 </button>
             </div>
@@ -121,143 +112,149 @@
     </div>
 </div>
 
-<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+{{-- PENTING: Pastikan SweetAlert2 diimpor. Ini bisa di <head> atau di akhir <body> --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    const fotoAplikasiInput = document.getElementById('foto_aplikasi');
+    const previewContainer = document.getElementById('preview');
+    let filesArray = []; // Store File objects for photos
+
+    fotoAplikasiInput.addEventListener('change', (e) => {
+        const newFiles = Array.from(e.target.files);
+        filesArray = filesArray.concat(newFiles);
+        renderPreview();
+        fotoAplikasiInput.value = ''; // Clear input to allow re-selection
+    });
+
+    function renderPreview() {
+        previewContainer.innerHTML = ''; // Clear existing previews
+
+        filesArray.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('relative', 'w-24', 'h-24');
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('object-cover', 'w-full', 'h-full', 'rounded');
+
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '✕';
+                removeBtn.classList.add('absolute', 'top-0', 'right-0', 'bg-red-500', 'text-white', 'rounded-full', 'text-xs', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'shadow');
+                removeBtn.type = 'button'; // Prevent form submission
+                removeBtn.onclick = () => {
+                    filesArray.splice(index, 1); // Remove file from array
+                    renderPreview(); // Re-render preview
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                previewContainer.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // PENTING: Tangani form submission menggunakan AJAX (Fetch API)
+    document.getElementById('aplikasiForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Mencegah pengiriman form tradisional
+
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true; // Nonaktifkan tombol
+        submitButton.textContent = 'Menyimpan...'; // Ubah teks tombol
+
+        const formData = new FormData(this); // Ambil semua data form
+
+        // Tambahkan setiap file dari filesArray ke objek FormData (untuk multiple files)
+        // PENTING: Pastikan nama field ini ('path_foto[]') cocok dengan 'path_foto.*' di StoreAplikasiRequest
+        filesArray.forEach((file) => {
+            formData.append('path_foto[]', file);
+        });
+
+        // Ambil CSRF token dari meta tag (pastikan meta tag ada di layout)
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken // Kirim CSRF token
+                }
+            });
+
+            // PENTING: Periksa apakah respons adalah JSON yang valid
+            if (!response.ok) {
+                // Jika status bukan 2xx (misal 422, 500), coba baca sebagai JSON jika memungkinkan,
+                // jika tidak, lemparkan error umum.
+                const errorData = await response.json().catch(() => null); // Coba parse JSON, kalau gagal jadi null
+                if (errorData) {
+                    throw errorData; // Lempar data error dari server
+                } else {
+                    throw new Error(`Server responded with status: ${response.status} ${response.statusText}`);
+                }
+            }
+
+            const data = await response.json(); // Parse respons sebagai JSON
+
+            if (data.success) {
+                Swal.fire({ // Tampilkan SweetAlert sukses
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = data.redirect; // Redirect ke halaman index
+                });
+            } else {
+                let errorMessage = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
+                if (data.errors) {
+                    errorMessage += '\n\nDetail Kesalahan:\n';
+                    for (const key in data.errors) {
+                        errorMessage += `- ${data.errors[key].join(', ')}\n`;
+                    }
+                }
+                Swal.fire({ // Tampilkan SweetAlert error
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonText: 'OK'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error); // Log error ke konsol browser
+            let displayMessage = 'Terjadi kesalahan saat berkomunikasi dengan server. Silakan coba lagi.';
+            if (error && error.message) {
+                // Jika error berasal dari server (misal dari throw errorData)
+                displayMessage = error.message;
+                if (error.errors) { // Jika ada error validasi dari server
+                    displayMessage += '\n\nDetail Kesalahan:\n';
+                    for (const key in error.errors) {
+                        displayMessage += `- ${error.errors[key].join(', ')}\n`;
+                    }
+                }
+            }
+
+            Swal.fire({ // Tampilkan SweetAlert error umum
+                icon: 'error',
+                title: 'Error Jaringan / Sistem!',
+                text: displayMessage,
+                confirmButtonText: 'OK'
+            });
+        } finally {
+            submitButton.disabled = false; // Aktifkan kembali tombol
+            submitButton.textContent = 'Simpan'; // Kembalikan teks tombol
+        }
+    });
+
     // Menampilkan nama file yang dipilih untuk input logo
     document.getElementById('logo').addEventListener('change', function() {
         var fileName = this.files[0] ? this.files[0].name : 'No file chosen';
         document.getElementById('file-chosen').textContent = fileName;
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        let blockCount = 1;
-        const dynamicContent = document.getElementById('dynamic-content');
-        const addBlockButton = document.getElementById('add-block'); // Pastikan tombol ini ada di HTML jika ingin berfungsi
-
-        const editors = {};
-
-        // Fungsi untuk membuat CKEditor dengan konfigurasi yang diinginkan
-        function createCKEditor(elementId, initialContent = '') {
-            ClassicEditor
-                .create(document.querySelector(elementId), {
-                    removePlugins: [
-                        'Image',
-                        'ImageCaption',
-                        'ImageStyle',
-                        'ImageToolbar',
-                        'ImageUpload',
-                        'EasyImage',
-                        'Base64UploadAdapter',
-                        'CKFinder',
-                        'MediaEmbed',
-                        'Link'
-                    ],
-                    toolbar: {
-                        items: [
-                            'heading',
-                            '|',
-                            'bold',
-                            'italic',
-                            'bulletedList',
-                            'numberedList',
-                            '|',
-                            'outdent',
-                            'indent',
-                            '|',
-                            'blockQuote',
-                            'undo',
-                            'redo'
-                        ]
-                    }
-                })
-                .then(editor => {
-                    editors[elementId.replace('#', '')] = editor; // Store by full ID for easy lookup
-                    editor.setData(initialContent); // Set initial content if provided
-                })
-                .catch(error => {
-                    console.error('There was an error initializing the CKEditor for ' + elementId + ':', error);
-                });
-        }
-
-        // Inisialisasi CKEditor untuk textarea Deskripsi
-        createCKEditor('#paragraf_0_content');
-
-        // Inisialisasi CKEditor untuk textarea Fitur
-        // Ambil konten yang mungkin sudah ada di textarea Fitur jika ada
-        const fiturTextarea = document.getElementById('fitur_content');
-        const initialFiturContent = fiturTextarea ? fiturTextarea.value : '';
-        createCKEditor('#fitur_content', initialFiturContent);
-
-
-        // Ini adalah bagian untuk menambahkan blok dinamis (paragraf/gambar)
-        // Saya asumsikan Anda telah menghapus atau akan menghapus fungsionalitas ini
-        // jika Anda hanya membutuhkan deskripsi dan fitur statis.
-        // Jika Anda masih ingin menambahkan paragraf dinamis untuk deskripsi, biarkan kode ini.
-        if (addBlockButton) {
-            addBlockButton.addEventListener('click', function() {
-                if (blockCount >= 5) {
-                    const modalDiv = document.createElement('div');
-                    modalDiv.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50';
-                    modalDiv.innerHTML = `
-                        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm mx-auto">
-                            <h2 class="text-xl font-bold mb-4 text-center">Batas Maksimal Terlampaui</h2>
-                            <p class="text-gray-700 mb-6">Maksimal 5 paragraf dan gambar tambahan dapat ditambahkan.</p>
-                            <div class="flex justify-end">
-                                <button type="button" id="close-modal" class="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700">Tutup</button>
-                            </div>
-                        </div>
-                    `;
-                    document.body.appendChild(modalDiv);
-
-                    document.getElementById('close-modal').addEventListener('click', function() {
-                        modalDiv.remove();
-                    });
-                    return;
-                }
-
-                const newBlock = document.createElement('div');
-                newBlock.id = `block-${blockCount}`;
-                newBlock.className = 'border border-gray-200 p-4 rounded-md bg-gray-50 relative';
-                newBlock.innerHTML = `
-                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Paragraf ${blockCount + 1}</h3>
-                    <button type="button" class="remove-block absolute top-2 right-2 text-red-600 hover:text-red-800 text-xl font-bold">&times;</button>
-                    <div>
-                        <label for="paragraf_${blockCount}_short_title" class="block text-sm font-medium text-gray-700">Judul Singkat Paragraf ${blockCount + 1}</label>
-                        <input type="text" name="paragrafs[${blockCount}][short_title]" id="paragraf_${blockCount}_short_title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                    </div>
-                    <div class="mt-4">
-                        <label for="paragraf_${blockCount}_content" class="block text-sm font-medium text-gray-700">Isi Paragraf ${blockCount + 1}</label>
-                        <textarea name="paragrafs[${blockCount}][content]" id="paragraf_${blockCount}_content" rows="5" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
-                    </div>
-                `;
-                // Saya menghapus bagian gambar dinamis di sini
-                dynamicContent.appendChild(newBlock);
-
-                createCKEditor(`#paragraf_${blockCount}_content`); // Panggil fungsi dengan ID elemen
-
-                newBlock.querySelector('.remove-block').addEventListener('click', function() {
-                    const blockId = `paragraf_${newBlock.id.split('-')[1]}_content`; // Adjust ID for lookup
-                    if (editors[blockId]) {
-                        editors[blockId].destroy()
-                            .catch(error => console.error('Error destroying editor:', error));
-                        delete editors[blockId];
-                    }
-                    newBlock.remove();
-                });
-
-                blockCount++;
-            });
-        }
-
-
-        // Handle form submission to ensure CKEditor content is updated
-        const form = document.querySelector('form');
-        form.addEventListener('submit', function() {
-            for (const id in editors) {
-                const editorInstance = editors[id];
-                document.getElementById(id).value = editorInstance.getData();
-            }
-        });
-    });
 </script>
 @endsection

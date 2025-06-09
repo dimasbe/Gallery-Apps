@@ -3,7 +3,6 @@
 namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\BeritaInterface;
-use App\Contracts\Interfaces\Eloquent\SearchInterface;
 use App\Models\Berita;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,7 +17,6 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Mengambil semua berita dengan relasi (kategori, fotoBerita).
-     * Relasi 'penulis' dihapus karena menyebabkan error.
      *
      * @return Collection
      */
@@ -26,7 +24,6 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
     {
         return $this->model->with([
                 'kategori',
-                // 'penulis', // <<< DIHAPUS: Karena menyebabkan "Call to undefined relationship [penulis]"
                 'fotoBerita' => function ($query) {
                     $query->where('tipe', 'thumbnail');
                 }
@@ -37,7 +34,6 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Mengambil satu berita berdasarkan ID.
-     * Relasi 'penulis' dihapus.
      *
      * @param mixed $id
      * @return Berita
@@ -46,7 +42,6 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
     {
         return $this->model->with([
                 'kategori',
-                // 'penulis', // <<< DIHAPUS
                 'fotoBerita'
             ])
             ->findOrFail($id);
@@ -54,7 +49,9 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Simpan berita baru.
-     * (Metode ini tidak memuat relasi, jadi tidak ada perubahan di sini)
+     *
+     * @param array $data
+     * @return Berita
      */
     public function store(array $data): Berita
     {
@@ -63,7 +60,10 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Perbarui berita berdasarkan ID.
-     * (Metode ini tidak memuat relasi, jadi tidak ada perubahan di sini)
+     *
+     * @param mixed $id
+     * @param array $data
+     * @return bool
      */
     public function update(mixed $id, array $data): bool
     {
@@ -73,7 +73,9 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Hapus berita berdasarkan ID.
-     * (Metode ini tidak memuat relasi, jadi tidak ada perubahan di sini)
+     *
+     * @param mixed $id
+     * @return bool
      */
     public function delete(mixed $id): bool
     {
@@ -83,9 +85,8 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Mencari berita berdasarkan keyword di judul atau kategori.
-     * Relasi 'penulis' dihapus.
      *
-     * @param  \Illuminate\Http\Request  $request Objek request HTTP yang berisi parameter pencarian
+     * @param Request $request
      * @return Collection
      */
     public function search(Request $request): Collection
@@ -94,12 +95,11 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
         $kategoriId = $request->input('kategori_id');
 
         $query = $this->model->with([
-                'kategori',
-                // 'penulis', // <<< DIHAPUS
-                'fotoBerita' => function ($q) {
-                    $q->where('tipe', 'thumbnail');
-                }
-            ]);
+            'kategori',
+            'fotoBerita' => function ($q) {
+                $q->where('tipe', 'thumbnail');
+            }
+        ]);
 
         if ($keyword) {
             $query->where(function ($q) use ($keyword) {
@@ -117,22 +117,19 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
             });
         }
 
-        return $query->orderBy('tanggal_dibuat', 'desc')
-            ->get();
+        return $query->orderBy('tanggal_dibuat', 'desc')->get();
     }
 
     /**
      * Mendapatkan sejumlah berita terbaru.
-     * Relasi 'penulis' dihapus.
      *
-     * @param int $limit Batasan jumlah berita yang diambil.
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param int $limit
+     * @return Collection
      */
     public function getLatest(int $limit = 3): Collection
     {
         return $this->model->with([
                 'kategori',
-                // 'penulis', // <<< DIHAPUS
                 'fotoBerita' => function ($query) {
                     $query->where('tipe', 'thumbnail');
                 }
@@ -143,18 +140,34 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
     }
 
     /**
-     * Mengambil semua berita dengan paginasi.
-     * Relasi 'penulis' dihapus.
+     * Paginasi umum tanpa filter.
      *
-     * @param int|null $perPage Jumlah item per halaman.
-     * @param int|null $kategoriId ID kategori untuk filter.
+     * @param int $pagination
+     * @return LengthAwarePaginator
+     */
+    public function paginate(int $pagination = 10): LengthAwarePaginator
+    {
+        return $this->model->with([
+                'kategori',
+                'fotoBerita' => function ($query) {
+                    $query->where('tipe', 'thumbnail');
+                }
+            ])
+            ->orderBy('tanggal_dibuat', 'desc')
+            ->paginate($pagination);
+    }
+
+    /**
+     * Paginasi dengan filter kategori.
+     *
+     * @param int|null $perPage
+     * @param int|null $kategoriId
      * @return LengthAwarePaginator
      */
     public function getAllPaginated(?int $perPage = 10, ?int $kategoriId = null): LengthAwarePaginator
     {
         $query = $this->model->with([
             'kategori',
-            // 'penulis', // <<< DIHAPUS
             'fotoBerita' => function ($query) {
                 $query->where('tipe', 'thumbnail');
             }

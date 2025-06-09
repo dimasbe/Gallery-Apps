@@ -16,30 +16,17 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
         $this->model = $aplikasi;
     }
 
+    public function get(): mixed {
+        return $this->model->query()->with('kategori', 'fotoAplikasi', 'users')->orderBy('id','DESC')->get();
+    }
     /**
      * Mengambil semua aplikasi dengan relasi yang diperlukan.
      *
      * @return mixed
      */
-    public function get(): mixed
-    {
-        return $this->model->query()
-            ->with('kategori', 'fotoAplikasi', 'user')
-            ->orderBy('id', 'DESC')
-            ->get();
-    }
 
-    /**
-     * Menampilkan aplikasi berdasarkan ID.
-     *
-     * @param mixed $id
-     * @return mixed
-     */
-    public function show(mixed $id): mixed
-    {
-        return $this->model->query()
-            ->with('kategori.fotoAplikasi', 'fotoAplikasi', 'user')
-            ->findOrFail($id);
+    public function show(mixed $id): mixed {
+        return $this->model->query()->with('kategori.fotoAplikasi', 'foto_aplikasi', 'users')->findOrFail($id);
     }
 
     /**

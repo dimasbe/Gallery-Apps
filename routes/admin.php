@@ -49,10 +49,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/aplikasi/{id}/terima', [AdminVerifikasiController::class, 'terima'])->name('aplikasi.terima');
     Route::post('/aplikasi/{id}/tolak', [AdminVerifikasiController::class, 'tolak'])->name('aplikasi.tolak');
 
-    Route::get('/verifikasi/{id}/detail', function($id) {
-        // Pastikan view 'admin.verifikasi.detail' ada
-        return view('admin.verifikasi.detail', ['appId' => $id]);
-    })->name('verifikasi.detail');
+    Route::get('/verifikasi/{id}/detail', [AdminVerifikasiController::class, 'detailVerifikasi'])->name('verifikasi.detail');
 
     // Rute Resource untuk Riwayat (index, show, destroy)
     Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);

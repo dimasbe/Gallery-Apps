@@ -5,101 +5,189 @@ namespace App\Http\Controllers;
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Contracts\Interfaces\FotoAplikasiInterface;
 use App\Contracts\Interfaces\KategoriInterface;
-use App\Http\Requests\StoreAplikasiRequest;
-use App\Http\Requests\UpdateAplikasiRequest;
+use App\Http\Requests\StoreAplikasiRequest; // <<< PENTING: Pastikan ini di-import!
+use App\Http\Requests\UpdateAplikasiRequest; // Pastikan ini ada jika ada metode update
 use App\Models\Aplikasi;
+use App\Models\Kategori;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse; // <<< PENTING: Import ini!
 use Illuminate\View\View;
-use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Auth; // <<< Pastikan ini di-import!
+use Illuminate\Support\Facades\Log; // <<< Pastikan ini di-import!
+
+// Pastikan Service Anda sudah ada dan ter-implementasi
+use App\Services\AplikasiService;
+use App\Services\FotoAplikasiService;
+use App\Services\LogoAplikasiService;
+
 
 class AplikasiController extends Controller
 {
     private AplikasiInterface $aplikasi;
-    private KategoriInterface $kategoriAplikasi;
+    private KategoriInterface $kategori;
     private FotoAplikasiInterface $fotoAplikasi;
+    private FotoAplikasiService $fotoAplikasiService;
+    private LogoAplikasiService $logoAplikasiService;
+    private AplikasiService $aplikasiService;
 
-    public function __construct(AplikasiInterface $aplikasi, FotoAplikasiInterface $fotoAplikasi, KategoriInterface $kategoriAplikasi)
-    {
+    public function __construct(
+        AplikasiInterface $aplikasi,
+        FotoAplikasiInterface $fotoAplikasi,
+        KategoriInterface $kategori,
+        FotoAplikasiService $fotoAplikasiService,
+        LogoAplikasiService $logoAplikasiService,
+        AplikasiService $aplikasiService
+    ) {
         $this->aplikasi = $aplikasi;
-        $this->kategoriAplikasi = $kategoriAplikasi;
+        $this->kategori = $kategori;
         $this->fotoAplikasi = $fotoAplikasi;
+        $this->fotoAplikasiService = $fotoAplikasiService;
+        $this->logoAplikasiService = $logoAplikasiService;
+        $this->aplikasiService = $aplikasiService;
     }
 
     public function index(): View
-    {
+    {        
         $aplikasi = $this->aplikasi->get();
-        $kategorisAplikasi = $this->kategoriAplikasi->get();
+        $kategori = $this->kategori->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
-
-        return view('aplikasi.index', compact('aplikasi', 'kategorisAplikasi', 'fotoAplikasi'));
+        return view('tambah_aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
 
     public function create(): View
     {
-        $kategorisAplikasi = $this->kategoriAplikasi->get();
-
-        return view('aplikasi.create', compact('kategorisAplikasi'));
+        $kategori = $this->kategori->filterBySubKategori('aplikasi');
+        $fotoAplikasi = $this->fotoAplikasi->get();
+        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi')); // Menggunakan $kategori, bukan $kategoris
     }
-
-    public function store(StoreAplikasiRequest $request): RedirectResponse
-    {
+    
+    public function store(StoreAplikasiRequest $request): JsonResponse { // <<< PASTIKAN TIPE KEMBALIAN INI DAN MENGGUNAKAN StoreAplikasiRequest
         try {
-            $this->aplikasi->store($request->validated());
-            Alert::success('Berhasil', 'Aplikasi Berhasil Ditambahkan');
-            return redirect()->route('aplikasi.index');
+            $validated = $request->validated();
+            $validated['id_user'] = Auth::id(); 
+
+            if ($request->hasFile('logo')) {
+                $validated['logo'] = $this->logoAplikasiService->store($request->file('logo'));
+            } else {
+                $validated['logo'] = null;
+            }
+
+            $files = $request->hasFile('path_foto') ? $request->file('path_foto') : null;
+
+            $this->aplikasiService->createWithFotos($validated, $files);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Aplikasi Berhasil Ditambahkan!',
+                'redirect' => route('tambah_aplikasi.index') // URL untuk redirect di frontend
+            ], 200);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Alert::error('Gagal', 'Silakan periksa kembali form Anda');
-            return back()->withErrors($e->validator)->withInput();
+            Log::error('Validation Error adding application: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal. Silakan periksa kembali form Anda.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error adding application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem, silakan coba lagi.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function show(Aplikasi $aplikasi): View
     {
-        // Mengambil detail aplikasi berdasarkan ID
-        return view('aplikasi.detail', compact('aplikasi'));
+        $aplikasi = $this->aplikasi->get();
+        $kategori = $this->kategori->get();
+        $fotoAplikasi = $this->fotoAplikasi->get();
+        return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
 
     public function edit(Aplikasi $aplikasi): View
     {
-        $kategorisAplikasi = $this->kategoriAplikasi->get();
-        $fotoAplikasi = $this->fotoAplikasi->get();
-
-        return view('aplikasi.edit', compact('aplikasi', 'kategorisAplikasi', 'fotoAplikasi'));
+        if ($aplikasi->id_user !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+        $kategori = Kategori::where('sub_kategori', 'aplikasi')->get(); // Menggunakan $kategori
+        $aplikasi->load('fotoAplikasi');
+        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori')); // Menggunakan $kategori
     }
 
-    public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): RedirectResponse
-    {
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateAplikasiRequest  $request
+     * @param  \App\Models\Aplikasi  $aplikasi
+     * @return \Illuminate\Http\JsonResponse // <<< PASTIKAN TIPE KEMBALIAN INI
+     */
+    public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): JsonResponse {
         try {
-            $this->aplikasi->update($aplikasi->id, $request->validated());
-            Alert::success('Berhasil', 'Aplikasi Berhasil Diperbarui');
-            return redirect()->route('aplikasi.index');
+            $validated = $request->validated();
+            // Logika update service
+            $this->aplikasiService->updateWithFotos($aplikasi->id, $validated, $request->file('logo'), $request->file('path_foto'));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Aplikasi Berhasil Diperbarui!',
+                'redirect' => route('tambah_aplikasi.index')
+            ], 200);
+
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Alert::error('Gagal', 'Silakan periksa kembali form Anda');
-            return back()->withErrors($e->validator)->withInput();
+            Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal. Periksa kembali form Anda.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem, silakan coba lagi.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function destroy(Aplikasi $aplikasi): RedirectResponse
-    {
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Aplikasi  $aplikasi
+     * @return \Illuminate\Http\JsonResponse // <<< PASTIKAN TIPE KEMBALIAN INI
+     */
+    public function destroy(Aplikasi $aplikasi): JsonResponse {
         try {
-            $this->aplikasi->delete($aplikasi->id);
-            Alert::success('Berhasil', 'Aplikasi Berhasil Dihapus');
-            return redirect()->route('aplikasi.index');
+            // Asumsi service memiliki metode delete
+            $this->aplikasiService->deleteAplikasiAndFiles($aplikasi->id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Aplikasi Berhasil Dihapus!'
+            ], 200);
+
         } catch (QueryException $e) {
             if ($e->errorInfo[1] == 1451) {
-                Alert::error('Gagal', 'Aplikasi Belum Dihapus karena masih terhubung dengan data lain');
-                return redirect()->route('aplikasi.index');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Aplikasi tidak dapat dihapus karena ada relasi data lain.'
+                ], 409); // Conflict
             }
+            Log::error('Error deleting application (QueryException): ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan database saat menghapus.'
+            ], 500);
+        } catch (\Exception $e) {
+            Log::error('Error deleting application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem, silakan coba lagi.'
+            ], 500);
         }
-        Alert::success('Berhasil', 'Aplikasi Berhasil Dihapus');
-        return redirect()->route('aplikasi.index');
-    }
-
-    public function search(Request $request): View
-    {
-        $aplikasi = $this->aplikasi->search($request);
-        return view('aplikasi.search', compact('aplikasi'));
     }
 }
