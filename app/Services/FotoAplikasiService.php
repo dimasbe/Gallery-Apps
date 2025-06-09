@@ -36,7 +36,7 @@ class FotoAplikasiService
      */
     public function updateMultiple(?array $files, int $idAplikasi): void
     {
-        if (!$files) return;
+        if (!$files || !is_array($files) || count($files) === 0) return;
 
         // Hapus foto lama dari storage dan database
         $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
