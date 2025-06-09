@@ -15,7 +15,7 @@
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
                     <li class="flex items-center">
-                        <a href="{{ route('admin.riwayat.index') }}" class="hover:text-custom-primary-red">Verifikasi</a>
+                        <a href="{{ route('admin.verifikasi') }}" class="hover:text-custom-primary-red">Verifikasi</a>
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
                     <li class="text-custom-primary-red" aria-current="page">Detail</li>

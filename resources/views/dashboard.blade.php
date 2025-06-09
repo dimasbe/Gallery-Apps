@@ -274,67 +274,68 @@
 </section>
 
 {{-- Section Berita Terbaru --}}
-    <section class="mt-20">
-        <div class="max-w-7xl mx-auto px-2">
-            <h2 class="text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-4">
-                BERITA
-            </h2>
-            <p class="text-center text-gray-500 font-poppins mb-4">
-                Lihat Berita Terbaru Kami
-            </p>
-            <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
-            <div class="relative">
-                {{-- Flex container untuk berita, ditambahkan justify-center agar item terpusat --}}
-                {{-- Gunakan kelas 'gap-4' untuk spasi antar item, lebih modern dari 'space-x-4' --}}
-                <div class="flex flex-wrap justify-center gap-4">
-                    {{-- Loop melalui koleksi $beritas yang dikirim dari controller --}}
-                    @forelse($beritas as $berita)
-                        {{-- Berita Item --}}
-                        <div class="bg-white rounded-xl shadow-md w-80 sm:w-96 flex-shrink-0">
-                            {{-- Menggunakan accessor thumbnail_url dari model Berita --}}
-                            {{-- Tambahkan fallback image dengan 'onerror' jika gambar tidak ditemukan --}}
-                            <img src="{{ $berita->thumbnail_url }}"
-                                alt="{{ $berita->judul_berita }}"
-                                class="w-full h-40 object-cover rounded-t-xl"
-                                onerror="this.onerror=null;this.src='https://via.placeholder.com/600x400?text=No+Image';">
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ $berita->judul_berita }}</h3>
-                                {{-- Memformat tanggal menggunakan Carbon dengan lokal Indonesia --}}
-                                <p class="text-gray-600 text-sm mb-2">
-                                    {{ \Carbon\Carbon::parse($berita->tanggal_dibuat)->locale('id')->isoFormat('D MMMM YYYY') }} {{-- KOREKSI: Mengubah format tanggal untuk Bahasa Indonesia --}}
-                                </p>
-                                {{-- Menggunakan accessor ringkasan dari model Berita --}}
-                                <p class="text-gray-700 text-sm mb-3">
-                                    {{ $berita->ringkasan }}
-                                </p>
-                                {{-- Link ke detail berita menggunakan rute bernama 'berita.show' --}}
-                                <a href="{{ route('berita.show', $berita->id) }}" class="text-blue-600 hover:underline">
-                                    Baca Selengkapnya
-                                </a>
-                            </div>
+<section class="mt-20">
+    <div class="max-w-7xl mx-auto px-2">
+        <h2 class="text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-4">
+            BERITA
+        </h2>
+        <p class="text-center text-gray-500 font-poppins mb-4">
+            Lihat Berita Terbaru Kami
+        </p>
+        <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
+        <div class="relative">
+            {{-- Flex container untuk berita, ditambahkan justify-center agar item terpusat --}}
+            {{-- Gunakan kelas 'gap-4' untuk spasi antar item, lebih modern dari 'space-x-4' --}}
+            <div class="flex flex-wrap justify-center gap-4">
+                {{-- Loop melalui koleksi $beritas yang dikirim dari controller --}}
+                @forelse($beritas as $berita)
+                    {{-- Berita Item --}}
+                    <div class="bg-white rounded-xl shadow-md w-80 sm:w-96 flex-shrink-0">
+                        {{-- Menggunakan accessor thumbnail_url dari model Berita --}}
+                        {{-- Tambahkan fallback image dengan 'onerror' jika gambar tidak ditemukan --}}
+                        <img src="{{ $berita->thumbnail_url }}"
+                            alt="{{ $berita->judul_berita }}"
+                            class="w-full h-40 object-cover rounded-t-xl"
+                            onerror="this.onerror=null;this.src='https://via.placeholder.com/600x400?text=No+Image';">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ $berita->judul_berita }}</h3>
+                            {{-- Memformat tanggal menggunakan Carbon dengan lokal Indonesia --}}
+                            <p class="text-gray-600 text-sm mb-2">
+                                {{ \Carbon\Carbon::parse($berita->tanggal_dibuat)->locale('id')->isoFormat('D MMMM YYYY') }}
+                            </p>
+                            {{-- Menggunakan accessor ringkasan dari model Berita --}}
+                            {{-- **PERBAIKAN DI SINI: Tambahkan style="word-wrap: break-word;"** --}}
+                            <p class="text-gray-700 text-sm mb-3" style="word-wrap: break-word;">
+                                {{ $berita->ringkasan }}
+                            </p>
+                            {{-- Link ke detail berita menggunakan rute bernama 'berita.show' --}}
+                            <a href="{{ route('berita.show', $berita->id) }}" class="text-blue-600 hover:underline">
+                                Baca Selengkapnya
+                            </a>
                         </div>
-                    @empty
-                        {{-- Pesan jika tidak ada berita yang ditemukan --}}
-                        <p class="text-center text-gray-500">Belum ada berita terbaru untuk ditampilkan.</p>
-                    @endforelse
-                </div>
-
-                {{-- Panah navigasi dihilangkan sesuai permintaan --}}
-                {{-- <div class="absolute top-1/2 -left-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
-                {{-- <div class="absolute top-1/2 -right-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
+                    </div>
+                @empty
+                    {{-- Pesan jika tidak ada berita yang ditemukan --}}
+                    <p class="text-center text-gray-500">Belum ada berita terbaru untuk ditampilkan.</p>
+                @endforelse
             </div>
 
-            {{-- Titik-titik paginasi/indikator dihilangkan karena Anda hanya menampilkan 3 item dan tanpa panah navigasi --}}
-            {{-- <div class="flex justify-center mt-4"> ... </div> --}}
-
-            {{-- Tombol "Lihat semua berita" --}}
-            <div class="flex justify-center mt-8">
-                <a href="{{ route('berita.index') }}"
-                    class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-6 py-3 rounded-full font-poppins shadow-md transition text-base">
-                    Lihat Semua Berita
-                </a>
-            </div>
+            {{-- Panah navigasi dihilangkan sesuai permintaan --}}
+            {{-- <div class="absolute top-1/2 -left-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
+            {{-- <div class="absolute top-1/2 -right-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
         </div>
-    </section>
+
+        {{-- Titik-titik paginasi/indikator dihilangkan karena Anda hanya menampilkan 3 item dan tanpa panah navigasi --}}
+        {{-- <div class="flex justify-center mt-4"> ... </div> --}}
+
+        {{-- Tombol "Lihat semua berita" --}}
+        <div class="flex justify-center mt-8">
+            <a href="{{ route('berita.index') }}"
+                class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-6 py-3 rounded-full font-poppins shadow-md transition text-base">
+                Lihat Semua Berita
+            </a>
+        </div>
+    </div>
+</section>
 
 @endsection

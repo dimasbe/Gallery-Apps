@@ -2,22 +2,36 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\Interfaces\KategoriInterface;
+use App\Contracts\Interfaces\NotifikasiInterface;
+use App\Contracts\Interfaces\VerifikasiAplikasiInterface;
+use App\Enums\StatusTypeEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Aplikasi;
+use App\Http\Requests\UpdateRejectVerifikasiRequest;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Carbon\Carbon; // Import Carbon untuk tanggal
+use Carbon\Carbon;
 
 class AdminVerifikasiController extends Controller
 {
+    protected VerifikasiAplikasiInterface $aplikasi;
+    protected NotifikasiInterface $notifikasi;
+
+    public function __construct(
+        VerifikasiAplikasiInterface $aplikasi,
+        NotifikasiInterface $notifikasi
+    ) {
+        $this->aplikasi = $aplikasi;
+        $this->notifikasi = $notifikasi;
+    }
+
     /**
      * Menampilkan daftar aplikasi yang perlu diverifikasi.
      */
     public function index()
     {
         // Ambil aplikasi dengan status_verifikasi 'pending'
-        $aplikasi = Aplikasi::where('status_verifikasi', 'pending')->get();
-        // return dd(count($aplikasi));
+        $aplikasi = $this->aplikasi->getByStatus(StatusTypeEnum::PENDING->value);
         return view('admin.verifikasi.index', compact('aplikasi'));
     }
 
@@ -27,12 +41,22 @@ class AdminVerifikasiController extends Controller
     public function terima(Request $request, $id)
     {
         try {
-            $aplikasi = Aplikasi::findOrFail($id);
             
-            $aplikasi->update([
-                'status_verifikasi' => 'diterima', // Gunakan nilai enum 'diterima'
+            $this->aplikasi->update($id, [
+                'status_verifikasi' => StatusTypeEnum::DITERIMA->value, // Gunakan nilai enum 'diterima'
                 'tanggal_verifikasi' => Carbon::now() // Set tanggal verifikasi
             ]);
+
+            // Menambahkan Notifikasi
+            $aplikasiSelected = $this->aplikasi->show($id);
+            $this->notifikasi->store([
+                'user_id' => $aplikasiSelected->id_user, // fallback ke user login
+                'judul' => 'Aplikasi Diterima',
+                'pesan' => 'Aplikasi "' . $aplikasiSelected->nama_aplikasi . '" telah diterima.',
+                'waktu' => Carbon::now(),
+                'is_read' => false
+            ]);
+
             return redirect()->route('admin.riwayat.index')->with('success', 'Aplikasi berhasil diterima.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menerima aplikasi: ' . $e->getMessage());
@@ -42,23 +66,23 @@ class AdminVerifikasiController extends Controller
     /**
      * Memproses penolakan aplikasi.
      */
-    public function tolak(Request $request, $id)
+    public function tolak(UpdateRejectVerifikasiRequest $request, $id)
     {
         try {
-            $request->validate([
-                'alasan_penolakan' => 'required|string|max:255', // Ganti 'catatan_penolakan'
-            ], [
-                'alasan_penolakan.required' => 'Alasan penolakan wajib diisi.',
-                'alasan_penolakan.string' => 'Alasan penolakan harus berupa teks.',
-                'alasan_penolakan.max' => 'Alasan penolakan tidak boleh lebih dari 255 karakter.',
-            ]);
-
-            $aplikasi = Aplikasi::findOrFail($id);
-
-            $aplikasi->update([
-                'status_verifikasi' => 'ditolak', // Gunakan nilai enum 'ditolak'
+            $this->aplikasi->update($id, [
+                'status_verifikasi' => StatusTypeEnum::DITOLAK->value, // Gunakan nilai enum 'ditolak'
                 'alasan_penolakan' => $request->alasan_penolakan, // Ganti 'catatan_penolakan'
                 'tanggal_verifikasi' => Carbon::now() // Set tanggal verifikasi
+            ]);
+
+            // Menambahkan Notifikasi
+            $aplikasiSelected = $this->aplikasi->show($id);
+            $this->notifikasi->store([
+                'user_id' => $aplikasiSelected->id_user, // fallback ke user login
+                'judul' => 'Aplikasi "' . $aplikasiSelected->nama_aplikasi . '" Ditolak',
+                'pesan' => $aplikasiSelected->alasan_penolakan,
+                'waktu' => Carbon::now(),
+                'is_read' => false
             ]);
 
             return redirect()->route('admin.riwayat.index')->with('success', 'Aplikasi berhasil ditolak.');
@@ -68,9 +92,7 @@ class AdminVerifikasiController extends Controller
     }
 
     public function detailVerifikasi($id) { 
-        $aplikasi = Aplikasi::with('user', 'kategori')->find($id)->first();
-
-        // return dd($aplikasi);
+        $aplikasi = $this->aplikasi->show($id);
 
         return view('admin.verifikasi.detail', compact('aplikasi'));
     }
