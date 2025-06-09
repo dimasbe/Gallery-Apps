@@ -67,6 +67,7 @@ class BeritaController extends Controller
         $kategoris = Kategori::all();
 
 
+        $kategoris = Kategori::where('sub_kategori', 'berita')->get();
 
         return view('berita.index', compact('beritas', 'kategoris'));
 
