@@ -48,4 +48,15 @@ class FotoAplikasiService
         // Simpan foto baru
         $this->storeMultiple($files, $idAplikasi);
     }
+
+    public function deleteMultipleByAplikasiId(int $idAplikasi): void
+    {
+        $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
+        foreach ($fotoLama as $foto) {
+            if ($foto->path_foto && Storage::disk('public')->exists($foto->path_foto)) {
+                Storage::disk('public')->delete($foto->path_foto);
+            }
+            $foto->delete();
+        }
+    }
 }

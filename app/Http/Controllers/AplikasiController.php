@@ -189,7 +189,8 @@ class AplikasiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Aplikasi Berhasil Dihapus!'
+                'message' => 'Aplikasi Berhasil Dihapus!',
+                'redirect' => route('tambah_aplikasi.index')
             ], 200);
 
         } catch (QueryException $e) {

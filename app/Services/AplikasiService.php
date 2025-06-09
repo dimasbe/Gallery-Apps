@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Services\FotoAplikasiService;
 use App\Services\LogoAplikasiService;
+use Illuminate\Support\Facades\Storage;
 
 class AplikasiService
 {
@@ -65,5 +67,41 @@ class AplikasiService
 
             return $this->aplikasi->find($id); // kembalikan data terbaru jika perlu
         });
+    }
+
+    public function deleteAplikasiAndFiles(int $aplikasiId): bool
+    {
+        DB::beginTransaction(); // Start a database transaction
+
+        try {
+            // Fetch the application using the AplikasiInterface
+            $aplikasi = $this->aplikasi->find($aplikasiId);
+
+            if (!$aplikasi) {
+                throw new Exception("Aplikasi dengan ID {$aplikasiId} tidak ditemukan.");
+            }
+
+            // Delete associated FotoAplikasi files from storage and database
+            // This assumes FotoAplikasiService has a method to delete multiple photos by aplikasi ID
+            $this->fotoAplikasiService->deleteMultipleByAplikasiId($aplikasi->id);
+
+
+            // Delete the logo file from storage
+            if ($aplikasi->logo && Storage::disk('public')->exists($aplikasi->logo)) {
+                Storage::disk('public')->delete($aplikasi->logo);
+            }
+
+            // Delete the main Aplikasi record from the database
+            $this->aplikasi->delete($aplikasi->id); // Assuming AplikasiInterface has a delete method by ID
+
+            DB::commit(); // Commit the transaction if all operations are successful
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack(); // Rollback the transaction on error
+            // Log the error for debugging purposes
+            \Log::error("Failed to delete application with ID: {$aplikasiId}. Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            throw new Exception("Gagal menghapus aplikasi dan file terkait: " . $e->getMessage());
+        }
     }
 }
