@@ -3,50 +3,68 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateAplikasiRequest extends FormRequest {
+class UpdateAplikasiRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
 
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
-            'id_user'            => ['required', 'exists:users,id'],
-            'nama_aplikasi'      => ['required', 'string', 'max:255'],
-            'logo'               => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'id_kategori'        => ['required', 'exists:kategori_aplikasi,id'],
-            'nama_pemilik'       => ['required', 'string', 'max:255'],
-            'tanggal_rilis'      => ['required', 'date'],
-            'versi'              => ['required', 'string', 'max:50'],
-            'tautan_aplikasi'    => ['required', 'url'],
-            'deskripsi'          => ['required', 'string'],
-            'fitur'              => ['required', 'string'],
-            'status_verifikasi'  => ['nullable', 'in:pendig,diterima,ditolak'], // Sesuaikan dengan value valid
-            'arsip'              => ['nullable', 'boolean'],
-            'tanggal_ditambahkan' => ['required', 'date'],
-            'tanggal_verifikasi'  => ['nullable', 'date'],
-            'alasan_penolakan'   => ['nullable', 'string'],
+            'nama_aplikasi'   => 'required|string|max:255',
+            'nama_pemilik'    => 'required|string|max:255',
+            'id_kategori'     => 'required|exists:kategori,id',
+            'tanggal_rilis'   => 'required|date',
+            'versi'           => 'required|string|max:50',
+            'rating_konten'   => 'required|string|max:50',
+            'tautan_aplikasi' => 'required|url',
+            'deskripsi'       => 'required|string',
+            'fitur'           => 'required|string',
+            'path_foto'       => 'nullable|array|min:1',
+            'path_foto.*'     => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
-            'id_user.required' => 'ID user harus diisi.',
-            'id_user.exists' => 'User tidak ditemukan.',
-            'nama_aplikasi.required' => 'Nama aplikasi harus diisi.',
-            'logo.required' => 'Logo harus diunggah.',
-            'logo.image' => 'File logo harus berupa gambar.',
-            'logo.mimes' => 'Logo harus berformat jpeg, png, jpg, gif, atau svg.',
-            'logo.max' => 'Ukuran logo maksimal 2MB.',
-            'id_kategori.required' => 'Kategori harus dipilih.',
-            'id_kategori.exists' => 'Kategori tidak valid.',
-            'nama_pemilik.required' => 'Nama pemilik harus diisi.',
-            'tanggal_rilis.required' => 'Tanggal rilis harus diisi.',
-            'versi.required' => 'Versi aplikasi harus diisi.',
-            'tautan_aplikasi.required' => 'Tautan aplikasi harus diisi.',
-            'tautan_aplikasi.url' => 'Tautan aplikasi harus berupa URL yang valid.',
-            'deskripsi.required' => 'Deskripsi harus diisi.',
-            'fitur.required' => 'Fitur harus diisi.',
-            'status_verifikasi.in' => 'Status verifikasi harus salah satu dari: pending, diterima, ditolak.',
-            'tanggal_ditambahkan.required' => 'Tanggal ditambahkan harus diisi.',
-            'tanggal_verifikasi.date' => 'Tanggal verifikasi harus berupa tanggal.',
+            'nama_aplikasi.required'   => 'Nama aplikasi wajib diisi.',
+            'nama_aplikasi.max'        => 'Nama aplikasi maksimal 255 karakter.',
+            'nama_pemilik.required'    => 'Nama pemilik wajib diisi.',
+            'nama_pemilik.max'         => 'Nama pemilik maksimal 255 karakter.',
+            'id_kategori.required'     => 'Kategori aplikasi wajib dipilih.',
+            'id_kategori.exists'       => 'Kategori yang dipilih tidak valid.',
+            'tanggal_rilis.required'   => 'Tanggal rilis wajib diisi.',
+            'tanggal_rilis.date'       => 'Tanggal rilis harus berupa tanggal yang valid.',
+            'versi.required'           => 'Versi aplikasi wajib diisi.',
+            'versi.max'                => 'Versi maksimal 50 karakter.',
+            'rating_konten.required'   => 'Rating konten wajib diisi.',
+            'rating_konten.max'        => 'Rating konten maksimal 50 karakter.',
+            'tautan_aplikasi.required' => 'Tautan aplikasi wajib diisi.',
+            'tautan_aplikasi.url'      => 'Tautan aplikasi harus berupa URL yang valid.',
+            'deskripsi.required'       => 'Deskripsi aplikasi wajib diisi.',
+            'fitur.required'           => 'Fitur aplikasi wajib diisi.',
+            'path_foto.required'       => 'Minimal satu foto harus diunggah.',
+            'path_foto.array'          => 'Foto harus dikirim dalam bentuk array.',
+            'path_foto.min'            => 'Minimal satu foto harus diunggah.',
+            'path_foto.*.required'     => 'Setiap foto wajib diunggah.',
+            'path_foto.*.image'        => 'File yang diunggah harus berupa gambar.',
+            'path_foto.*.mimes'        => 'Format gambar yang diperbolehkan: jpeg, png, jpg, gif, svg.',
+            'path_foto.*.max'          => 'Ukuran gambar maksimal 2MB.',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Validasi gagal. Periksa kembali input Anda.',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

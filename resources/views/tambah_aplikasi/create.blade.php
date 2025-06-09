@@ -3,12 +3,22 @@
 @section('content')
 <div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
     <div class="max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-6">
+        
+        <div class="mb-6">
+                <a href="{{ route('tambah_aplikasi.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Kembali
+                </a>
+        </div>
+
         <h2 class="text-xl font-semibold text-gray-900 text-center">
             Tambah Aplikasi
         </h2>
 
         <form class="mt-8 space-y-6" id="aplikasiForm" action="{{ route('tambah_aplikasi.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf {{-- PENTING: Untuk CSRF Token --}}
+            @csrf 
 
             {{-- Input Foto Aplikasi Multiple --}}
             <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-gray-400">
@@ -27,21 +37,21 @@
             {{-- Input Logo --}}
             <div>
                 <label for="logo" class="block text-sm font-medium text-gray-700">Logo</label>
-                <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100" accept="image/*">
+                <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-700 file:text-white hover:file:bg-red-100" accept="image/*">
             </div>
 
             {{-- Input Teks Lainnya --}}
             <div>
                 <label for="nama_aplikasi" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
                 <div class="mt-1">
-                    <input id="nama_aplikasi" name="nama_aplikasi" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <input id="nama_aplikasi" name="nama_aplikasi" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
             </div>
             {{-- ... (input lainnya) ... --}}
             <div>
                 <label for="pemilik" class="block text-sm font-medium text-gray-700">Pemilik</label>
                 <div class="mt-1">
-                    <input id="pemilik" name="nama_pemilik" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <input id="pemilik" name="nama_pemilik" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
             </div>
 
@@ -62,7 +72,7 @@
                 <div>
                     <label for="tanggal_rilis" class="block text-sm font-medium text-gray-700">Tanggal Rilis</label>
                     <div class="mt-1 relative">
-                        <input id="tanggal_rilis" name="tanggal_rilis" type="date" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        <input id="tanggal_rilis" name="tanggal_rilis" type="date" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
                 </div>
             </div>
@@ -71,13 +81,13 @@
                 <div>
                     <label for="versi" class="block text-sm font-medium text-gray-700">Versi</label>
                     <div class="mt-1">
-                        <input id="versi" name="versi" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        <input id="versi" name="versi" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
                 </div>
                 <div>
                     <label for="rating_konten" class="block text-sm font-medium text-gray-700">Rating Konten</label>
                     <div class="mt-1">
-                        <input id="rating_konten" name="rating_konten" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        <input id="rating_konten" name="rating_konten" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
                 </div>
             </div>
@@ -85,7 +95,7 @@
             <div>
                 <label for="tautan_aplikasi" class="block text-sm font-medium text-gray-700">Tautan Aplikasi</label>
                 <div class="mt-1">
-                    <input id="tautan_aplikasi" name="tautan_aplikasi" type="url" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <input id="tautan_aplikasi" name="tautan_aplikasi" type="url" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
             </div>
 
@@ -96,7 +106,7 @@
 
             <div class="mb-6">
                 <label for="fitur" class="block text-sm font-medium text-gray-700">Fitur</label>
-                <textarea name="fitur" id="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" required></textarea>
+                <textarea name="fitur" id="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
             </div>
 
 
