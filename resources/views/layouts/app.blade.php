@@ -145,7 +145,7 @@
                             
                             @if ($notifications->count() > 0)
                             @foreach($notifications as $notification)
-                                    <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
+                                    <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
                                         <div class="flex-grow overflow-hidden">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
                                             <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
@@ -547,7 +547,25 @@
                     unreadDot.classList.add('hidden'); // Sembunyikan dot biru
                 }
                 updateGlobalUnreadNotificationDot(); // Perbarui jumlah notifikasi belum dibaca
-                // TODO: Di sini Anda bisa mengirim permintaan AJAX ke server untuk menandai notifikasi sebagai dibaca di database
+
+                // Kirim permintaan AJAX ke server untuk menandai notifikasi sebagai dibaca di database
+                const notificationId = notificationElement.getAttribute('data-notification-id');
+                if (notificationId) {
+                    fetch(`/notifications/${notificationId}/read`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ read: true })
+                    }).then(response => {
+                        if (!response.ok) {
+                            console.error('Gagal menandai notifikasi sebagai dibaca');
+                        }
+                    }).catch(error => {
+                        console.error('Error saat menandai notifikasi sebagai dibaca:', error);
+                    });
+                }
             }
         }
 
