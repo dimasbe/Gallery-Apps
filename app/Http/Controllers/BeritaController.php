@@ -31,7 +31,7 @@ class BeritaController extends Controller
         $beritas = $this->beritaService->getAllPaginated(10, $kategoriId); // Menggunakan 10 sebagai default per halaman
 
         // Mengambil semua kategori (bisa juga dari service jika ada service Kategori)
-        $kategoris = Kategori::all();
+        $kategoris = Kategori::where('sub_kategori', 'berita')->get();
 
         return view('berita.index', compact('beritas', 'kategoris'));
     }
