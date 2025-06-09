@@ -135,4 +135,11 @@ class BeritaService
             ->get();
     }
 
+    public function getLatest($jumlah = 3)
+{
+    return Berita::latest()->take($jumlah)->get();
+}
+
+
+
 }

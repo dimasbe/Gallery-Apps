@@ -37,4 +37,13 @@ class BeritaController extends Controller
 
         return view('berita.show', compact('berita', 'beritaTerkait'));
     }
+
+    public function homepageLatestNews() // <--- METODE INI HARUS DITAMBAHKAN
+    {
+        // Menggunakan service untuk mendapatkan 3 berita terbaru
+        $beritas = $this->beritaService->getLatest(3);
+
+        // View untuk halaman beranda Anda (welcome.blade.php)
+        return view('welcome', compact('beritas'));
+    }
 }
