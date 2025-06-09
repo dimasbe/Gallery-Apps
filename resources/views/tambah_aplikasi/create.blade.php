@@ -3,7 +3,7 @@
 @section('content')
 <div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
     <div class="max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-6">
-        
+
         <div class="mb-6">
                 <a href="{{ route('tambah_aplikasi.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -18,7 +18,14 @@
         </h2>
 
         <form class="mt-8 space-y-6" id="aplikasiForm" action="{{ route('tambah_aplikasi.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf 
+            @csrf
+
+            {{-- General error message container (for non-validation errors like network issues) --}}
+            <div id="generalErrorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Gagal!</strong>
+                <span class="block sm:inline" id="generalErrorText"></span>
+                <ul id="generalErrorDetails" class="mt-2 list-disc list-inside text-sm"></ul>
+            </div>
 
             {{-- Input Foto Aplikasi Multiple --}}
             <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-gray-400">
@@ -33,40 +40,45 @@
                 </label>
             </div>
             <div id="preview" class="mt-4 flex flex-wrap gap-4"></div>
+            <div id="error-path_foto" class="text-red-500 text-xs mt-1"></div>
+
 
             {{-- Input Logo --}}
             <div>
                 <label for="logo" class="block text-sm font-medium text-gray-700">Logo</label>
                 <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-700 file:text-white hover:file:bg-red-100" accept="image/*">
+                <div id="error-logo" class="text-red-500 text-xs mt-1"></div>
             </div>
 
             {{-- Input Teks Lainnya --}}
             <div>
                 <label for="nama_aplikasi" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
                 <div class="mt-1">
-                    <input id="nama_aplikasi" name="nama_aplikasi" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    <input id="nama_aplikasi" name="nama_aplikasi" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
+                <div id="error-nama_aplikasi" class="text-red-500 text-xs mt-1"></div>
             </div>
-            {{-- ... (input lainnya) ... --}}
             <div>
                 <label for="pemilik" class="block text-sm font-medium text-gray-700">Pemilik</label>
                 <div class="mt-1">
-                    <input id="pemilik" name="nama_pemilik" type="text" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                    <input id="pemilik" name="nama_pemilik" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
+                <div id="error-nama_pemilik" class="text-red-500 text-xs mt-1"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="id_kategori" class="block text-sm font-medium text-gray-700">Kategori</label>
                     <select name="id_kategori" id="id_kategori"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required>
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                         <option value="">Pilih Kategori</option>
-                        @foreach($kategori as $item) {{-- Hapus 's' jika variabel di controller adalah $kategori --}}
+                        @foreach($kategori as $item)
                             <option value="{{ $item->id }}" {{ old('id_kategori') == $item->id ? 'selected' : '' }}>
                                 {{ $item->nama_kategori }}
                             </option>
                         @endforeach
                     </select>
+                    <div id="error-id_kategori" class="text-red-500 text-xs mt-1"></div>
                 </div>
 
                 <div>
@@ -74,6 +86,7 @@
                     <div class="mt-1 relative">
                         <input id="tanggal_rilis" name="tanggal_rilis" type="date" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
+                    <div id="error-tanggal_rilis" class="text-red-500 text-xs mt-1"></div>
                 </div>
             </div>
 
@@ -83,12 +96,14 @@
                     <div class="mt-1">
                         <input id="versi" name="versi" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
+                    <div id="error-versi" class="text-red-500 text-xs mt-1"></div>
                 </div>
                 <div>
                     <label for="rating_konten" class="block text-sm font-medium text-gray-700">Rating Konten</label>
                     <div class="mt-1">
                         <input id="rating_konten" name="rating_konten" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
+                    <div id="error-rating_konten" class="text-red-500 text-xs mt-1"></div>
                 </div>
             </div>
 
@@ -97,16 +112,19 @@
                 <div class="mt-1">
                     <input id="tautan_aplikasi" name="tautan_aplikasi" type="url" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                 </div>
+                <div id="error-tautan_aplikasi" class="text-red-500 text-xs mt-1"></div>
             </div>
 
             <div class="mb-6">
                 <label for="deskripsi" class="block text-sm font-medium text-gray-700">Deskripsi</label>
-                <textarea name="deskripsi" id="deskripsi" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
+                <textarea name="deskripsi" id="deskripsi" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"></textarea>
+                <div id="error-deskripsi" class="text-red-500 text-xs mt-1"></div>
             </div>
 
             <div class="mb-6">
                 <label for="fitur" class="block text-sm font-medium text-gray-700">Fitur</label>
-                <textarea name="fitur" id="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" required></textarea>
+                <textarea name="fitur" id="fitur" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"></textarea>
+                <div id="error-fitur" class="text-red-500 text-xs mt-1"></div>
             </div>
 
 
@@ -122,13 +140,17 @@
     </div>
 </div>
 
-{{-- PENTING: Pastikan SweetAlert2 diimpor. Ini bisa di <head> atau di akhir <body> --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     const fotoAplikasiInput = document.getElementById('foto_aplikasi');
     const previewContainer = document.getElementById('preview');
     let filesArray = []; // Store File objects for photos
+
+    // Get general message containers
+    const generalErrorMessageContainer = document.getElementById('generalErrorMessage');
+    const generalErrorText = document.getElementById('generalErrorText');
+    const generalErrorDetailsList = document.getElementById('generalErrorDetails');
 
     fotoAplikasiInput.addEventListener('change', (e) => {
         const newFiles = Array.from(e.target.files);
@@ -167,23 +189,32 @@
         });
     }
 
-    // PENTING: Tangani form submission menggunakan AJAX (Fetch API)
+    // Function to clear all inline error messages
+    function clearErrors() {
+        document.querySelectorAll('[id^="error-"]').forEach(el => {
+            el.textContent = '';
+            el.classList.add('hidden'); // Ensure it's hidden when cleared
+        });
+        generalErrorMessageContainer.classList.add('hidden');
+        generalErrorDetailsList.innerHTML = '';
+    }
+
     document.getElementById('aplikasiForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Mencegah pengiriman form tradisional
+        e.preventDefault(); // Prevent traditional form submission
+
+        clearErrors(); // Clear previous errors
 
         const submitButton = document.getElementById('submitButton');
-        submitButton.disabled = true; // Nonaktifkan tombol
-        submitButton.textContent = 'Menyimpan...'; // Ubah teks tombol
+        submitButton.disabled = true;
+        submitButton.textContent = 'Menyimpan...'; // Show loading text
 
-        const formData = new FormData(this); // Ambil semua data form
+        const formData = new FormData(this);
 
-        // Tambahkan setiap file dari filesArray ke objek FormData (untuk multiple files)
-        // PENTING: Pastikan nama field ini ('path_foto[]') cocok dengan 'path_foto.*' di StoreAplikasiRequest
+        // Append multiple files for path_foto[]
         filesArray.forEach((file) => {
             formData.append('path_foto[]', file);
         });
 
-        // Ambil CSRF token dari meta tag (pastikan meta tag ada di layout)
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         try {
@@ -191,79 +222,64 @@
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken // Kirim CSRF token
+                    'X-CSRF-TOKEN': csrfToken
                 }
             });
 
-            // PENTING: Periksa apakah respons adalah JSON yang valid
-            if (!response.ok) {
-                // Jika status bukan 2xx (misal 422, 500), coba baca sebagai JSON jika memungkinkan,
-                // jika tidak, lemparkan error umum.
-                const errorData = await response.json().catch(() => null); // Coba parse JSON, kalau gagal jadi null
-                if (errorData) {
-                    throw errorData; // Lempar data error dari server
+            const data = await response.json(); // Always try to parse as JSON
+
+            if (response.ok) { // Check if status is 2xx (successful response)
+                if (data.success) {
+                    Swal.fire({ // Show SweetAlert success popup
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        this.reset(); // Clear form
+                        filesArray = []; // Clear photo files
+                        renderPreview(); // Clear photo preview
+                        window.location.href = data.redirect; // Redirect
+                    });
                 } else {
-                    throw new Error(`Server responded with status: ${response.status} ${response.statusText}`);
+                    // This case ideally shouldn't be reached if response.ok is true
+                    // unless your server sends `success: false` with a 200 status.
+                    // If it does, treat it as a general error.
+                    generalErrorText.textContent = data.message || 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.';
+                    generalErrorMessageContainer.classList.remove('hidden');
                 }
-            }
-
-            const data = await response.json(); // Parse respons sebagai JSON
-
-            if (data.success) {
-                Swal.fire({ // Tampilkan SweetAlert sukses
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = data.redirect; // Redirect ke halaman index
-                });
-            } else {
-                let errorMessage = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
+            } else { // Handle non-2xx responses (e.g., 422 validation errors, 500 server errors)
+                generalErrorText.textContent = data.message || 'Terjadi kesalahan saat menyimpan data.';
                 if (data.errors) {
-                    errorMessage += '\n\nDetail Kesalahan:\n';
+                    // Display inline errors for specific fields
                     for (const key in data.errors) {
-                        errorMessage += `- ${data.errors[key].join(', ')}\n`;
+                        // Laravel validation sometimes returns 'path_foto.0', 'path_foto.1', etc.
+                        // Map these to 'path_foto' for the general error div for multiple images.
+                        const errorKey = key.includes('path_foto') ? 'path_foto' : key;
+
+                        const errorDiv = document.getElementById(`error-${errorKey}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = data.errors[key].join(', ');
+                            errorDiv.classList.remove('hidden'); // Show the error div
+                        } else {
+                            // If no specific div, add to general error details list
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${key}: ${data.errors[key].join(', ')}`;
+                            generalErrorDetailsList.appendChild(listItem);
+                        }
                     }
                 }
-                Swal.fire({ // Tampilkan SweetAlert error
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: errorMessage,
-                    confirmButtonText: 'OK'
-                });
+                generalErrorMessageContainer.classList.remove('hidden'); // Show the general error container
             }
         } catch (error) {
-            console.error('Error:', error); // Log error ke konsol browser
-            let displayMessage = 'Terjadi kesalahan saat berkomunikasi dengan server. Silakan coba lagi.';
-            if (error && error.message) {
-                // Jika error berasal dari server (misal dari throw errorData)
-                displayMessage = error.message;
-                if (error.errors) { // Jika ada error validasi dari server
-                    displayMessage += '\n\nDetail Kesalahan:\n';
-                    for (const key in error.errors) {
-                        displayMessage += `- ${error.errors[key].join(', ')}\n`;
-                    }
-                }
-            }
-
-            Swal.fire({ // Tampilkan SweetAlert error umum
-                icon: 'error',
-                title: 'Error Jaringan / Sistem!',
-                text: displayMessage,
-                confirmButtonText: 'OK'
-            });
+            console.error('Error:', error);
+            generalErrorText.textContent = 'Terjadi kesalahan jaringan atau sistem. Pastikan Anda terhubung ke internet dan coba lagi.';
+            generalErrorMessageContainer.classList.remove('hidden'); // Show the general error container
         } finally {
-            submitButton.disabled = false; // Aktifkan kembali tombol
-            submitButton.textContent = 'Simpan'; // Kembalikan teks tombol
+            submitButton.disabled = false;
+            submitButton.textContent = 'Simpan'; // Reset button text
         }
-    });
-
-    // Menampilkan nama file yang dipilih untuk input logo
-    document.getElementById('logo').addEventListener('change', function() {
-        var fileName = this.files[0] ? this.files[0].name : 'No file chosen';
-        document.getElementById('file-chosen').textContent = fileName;
     });
 
 </script>
