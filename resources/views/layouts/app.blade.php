@@ -145,13 +145,16 @@
                             
                             @if ($notifications->count() > 0)
                             @foreach($notifications as $notification)
-                                    <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
+                                    <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
                                         <div class="flex-grow overflow-hidden">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
                                             <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
                                         </div>
                                         <div class="ml-3 flex-shrink-0 text-right">
                                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="{{  $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
+                                            @if(!$notification->dibaca)
+                                                <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
