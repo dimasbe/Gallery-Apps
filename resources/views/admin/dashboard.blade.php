@@ -91,13 +91,13 @@
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-700">Beranda</h1> {{-- Judul utama halaman --}}
             <nav aria-label="breadcrumb">
-                <ol class="flex items-center text-sm text-gray-600">
+                <!-- <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
                         <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
                         <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
                     </li>
                     <li class="text-custom-primary-red" aria-current="page">Beranda</li> {{-- Breadcrumb untuk halaman dashboard --}}
-                </ol>
+                </ol> -->
             </nav>
         </div>
     </div>

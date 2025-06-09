@@ -1,21 +1,32 @@
 @extends('layouts.admin')
 
 @section('content')
-<!-- Wrapper Konten Utama -->
+
+<!-- {{-- SweetAlert2 untuk notifikasi dari session (Ini menangani notifikasi dari redirect non-AJAX, atau saat halaman pertama kali dimuat) --}}
+@if (session('alert.config'))
+    <script>
+        Swal.fire(@json(session('alert.config')));
+    </script>
+@endif -->
+
 <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
-    <!-- Navbar Riwayat + Breadcrumbs -->
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-700">Berita</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="flex items-center text-sm text-gray-600">
-                    <li class="flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
-                    </li>
-                    <li class="text-custom-primary-red" aria-current="page">Berita</li>
-                </ol>
-            </nav>
+            <div class="flex mx-8">
+                <div class="flex w-64 md:w-80">
+                    <input
+                        type="text"
+                        placeholder="Cari di sini..."
+                        class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
+                    />
+                    <button
+                        class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
+                    >
+                        <i class="fas fa-search text-custom-primary-red"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -29,17 +40,9 @@
             </a>
         </div>
 
-        {{-- Alert success/error --}}
-        @if (session('success'))
-            <script>alert("{{ session('success') }}");</script>
-        @endif
-        @if (session('error'))
-            <script>alert("{{ session('error') }}");</script>
-        @endif
-
         {{-- Tabel Berita --}}
         <div class="overflow-x-auto">
-            <table class="min-w-full bg-white rounded-lg overflow-hidden">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden" id="beritaTable"> {{-- Menambahkan ID ke tabel --}}
                 <thead>
                     <tr>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider rounded-tl-lg">
@@ -64,7 +67,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($berita as $item)
-                        <tr>
+                        <tr id="berita-row-{{ $item->id }}"> {{-- Menambahkan ID ke setiap baris untuk penghapusan --}}
                             <td class="text-center py-4 px-4 text-sm text-gray-700">{{ $loop->iteration }}</td>
                             <td class="text-center py-4 px-4 text-sm text-gray-700">
                                 <img src="{{ $item->thumbnail_url }}" alt="Thumbnail Berita" class="w-16 h-16 object-cover rounded-md shadow-sm">
@@ -86,14 +89,17 @@
                                        class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-3 rounded shadow">
                                         Edit
                                     </a>
-                                    <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');">
+                                    {{-- Menggunakan tombol untuk konfirmasi hapus, panggil fungsi deleteBerita yang baru --}}
+                                    <button type="button" 
+                                            class="bg-red-700 border border-red-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm"
+                                            onclick="deleteBerita('{{ $item->id }}', '{{ route('admin.berita.destroy', $item->id) }}')">
+                                        Hapus
+                                    </button>
+                                    {{-- Form tersembunyi tidak lagi diperlukan secara ketat jika menggunakan Fetch API, tetapi disimpan untuk konteks --}}
+                                    {{-- <form id="delete-form-{{ $item->id }}" action="{{ route('admin.berita.destroy', $item->id) }}" method="POST" style="display: none;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
-                                            class="bg-red-700 border border-red-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm">
-                                            Hapus
-                                        </button>
-                                    </form>
+                                    </form> --}}
                                 </div>
                             </td>
                         </tr>
@@ -130,4 +136,76 @@
         </div>
     </div>
 </div>
+
+{{-- SweetAlert2 CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Fungsi untuk menangani penghapusan dengan SweetAlert dan AJAX
+    async function deleteBerita(beritaId, deleteUrl) {
+        const result = await Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Berita ini akan dihapus secara permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // Sertakan token CSRF
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 1500 // Notifikasi akan hilang setelah 1.5 detik
+                    }).then(() => {
+                        // Secara opsional hapus baris dari tabel tanpa me-refresh halaman penuh
+                        const row = document.getElementById('berita-row-' + beritaId);
+                        if (row) {
+                            row.remove();
+                        }
+                        // Jika Anda ingin me-refresh halaman penuh untuk kesederhanaan setelah penghapusan berhasil:
+                        // window.location.reload(); 
+                    });
+                } else {
+                    // Tangani kesalahan dari server (validasi, konflik, umum)
+                    let errorMessage = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
+                    if (data.errors) {
+                        // Untuk kesalahan validasi, Anda mungkin ingin menampilkannya dengan cara yang lebih detail
+                        errorMessage += '\n' + Object.values(data.errors).join('\n');
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: errorMessage
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan Jaringan!',
+                    text: 'Tidak dapat terhubung ke server. Silakan coba lagi.'
+                });
+            }
+        }
+    }
+</script>
 @endsection

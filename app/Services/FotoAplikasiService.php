@@ -36,6 +36,8 @@ class FotoAplikasiService
      */
     public function updateMultiple(?array $files, int $idAplikasi): void
     {
+        if (!$files || !is_array($files) || count($files) === 0) return;
+
         // Hapus foto lama dari storage dan database
         $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
         foreach ($fotoLama as $foto) {
@@ -44,10 +46,20 @@ class FotoAplikasiService
         }
 
         // Simpan foto baru
-        if ($files) { // Pastikan ada file baru sebelum memanggil storeMultiple
-            $this->storeMultiple($files, $idAplikasi);
+        $this->storeMultiple($files, $idAplikasi);
+    }
+
+    public function deleteMultipleByAplikasiId(int $idAplikasi): void
+    {
+        $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
+        foreach ($fotoLama as $foto) {
+            if ($foto->path_foto && Storage::disk('public')->exists($foto->path_foto)) {
+                Storage::disk('public')->delete($foto->path_foto);
+            }
+            $foto->delete();
         }
     }
+}
 
     /**
      * Hapus satu file foto dari storage.

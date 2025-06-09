@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationController;
+
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -115,4 +117,7 @@ Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class
 
 require __DIR__.'/auth.php';
 require __DIR__.'/user_login.php';
+
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
 

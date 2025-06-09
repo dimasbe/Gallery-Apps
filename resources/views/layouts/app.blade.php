@@ -148,13 +148,16 @@
                             
                             @if ($notifications->count() > 0)
                             @foreach($notifications as $notification)
-                                    <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
+                                    <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
                                         <div class="flex-grow overflow-hidden">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
                                             <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
                                         </div>
                                         <div class="ml-3 flex-shrink-0 text-right">
                                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="{{  $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
+                                            @if(!$notification->dibaca)
+                                                <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
@@ -351,103 +354,190 @@
     </div>
     
     {{-- MODAL LOGIN (Disamakan dengan tampilan Register) --}}
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="w-[460px] bg-white rounded-xl shadow p-8 relative">
-            <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 text-2xl font-semibold">
-                &times;
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="w-[460px] bg-white rounded-xl shadow p-8 relative">
+        <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 text-2xl font-semibold">
+            &times;
+        </button>
+        <h2 class="text-[24px] font-bold text-black text-center mb-1">Login</h2>
+        <p class="text-center text-[13px] text-black mb-6">Selamat Datang Kembali di GalleryApps</p>
+
+        {{-- Notifikasi Error Umum untuk Modal Login (jika ada error yang tidak terkait langsung dengan input) --}}
+        @if (session('error') && !($errors->has('email') || $errors->has('password')))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block">{{ session('error') }}</span>
+            </div>
+        @endif
+
+        <form id="loginForm" method="POST" action="{{ route('login') }}" class="space-y-4" novalidate>
+            @csrf
+
+            <div>
+                <label for="login_email" class="block text-sm font-medium text-black mb-1">Email</label>
+                <input id="login_email" name="email" type="email" required autofocus
+                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black @error('email') border-red-500 @enderror"
+                    placeholder="Masukkan email anda" autocomplete="email" value="{{ old('email') }}">
+                <p class="text-red-500 text-xs italic mt-1 hidden" id="error-login_email">Email wajib diisi.</p>
+                @error('email')
+                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="login_password" class="block text-sm font-medium text-black mb-1">Password</label>
+                <div class="relative">
+                    <input id="login_password" name="password" type="password" required autocomplete="current-password"
+                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black @error('password') border-red-500 @enderror"
+                        placeholder="Masukkan password anda">
+                    <button type="button" onclick="togglePassword(this, 'login_password')" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5
+                                s8.268 2.943 9.542 7-3.732 7-9.542 7
+                                -8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M13.875 18.825A10.05 10.05 0 0112 19
+                                c-4.478 0-8.269-2.944-9.543-7
+                                a9.956 9.956 0 012.342-3.36m3.093-2.52
+                                A9.953 9.953 0 0112 5c4.478 0 8.269 2.944 9.543 7
+                                a9.956 9.956 0 01-1.88 3.106" />
+                            <path d="M3 3l18 18" />
+                        </svg>
+                    </button>
+                </div>
+                <p class="text-red-500 text-xs italic mt-1 hidden" id="error-login_password">Password wajib diisi.</p>
+                @error('password')
+                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="login_remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                    <label for="login_remember_me" class="ml-2 block text-sm text-black">Ingat saya</label>
+                </div>
+                @if (Route::has('password.request'))
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                        Lupa kata sandi Anda?
+                    </a>
+                @endif
+            </div>
+
+            <button type="submit" class="w-full h-[40px] mt-2 bg-[#AD1500] text-white font-semibold text-sm rounded-md transition-all">
+                Login
             </button>
-            <h2 class="text-[24px] font-bold text-black text-center mb-1">Login</h2>
-            <p class="text-center text-[13px] text-black mb-6">Selamat Datang Kembali di GalleryApps</p>
+        </form>
 
-            {{-- Notifikasi Error untuk Modal Login --}}
-            @if ($errors->has('email') || $errors->has('password') || session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    @if ($errors->has('email'))
-                        <span class="block">{{ $errors->first('email') }}</span>
-                    @endif
-                    @if ($errors->has('password'))
-                        <span class="block">{{ $errors->first('password') }}</span>
-                    @endif
-                    @if (session('error'))
-                        <span class="block">{{ session('error') }}</span>
-                    @endif
-                </div>
-            @endif
+        <div class="flex items-center my-6">
+            <hr class="flex-grow border-gray-300">
+            <span class="mx-3 text-gray-500 text-sm">Atau</span>
+            <hr class="flex-grow border-gray-300">
+        </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
-                @csrf
+        <div class="flex justify-center">
+            <a href="{{ route('google.redirect', ['from' => 'login']) }}"
+                class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+                <span>Login dengan Google</span>
+            </a>
+        </div>
 
-                <div>
-                    <label for="login_email" class="block text-sm font-medium text-black mb-1">Email</label>
-                    <input id="login_email" name="email" type="email" required autofocus
-                           class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black"
-                           placeholder="Masukkan email anda" autocomplete="email">
-                </div>
-
-                <div>
-                    <label for="login_password" class="block text-sm font-medium text-black mb-1">Password</label>
-                    <div class="relative">
-                        <input id="login_password" name="password" type="password" required autocomplete="current-password"
-                               class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black"
-                               placeholder="Masukkan password anda">
-                        <button type="button" onclick="togglePassword(this)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5
-                                    s8.268 2.943 9.542 7-3.732 7-9.542 7
-                                    -8.268-2.943-9.542-7z" />
-                            </svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M13.875 18.825A10.05 10.05 0 0112 19
-                                    c-4.478 0-8.269-2.944-9.543-7
-                                    a9.956 9.956 0 012.342-3.36m3.093-2.52
-                                    A9.953 9.953 0 0112 5c4.478 0 8.269 2.944 9.543 7
-                                    a9.956 9.956 0 01-1.88 3.106" />
-                                <path d="M3 3l18 18" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="login_remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                        <label for="login_remember_me" class="ml-2 block text-sm text-black">Ingat saya</label>
-                    </div>
-                    @if (Route::has('password.request'))
-                        <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                            Lupa kata sandi Anda?
-                        </a>
-                    @endif
-                </div>
-
-                <button type="submit" class="w-full h-[40px] mt-2 bg-[#AD1500] text-white font-semibold text-sm rounded-md transition-all">
-                    Login
-                </button>
-            </form>
-
-            <div class="flex items-center my-6">
-                <hr class="flex-grow border-gray-300">
-                <span class="mx-3 text-gray-500 text-sm">Atau</span>
-                <hr class="flex-grow border-gray-300">
-            </div>
-
-            <div class="flex justify-center">
-                <a href="{{ route('google.redirect', ['from' => 'login']) }}"
-                    class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-                    <span>Login dengan Google</span>
-                </a>
-            </div>
-
-            <div class="mt-6 text-center text-sm text-black">
-                Belum punya akun?
-                <a href="{{ route('register') }}" class="text-[#0500FF] hover:underline font-medium">Register</a>
-            </div>
+        <div class="mt-6 text-center text-sm text-black">
+            Belum punya akun?
+            <a href="{{ route('register') }}" class="text-[#0500FF] hover:underline font-medium">Register</a>
         </div>
     </div>
+</div>
+
+<script>
+    // Make sure this function is globally accessible if your openModal() is elsewhere
+    function closeLoginModal() {
+        document.getElementById('loginModal').classList.add('hidden');
+        clearLoginErrorMessages(); // Clear any previous error messages when closing the modal
+    }
+
+    function togglePassword(button, inputId) {
+        const input = document.getElementById(inputId);
+        const eyeIcon = button.querySelector('.eye-icon');
+        const eyeOffIcon = button.querySelector('.eye-off-icon');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeIcon.classList.add('hidden');
+            eyeOffIcon.classList.remove('hidden');
+        } else {
+            input.type = 'password';
+            eyeIcon.classList.remove('hidden');
+            eyeOffIcon.classList.add('hidden');
+        }
+    }
+
+    // Function to clear all inline error messages for the login form
+    function clearLoginErrorMessages() {
+        document.querySelectorAll('#loginForm .text-red-500.italic').forEach(el => {
+            el.classList.add('hidden');
+        });
+        document.querySelectorAll('#loginForm input').forEach(input => {
+            input.classList.remove('border-red-500');
+        });
+    }
+
+    // Client-side validation for the login form
+    function validateLoginForm() {
+        let isValid = true;
+        clearLoginErrorMessages(); // Clear existing errors before validating
+
+        const emailInput = document.getElementById('login_email');
+        const passwordInput = document.getElementById('login_password');
+
+        // Validate Email
+        if (!emailInput.value.trim()) {
+            emailInput.classList.add('border-red-500');
+            document.getElementById('error-login_email').classList.remove('hidden');
+            isValid = false;
+        } else {
+            emailInput.classList.remove('border-red-500');
+            document.getElementById('error-login_email').classList.add('hidden');
+        }
+
+        // Validate Password
+        if (!passwordInput.value.trim()) {
+            passwordInput.classList.add('border-red-500');
+            document.getElementById('error-login_password').classList.remove('hidden');
+            isValid = false;
+        } else {
+            passwordInput.classList.remove('border-red-500');
+            document.getElementById('error-login_password').classList.add('hidden');
+        }
+
+        return isValid;
+    }
+
+    // Event listener for form submission
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Prevent default form submission if client-side validation fails
+        if (!validateLoginForm()) {
+            e.preventDefault();
+        }
+    });
+
+    // Handle Laravel backend validation errors (if any)
+    @if ($errors->any() || session('error'))
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show the login modal if there are any validation errors or a session error
+            document.getElementById('loginModal').classList.remove('hidden');
+
+            // Keep the old input value in the email field if available
+            const loginEmailInput = document.getElementById('login_email');
+            if ("{{ old('email') }}") {
+                loginEmailInput.value = "{{ old('email') }}";
+            }
+        });
+    @endif
+</script>
 
     {{-- Script for Dropdown and Notification --}}
     <script>
@@ -547,7 +637,25 @@
                     unreadDot.classList.add('hidden'); // Sembunyikan dot biru
                 }
                 updateGlobalUnreadNotificationDot(); // Perbarui jumlah notifikasi belum dibaca
-                // TODO: Di sini Anda bisa mengirim permintaan AJAX ke server untuk menandai notifikasi sebagai dibaca di database
+
+                // Kirim permintaan AJAX ke server untuk menandai notifikasi sebagai dibaca di database
+                const notificationId = notificationElement.getAttribute('data-notification-id');
+                if (notificationId) {
+                    fetch(`/notifications/${notificationId}/read`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ read: true })
+                    }).then(response => {
+                        if (!response.ok) {
+                            console.error('Gagal menandai notifikasi sebagai dibaca');
+                        }
+                    }).catch(error => {
+                        console.error('Error saat menandai notifikasi sebagai dibaca:', error);
+                    });
+                }
             }
         }
 

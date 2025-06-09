@@ -263,26 +263,56 @@ class AplikasiController extends Controller
         return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori'));
     }
 
-    public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): JsonResponse {
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateAplikasiRequest  $request
+     * @param  \App\Models\Aplikasi  $aplikasi
+     * @return \Illuminate\Http\JsonResponse // <<< PASTIKAN TIPE KEMBALIAN INI
+     */
+    public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): JsonResponse
+    {
         try {
             $validated = $request->validated();
-            $this->aplikasiService->updateWithFotos($aplikasi->id, $validated, $request->file('logo'), $request->file('path_foto'));
+
+            // Ambil file logo dan foto dari request, bisa null jika tidak dikirim
+            $logoFile = $request->file('path_logo');
+            $fotoFiles = $request->file('path_foto');
+
+            // Buat array kosong kalau tidak ada file dikirim
+            $fotoFiles = is_array($fotoFiles) && count($fotoFiles) > 0 ? $fotoFiles : null;
+
+            // Tambahkan logo ke validated jika ada
+            if ($logoFile) {
+                $validated['path_logo'] = $logoFile;
+            }
+
+            $this->aplikasiService->updateWithFotos($aplikasi->id, $validated, $fotoFiles);
+
+            // Panggil service update dengan parameter yang sesuai
+            $updatedAplikasi = $this->aplikasiService->updateWithFotos(
+                $aplikasi->id,
+                $validated,
+                $fotoFiles
+            );
 
             return response()->json([
                 'success' => true,
                 'message' => 'Aplikasi Berhasil Diperbarui!',
+                'data' => $updatedAplikasi,
                 'redirect' => route('tambah_aplikasi.index')
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            \Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal. Periksa kembali form Anda.',
                 'errors' => $e->errors()
             ], 422);
+
         } catch (\Exception $e) {
-            Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            \Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem, silakan coba lagi.',
@@ -297,7 +327,8 @@ class AplikasiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Aplikasi Berhasil Dihapus!'
+                'message' => 'Aplikasi Berhasil Dihapus!',
+                'redirect' => route('tambah_aplikasi.index')
             ], 200);
 
         } catch (QueryException $e) {

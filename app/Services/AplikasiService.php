@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage; // Penting untuk operasi file
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Contracts\Interfaces\FotoAplikasiInterface; // Tambahkan ini jika Anda menggunakannya di konstruktor FotoAplikasiService
 use App\Services\FotoAplikasiService;
 use App\Services\LogoAplikasiService;
-use Exception; // Untuk menangani exception
+use Illuminate\Support\Facades\Storage;
 
 class AplikasiService
 {
@@ -63,67 +64,66 @@ class AplikasiService
      */
     public function updateWithFotos(int $id, array $data, $logoFile = null, ?array $newFotoFiles = null): bool
     {
-        return DB::transaction(function () use ($id, $data, $logoFile, $newFotoFiles) {
-            $aplikasi = $this->aplikasiRepository->show($id); // Asumsi AplikasiInterface memiliki metode 'show'
+        return DB::transaction(function () use ($id, $data, $files) {
+            // Ambil data lama untuk mengetahui path logo sebelumnya
+            $aplikasi = $this->aplikasi->find($id);
+            $oldLogoPath = $aplikasi->path_logo ?? null;
 
-            // Handle logo update if a new logo file is provided
-            if ($logoFile) {
-                // Hapus logo lama jika ada
-                if ($aplikasi->logo) {
-                    $this->logoAplikasiService->delete($aplikasi->logo); // Asumsi LogoAplikasiService memiliki metode 'delete'
-                }
-                // Simpan logo baru dan update path di data
-                $data['logo'] = $this->logoAplikasiService->store($logoFile); // Asumsi LogoAplikasiService memiliki metode 'store'
+            // Jika ada file logo baru dikirim
+            if (isset($data['path_logo']) && $data['path_logo'] instanceof \Illuminate\Http\UploadedFile) {
+                $data['path_logo'] = $this->logoAplikasiService->update($data['path_logo'], $oldLogoPath);
             } else {
-                // Jika tidak ada logo baru, dan tidak ada di $data (misalnya tidak diubah), jangan ikut di update
-                // Jika $data['logo'] diset null dari request, itu akan meng-handle penghapusan logo (jika database nullable)
-                unset($data['logo']); // Hindari overwrite jika tidak ada file baru dan tidak ada perubahan logo
+                unset($data['path_logo']); // jangan update path_logo kalau tidak dikirim
             }
 
-            // Update data aplikasi di database
-            $updated = $this->aplikasiRepository->update($id, $data); // Asumsi AplikasiInterface memiliki metode 'update'
+            // Set status_verifikasi ke pending setiap kali ada update
+            $data['status_verifikasi'] = 'pending';
 
-            // Tambahkan foto-foto baru jika ada
-            if ($newFotoFiles) {
-                // Asumsi FotoAplikasiService memiliki metode storeMultiple yang menerima array file dan id_aplikasi
-                $this->fotoAplikasiService->storeMultiple($newFotoFiles, $id);
+            // Update data aplikasi
+            $this->aplikasi->update($id, $data);
+
+            // Update foto aplikasi jika dikirim
+            if ($files) {
+                $this->fotoAplikasiService->updateMultiple($files, $id);
             }
 
-            return $updated;
+            return $this->aplikasi->find($id); // kembalikan data terbaru jika perlu
         });
     }
 
-    /**
-     * Delete an application and its associated files (logo and photos).
-     *
-     * @param int $aplikasiId
-     * @return bool|null
-     * @throws \Exception
-     */
-    public function deleteAplikasiAndFiles(int $aplikasiId): ?bool
+    public function deleteAplikasiAndFiles(int $aplikasiId): bool
     {
-        return DB::transaction(function () use ($aplikasiId) {
-            $aplikasi = $this->aplikasiRepository->show($aplikasiId); // Ambil data aplikasi
+        DB::beginTransaction(); // Start a database transaction
+
+        try {
+            // Fetch the application using the AplikasiInterface
+            $aplikasi = $this->aplikasi->find($aplikasiId);
 
             if (!$aplikasi) {
-                return false; // Aplikasi tidak ditemukan
+                throw new Exception("Aplikasi dengan ID {$aplikasiId} tidak ditemukan.");
             }
 
-            // 1. Hapus semua foto aplikasi terkait menggunakan FotoAplikasiService
-            $this->fotoAplikasiService->deleteAllByAplikasiId($aplikasiId);
+            // Delete associated FotoAplikasi files from storage and database
+            // This assumes FotoAplikasiService has a method to delete multiple photos by aplikasi ID
+            $this->fotoAplikasiService->deleteMultipleByAplikasiId($aplikasi->id);
 
 
-            // 2. Hapus logo aplikasi menggunakan LogoAplikasiService
-            if ($aplikasi->logo) {
-                $this->logoAplikasiService->delete($aplikasi->logo); // Asumsi LogoAplikasiService memiliki metode 'delete'
+            // Delete the logo file from storage
+            if ($aplikasi->logo && Storage::disk('public')->exists($aplikasi->logo)) {
+                Storage::disk('public')->delete($aplikasi->logo);
             }
 
-            // 3. Hapus entri aplikasi dari database
-            // PENTING: Pastikan aplikasiRepository memiliki metode 'delete' (bukan 'destroy')
-            // Sesuai diskusi terakhir, BaseRepository Anda memiliki 'delete'
-            $result = $this->aplikasiRepository->delete($aplikasiId); // <<< PASTIKAN INI 'delete'
+            // Delete the main Aplikasi record from the database
+            $this->aplikasi->delete($aplikasi->id); // Assuming AplikasiInterface has a delete method by ID
 
-            return $result;
-        });
+            DB::commit(); // Commit the transaction if all operations are successful
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack(); // Rollback the transaction on error
+            // Log the error for debugging purposes
+            \Log::error("Failed to delete application with ID: {$aplikasiId}. Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            throw new Exception("Gagal menghapus aplikasi dan file terkait: " . $e->getMessage());
+        }
     }
 }
