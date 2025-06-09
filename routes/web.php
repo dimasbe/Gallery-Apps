@@ -8,11 +8,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AplikasiController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\Pengguna\KategoriController;
+use App\Http\Controllers\Pengguna\KategoriController; // Jika ini untuk kategori umum, bukan aplikasi
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\BeritaController;
 use App\Models\Berita; // Penting: Import model Berita untuk mengakses data
+use App\Models\Kategori; // PASTIKAN KATEGORI DI-IMPORT UNTUK APLIKASI CONTROLLER
+
 
 /*
 |--------------------------------------------------------------------------
@@ -55,18 +56,24 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-// Rute untuk Halaman Aplikasi Umum
-Route::get('/aplikasi', function () {
-    return view('aplikasi.index');
-})->name('aplikasi');
+// --- PERBAIKAN DAN PENAMBAHAN DI SINI ---
 
-Route::get('/aplikasi/detail', function () {
-    return view('aplikasi.detail');
-})->name('aplikasi.detail');
+// Rute untuk Halaman Aplikasi Umum (misalnya, semua aplikasi atau halaman utama aplikasi)
+Route::get('/aplikasi', [AplikasiController::class, 'index'])->name('aplikasi');
 
-Route::get('/aplikasi/populer', function () {
-    return view('aplikasi.populer');
-})->name('aplikasi.populer');
+// Rute untuk detail aplikasi (penting untuk tautan di hasil pencarian dan halaman aplikasi)
+// Rute ini menerima ID aplikasi dan memanggil metode 'detail' di AplikasiController
+Route::get('/aplikasi/detail/{aplikasi}', [AplikasiController::class, 'detail'])->name('aplikasi.detail');
+
+// Rute BARU untuk Aplikasi Paling Populer - Mengarahkan ke metode 'showPopuler' di AplikasiController
+Route::get('/aplikasi/populer', [AplikasiController::class, 'showPopuler'])->name('aplikasi.populer');
+
+// Rute untuk menampilkan aplikasi berdasarkan kategori
+// Menggunakan wildcard {nama_kategori} yang akan ditangkap oleh controller
+Route::get('/kategori-aplikasi/{nama_kategori}', [AplikasiController::class, 'showByCategory'])->name('kategori.show');
+
+
+// --- AKHIR PERBAIKAN DAN PENAMBAHAN ---
 
 
 // 🔐 Login via Google (untuk user biasa)
@@ -90,9 +97,11 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Rute kategori
-Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
-Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show');
+// Rute kategori umum (ini berbeda dengan kategori aplikasi di atas)
+// Jika Anda memiliki KategoriController terpisah untuk hal-hal selain aplikasi, ini adalah tempatnya.
+// Perhatikan nama route-nya agar tidak konflik.
+Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index_umum');
+Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_umum');
 
 
 // Rute search
