@@ -132,9 +132,9 @@
             <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Tolak Ajuan</h2>
             <div class="mb-4">
                 <label for="reject-notes" class="block text-gray-700 text-sm font-bold mb-2">Catatan</label>
-                <textarea id="reject-notes" rows="4" name="alasan_penolakan" required
+                <textarea id="reject-notes" rows="4" name="alasan_penolakan"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
-                    placeholder="Aplikasi tidak sesuai kriteria."></textarea>
+                    placeholder="Aplikasi tidak sesuai kriteria..."></textarea>
             </div>
             <div class="flex justify-end space-x-4">
                 {{-- Tombol Batal --}}
@@ -165,11 +165,20 @@
         </div>
     </div>
 </div>
-
 @endsection
 
 @push('scripts')
 <script>
+    @if (session('success'))
+        alert( @json(session('success')));
+    @elseif (session('error'))
+        alert(@json(session('error')));
+    @endif
+
+    @error('alasan_penolakan')
+        alert(@json($message));
+    @enderror
+
     let selectedId = null;
     let linkAction = '';
 
@@ -191,14 +200,6 @@
         document.getElementById('reject-notes').value = ''; // Bersihkan textarea
     }
 
-    function submitReject() {
-        const notes = document.getElementById('reject-notes').innerText;
-
-        console.log(notes)
-
-        hideRejectPopup();
-    }
-
     // --- Fungsi untuk Pop-up Terima Ajuan ---
     function showAcceptPopup(button) {
         selectedId = button.getAttribute('data-id') || null;
@@ -214,13 +215,6 @@
     function hideAcceptPopup() {
         console.log('Menyembunyikan pop-up Diterima...');
         document.getElementById('accept-popup-overlay').classList.add('hidden');
-    }
-
-    function submitAccept() {
-        console.log('Aplikasi diterima!');
-
-        form.action = `{{ route('admin.aplikasi.terima', ['id' => '___']) }}`.replace('___', selectedId)
-        hideAcceptPopup(); // Sembunyikan pop-up setelah "mengirim"
     }
 
     // --- Opsional: Menutup pop-up saat mengklik di luar area modal ---

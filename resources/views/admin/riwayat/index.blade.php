@@ -186,6 +186,12 @@
 
 
     <script>
+        @if (session('success'))
+            alert( @json(session('success')));
+        @elseif (session('error'))
+            alert(@json(session('error')));
+        @endif
+
         function showArsipPopup() {
             document.getElementById('arsip-popup-overlay').classList.remove('hidden');
         }
