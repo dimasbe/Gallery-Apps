@@ -47,7 +47,7 @@
                 <p class="text-gray-600 text-sm font-poppins mb-4">{{ $aplikasi['nama_pemilik'] }}</p>
 
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="{{ asset('images/icon_ml.png') }}" alt="Mobile Legends Icon" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
+                    <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Logo" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
                     <div class="flex items-center space-x-4">
                         {{-- Rating --}}
                         <div class="flex flex-col items-start">
@@ -103,10 +103,9 @@
                 <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
                     {{-- Reduced max-height for smaller appearance --}}
                     {{-- Added data-index attribute to each image for easy lookup in JS --}}
-                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Screenshot 1" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="0">
-                    <img src="{{ asset('images/mobilelegends2.png') }}" alt="Screenshot 2" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="1">
-                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Screenshot 3" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="2">
-                    <img src="{{ asset('images/mobilelegends2.png') }}" alt="Screenshot 4" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="3">
+                    @foreach($aplikasi->fotoAplikasi as $index => $foto)
+                        <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Screenshot {{ $index + 1 }}" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="{{ $index }}">
+                    @endforeach
                 </div>
 
                 <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
