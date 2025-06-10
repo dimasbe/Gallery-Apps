@@ -70,12 +70,16 @@
                     {{ ucfirst($status) }}
                 </span>
                 {{-- Gambar logo aplikasi --}}
-                <img src="{{ asset('storage/' . $app->logo) }}"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Logo+Tidak+Tersedia';"
-                     alt="{{ $app->nama_aplikasi }}"
-                     class="w-full h-44 object-cover object-center">
+                <img src="{{ asset('storage/' . optional($app->fotoAplikasi()->first())->path_foto) }}"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Foto+Tidak+Tersedia';"
+                    alt="{{ $app->nama_aplikasi }}"
+                    class="w-full h-44 object-cover object-center">
                 <div class="p-5">
-                    <h3 class="font-bold text-gray-900 text-lg mb-2">{{ $app->nama_aplikasi }}</h3>
+                    <h3 class="font-bold text-gray-900 text-lg mb-2">
+                        <a href="{{ route('tambah_aplikasi.show', $app->id) }}" class="hover:text-blue-600 transition-colors duration-200">
+                            {{ $app->nama_aplikasi }}
+                        </a>
+                    </h3>
                     {{-- Format tanggal upload (created_at) --}}
                     <p class="text-xs text-gray-500 mb-4">Upload: {{ $app->created_at->format('d-m-Y') }}</p>
                     <p class="text-xs text-gray-500 mb-4">

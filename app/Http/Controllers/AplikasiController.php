@@ -49,7 +49,9 @@ class AplikasiController extends Controller
 
     public function index(): View
     {        
-        $aplikasi = $this->aplikasi->get();
+        $userId = Auth::id();
+
+        $aplikasi = $this->aplikasi->getByUserId($userId);
         $kategori = $this->kategori->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
         return view('tambah_aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
@@ -59,10 +61,10 @@ class AplikasiController extends Controller
     {
         $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->get();
-        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi')); // Menggunakan $kategori, bukan $kategoris
+        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi')); 
     }
     
-    public function store(StoreAplikasiRequest $request): JsonResponse { // <<< PASTIKAN TIPE KEMBALIAN INI DAN MENGGUNAKAN StoreAplikasiRequest
+    public function store(StoreAplikasiRequest $request): JsonResponse { 
         try {
             $validated = $request->validated();
             $validated['id_user'] = Auth::id(); 
@@ -100,7 +102,7 @@ class AplikasiController extends Controller
         }
     }
 
-    public function show(Aplikasi $aplikasi): View
+    public function showAplikasi(Aplikasi $aplikasi): View
     {
         $aplikasi = $this->aplikasi->get();
         $kategori = $this->kategori->get();
@@ -108,23 +110,23 @@ class AplikasiController extends Controller
         return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
 
+    public function show(Aplikasi $aplikasi): View
+    {
+        $kategori = $this->kategori->get();
+        $fotoAplikasi = $this->fotoAplikasi->where('id_aplikasi', $aplikasi->id);
+        return view('tambah_aplikasi.show', compact('aplikasi', 'kategori', 'fotoAplikasi'));
+    }
+
     public function edit(Aplikasi $aplikasi): View
     {
         if ($aplikasi->id_user !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
-        $kategori = Kategori::where('sub_kategori', 'aplikasi')->get(); // Menggunakan $kategori
+        $kategori = Kategori::where('sub_kategori', 'aplikasi')->get(); 
         $aplikasi->load('fotoAplikasi');
-        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori')); // Menggunakan $kategori
+        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori')); 
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateAplikasiRequest  $request
-     * @param  \App\Models\Aplikasi  $aplikasi
-     * @return \Illuminate\Http\JsonResponse // <<< PASTIKAN TIPE KEMBALIAN INI
-     */
     public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): JsonResponse
     {
         try {
@@ -176,12 +178,6 @@ class AplikasiController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Aplikasi  $aplikasi
-     * @return \Illuminate\Http\JsonResponse // <<< PASTIKAN TIPE KEMBALIAN INI
-     */
     public function destroy(Aplikasi $aplikasi): JsonResponse {
         try {
             // Asumsi service memiliki metode delete
