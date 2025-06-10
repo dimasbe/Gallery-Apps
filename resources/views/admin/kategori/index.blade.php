@@ -8,34 +8,44 @@
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-700">Kategori</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="flex items-center text-sm text-gray-600">
-                    <li class="flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
-                    </li>
-                    <li class="text-custom-primary-red" aria-current="page">Kategori</li>
-                </ol>
-            </nav>
-        </div>
+            <div class="flex mx-8">
+                {{-- Form Pencarian --}}
+                <form action="{{ route('admin.kategori.index') }}" method="GET" class="flex w-64 md:w-80">
+                    <input
+                        type="text"
+                        name="search" {{-- Tambahkan atribut name="search" --}}
+                        placeholder="Cari di sini..."
+                        class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
+                        value="{{ request('search') }}" {{-- Pertahankan nilai pencarian sebelumnya --}}
+                    />
+                    <button
+                        type="submit" {{-- Ubah type menjadi submit --}}
+                        class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
+                    >
+                        <i class="fas fa-search text-custom-primary-red"></i>
+                    </button>
+                    {{-- Tambahkan input hidden untuk mempertahankan filter jika ada --}}
+                    @if(request('filter') && request('filter') !== 'semua')
+                        <input type="hidden" name="filter" value="{{ request('filter') }}">
+                    @endif
+                </form>
+            </div>
+            </div>
     </div>
 
     <div class="bg-white shadow-md rounded-lg p-6">
         {{-- Main container for the header row --}}
         <div class="flex items-center mb-4">
-            {{-- Left-aligned text --}}
-            <h1 class="text-xl font-bold text-custom-primary-red">Manajemen Kategori</h1>
-        
             {{-- Center-aligned text. flex-grow makes it take available space, text-center centers the content within it. --}}
             <div class="flex-grow text-center">
-                <h2 class="text-xl font-bold text-black-1000">Daftar Kategori</h2>
             </div>
-        
+
             {{-- Right-aligned buttons group. space-x-6 applied here for distance between filter group and 'Tambah' button --}}
             <div class="flex space-x-4">
                 {{-- Filter buttons group --}}
                 <div class="flex space-x-2">
-                    <a href="{{ route('admin.kategori.index', ['filter' => 'semua']) }}"
+                    {{-- Perbarui URL filter untuk mempertahankan parameter search --}}
+                    <a href="{{ route('admin.kategori.index', array_merge(['filter' => 'semua'], request()->only('search'))) }}"
                         class="btnFilter font-semi bold py-1 px-3 rounded-lg shadow-md flex items-center transition-colors duration-200
                             @if($filter === 'semua')
                                 bg-red-700 hover:bg-red-800 active:bg-red-900 text-white
@@ -44,7 +54,7 @@
                             @endif">
                         Semua
                     </a>
-                    <a href="{{ route('admin.kategori.index', ['filter' => 'aplikasi']) }}"
+                    <a href="{{ route('admin.kategori.index', array_merge(['filter' => 'aplikasi'], request()->only('search'))) }}"
                         class="btnFilter font-semi bold py-1 px-3 rounded-lg shadow-md flex items-center transition-colors duration-200
                             @if($filter === 'aplikasi')
                                 bg-red-700 hover:bg-red-800 active:bg-red-900 text-white
@@ -53,7 +63,7 @@
                             @endif">
                         Aplikasi
                     </a>
-                    <a href="{{ route('admin.kategori.index', ['filter' => 'berita']) }}"
+                    <a href="{{ route('admin.kategori.index', array_merge(['filter' => 'berita'], request()->only('search'))) }}"
                         class="btnFilter font-semi bold py-1 px-3 rounded-lg shadow-md flex items-center transition-colors duration-200
                             @if($filter === 'berita')
                                 bg-red-700 hover:bg-red-800 active:bg-red-900 text-white
@@ -70,7 +80,7 @@
                 </button>
             </div>
         </div>
-        
+
         <div id="modalTambah" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
             <div class="bg-white w-full max-w-md rounded-lg shadow-lg p-6 relative">
                 <h2 class="text-xl font-bold mb-4 text-gray-800 text-center">Tambah Kategori</h2>
@@ -222,8 +232,8 @@
                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">{{ $loop->iteration }}</td>
                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm kategori-nama">{{ $category->nama_kategori }}</td>
                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm capitalize">{{ $category->sub_kategori }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm">{{ \Carbon\Carbon::parse($category->tanggal_dibuat)->format('d - m - Y') }}</td>
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm">{{ \Carbon\Carbon::parse($category->tanggal_diedit)->format('d - m - Y') }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm">{{ \Carbon\Carbon::parse($category->created_at)->format('d - m - Y') }}</td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm">{{ \Carbon\Carbon::parse($category->updated_at)->format('d - m - Y') }}</td>
                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm text-center">
                             <div class="flex space-x-2 justify-center">
                                 <button class="btnDetail bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm" data-id="{{ $category->id }}">Detail</button>
@@ -291,7 +301,7 @@
 
     document.getElementById('formTambahKategori').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
         if (!validateForm('formTambahKategori')) {
             return; // Stop if validation fails
         }
@@ -527,9 +537,9 @@
 
                 document.getElementById('detailSubKategori').textContent = kategori.sub_kategori;
                 document.getElementById('detailNamaKategori').textContent = kategori.nama_kategori;
-                document.getElementById('detailTanggalDibuat').textContent = new Date(kategori.tanggal_dibuat).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' - ');
-                document.getElementById('detailTanggalDiedit').textContent = new Date(kategori.tanggal_diedit).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' - ');
-                
+                document.getElementById('detailTanggalDibuat').textContent = new Date(kategori.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' - ');
+                document.getElementById('detailTanggalDiedit').textContent = new Date(kategori.updated_at).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' - ');
+
                 document.getElementById('modalDetail').classList.remove('hidden');
             } catch (error) {
                 console.error('Error:', error);

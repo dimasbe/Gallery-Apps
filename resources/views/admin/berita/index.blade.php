@@ -14,31 +14,35 @@
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-700">Berita</h1>
             <div class="flex mx-8">
-                <div class="flex w-64 md:w-80">
-                    <input
-                        type="text"
-                        placeholder="Cari di sini..."
-                        class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
-                    />
-                    <button
-                        class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
-                    >
-                        <i class="fas fa-search text-custom-primary-red"></i>
-                    </button>
-                </div>
-            </div>
+    {{-- Form Pencarian --}}
+    <form action="{{ route('admin.berita.index') }}" method="GET" class="flex w-64 md:w-80 mb-4">
+    <input
+        type="text"
+        name="keyword"
+        placeholder="Cari di sini..."
+        class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
+        value="{{ request('keyword') }}"
+    />
+    <button
+        type="submit"
+        class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
+    >
+        <i class="fas fa-search text-custom-primary-red"></i>
+    </button>
+</form>
+
+</div>
         </div>
     </div>
 
     <div class="bg-white shadow-md rounded-lg p-6">
         {{-- Header --}}
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-xl font-bold text-custom-primary-red">Daftar Berita</h1>
-            <a href="{{ route('admin.berita.create') }}" 
-               class="bg-custom-primary-red text-white px-4 py-2 rounded-md hover:bg-custom-primary-red-darker transition duration-200">
-                <i class="fas fa-plus mr-2"></i> Tambah Berita
-            </a>
-        </div>
+        <div class="flex justify-end items-center mb-4">
+    <a href="{{ route('admin.berita.create') }}"
+       class="bg-custom-primary-red text-white px-4 py-2 rounded-md hover:bg-custom-primary-red-darker transition duration-200">
+        <i class="fas fa-plus mr-2"></i> Tambah Berita
+    </a>
+</div>
 
         {{-- Tabel Berita --}}
         <div class="overflow-x-auto">
