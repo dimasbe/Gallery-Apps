@@ -48,9 +48,7 @@ class AplikasiController extends Controller
 
     public function index(): View
     {        
-        $userId = Auth::id();
-
-        $aplikasi = $this->aplikasi->getByUserId($userId);
+        $aplikasi = $this->aplikasi->get();
         $kategori = $this->kategori->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
         return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
