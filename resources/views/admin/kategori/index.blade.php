@@ -34,12 +34,9 @@
     <div class="bg-white shadow-md rounded-lg p-6">
         {{-- Main container for the header row --}}
         <div class="flex items-center mb-4">
-            {{-- Left-aligned text --}}
-            <h1 class="text-xl font-bold text-custom-primary-red">Manajemen Kategori</h1>
-        
+           
             {{-- Center-aligned text. flex-grow makes it take available space, text-center centers the content within it. --}}
             <div class="flex-grow text-center">
-                <h2 class="text-xl font-bold text-black-1000">Daftar Kategori</h2>
             </div>
         
             {{-- Right-aligned buttons group. space-x-6 applied here for distance between filter group and 'Tambah' button --}}
