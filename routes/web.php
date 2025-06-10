@@ -120,4 +120,4 @@ require __DIR__.'/user_login.php';
 
 Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
-
+Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_by_nama');
