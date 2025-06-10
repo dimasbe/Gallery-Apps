@@ -47,4 +47,9 @@ class FotoAplikasiRepository extends BaseRepository implements FotoAplikasiInter
     {
         return $this->model->query()->find($id);
     }
+
+    public function where(string $column, $value): mixed
+    {
+        return $this->model->query()->where($column, $value)->get();       
+    }
 }

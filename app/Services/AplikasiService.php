@@ -4,15 +4,14 @@ namespace App\Services;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage; // Penting untuk operasi file
 use App\Contracts\Interfaces\AplikasiInterface;
-use App\Contracts\Interfaces\FotoAplikasiInterface; // Tambahkan ini jika Anda menggunakannya di konstruktor FotoAplikasiService
 use App\Services\FotoAplikasiService;
 use App\Services\LogoAplikasiService;
+use Illuminate\Support\Facades\Storage;
 
 class AplikasiService
 {
-    protected AplikasiInterface $aplikasiRepository; // Menggunakan 'aplikasiRepository' agar lebih jelas
+    protected AplikasiInterface $aplikasi;
     protected FotoAplikasiService $fotoAplikasiService;
     protected LogoAplikasiService $logoAplikasiService;
 
@@ -21,29 +20,19 @@ class AplikasiService
         FotoAplikasiService $fotoAplikasiService,
         LogoAplikasiService $logoAplikasiService
     ) {
-        $this->aplikasiRepository = $aplikasi; // Sesuaikan penamaan
+        $this->aplikasi = $aplikasi;
         $this->fotoAplikasiService = $fotoAplikasiService;
         $this->logoAplikasiService = $logoAplikasiService;
     }
 
-    /**
-     * Create a new application with its logo and photos.
-     * The logo path should already be in $data.
-     *
-     * @param array $data Validated application data, including logo path.
-     * @param array|null $files Array of UploadedFile objects for path_foto.
-     * @return \App\Models\Aplikasi
-     * @throws \Exception
-     */
     public function createWithFotos(array $data, ?array $files = null)
     {
         return DB::transaction(function () use ($data, $files) {
-            // $data sudah mengandung 'logo' yang sudah di-store oleh LogoAplikasiService di controller
-            $aplikasi = $this->aplikasiRepository->store($data); // Asumsi AplikasiInterface memiliki metode 'store'
+            // Simpan data aplikasi (logo sudah ada di $data dari Controller)
+            $aplikasi = $this->aplikasi->store($data);
 
             // Simpan foto lainnya jika ada
             if ($files) {
-                // Asumsi FotoAplikasiService memiliki metode storeMultiple yang menerima array file dan id_aplikasi
                 $this->fotoAplikasiService->storeMultiple($files, $aplikasi->id);
             }
 
@@ -51,17 +40,7 @@ class AplikasiService
         });
     }
 
-    /**
-     * Update an existing application and its logo and photos.
-     *
-     * @param int $id Application ID.
-     * @param array $data Validated application data.
-     * @param \Illuminate\Http\UploadedFile|null $logoFile New logo file to upload.
-     * @param array|null $newFotoFiles New photo files to add.
-     * @return bool
-     * @throws \Exception
-     */
-    public function updateWithFotos(int $id, array $data, $logoFile = null, ?array $newFotoFiles = null): bool
+    public function updateWithFotos(int $id, array $data, ?array $files = null)
     {
         return DB::transaction(function () use ($id, $data, $files) {
             // Ambil data lama untuk mengetahui path logo sebelumnya

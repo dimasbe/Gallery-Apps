@@ -99,6 +99,15 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
         return $this->model->query()->findOrFail($id); // Implementasi metode find
     }
 
+    public function getByUserId(int|string $userId): mixed
+    {
+        return $this->model->query()
+            ->with('kategori', 'fotoAplikasi', 'users')
+            ->where('id_user', $userId)
+            ->orderBy('id', 'DESC')
+            ->get();
+    }
+
     /**
      * Implementasi dari getPopularApps.
      *

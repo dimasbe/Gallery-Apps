@@ -46,57 +46,24 @@ class AplikasiController extends Controller
         $this->aplikasiService = $aplikasiService;
     }
 
-    public function index(Request $request): View
-    {
-        // --- 1. Query untuk Paling Populer (berdasarkan jumlah_kunjungan) ---
-        $allPopularApplications = Aplikasi::orderBy('jumlah_kunjungan', 'desc')->get(); // Mengurutkan berdasarkan kunjungan
+    public function index(): View
+    {        
+        $userId = Auth::id();
 
-        $perPagePopular = 18; // 6 baris * 3 kolom
-        $currentPagePopular = LengthAwarePaginator::resolveCurrentPage('popular_page'); // Gunakan nama unik untuk paginator
-        $pagedPopularApplications = new LengthAwarePaginator(
-            $allPopularApplications->forPage($currentPagePopular, $perPagePopular),
-            $allPopularApplications->count(),
-            $perPagePopular,
-            $currentPagePopular,
-            ['path' => LengthAwarePaginator::resolveCurrentPath(), 'pageName' => 'popular_page'] // Tambahkan pageName
-        );
+        $aplikasi = $this->aplikasi->getByUserId($userId);
+        $kategori = $this->kategori->get();
+        $fotoAplikasi = $this->fotoAplikasi->get();
+        return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
+    }
 
-        $columnedPopularResults = $this->distributeIntoColumns($pagedPopularApplications);
+    public function indexPage(): View
+    {        
+        $userId = Auth::id();
 
-
-        // --- 2. Query untuk Aplikasi per Kategori ---
-        $allCategories = Kategori::where('sub_kategori', 'aplikasi')->get(); // Ambil semua kategori aplikasi
-
-        $categorizedApplications = [];
-        $perPageCategory = 18; // Atur jumlah item per halaman untuk setiap kategori
-
-        foreach ($allCategories as $category) {
-            $categoryApps = Aplikasi::where('id_kategori', $category->id)
-                                    ->orderBy('nama_aplikasi', 'asc') // Urutkan sesuai kategori
-                                    ->get();
-
-            $currentPageCategory = LengthAwarePaginator::resolveCurrentPage('category_' . $category->id . '_page');
-            $pagedCategoryApps = new LengthAwarePaginator(
-                $categoryApps->forPage($currentPageCategory, $perPageCategory),
-                $categoryApps->count(),
-                $perPageCategory,
-                $currentPageCategory,
-                ['path' => LengthAwarePaginator::resolveCurrentPath(), 'pageName' => 'category_' . $category->id . '_page']
-            );
-
-            $categorizedApplications[] = [
-                'category' => $category,
-                'applications' => $pagedCategoryApps,
-                'columnedResults' => $this->distributeIntoColumns($pagedCategoryApps)
-            ];
-        }
-
-
-        return view('aplikasi.index', [
-            'aplikasiPopuler' => $pagedPopularApplications,
-            'columnedResultsPopuler' => $columnedPopularResults,
-            'categorizedApplications' => $categorizedApplications, // Kirim data per kategori
-        ]);
+        $aplikasi = $this->aplikasi->getByUserId($userId);
+        $kategori = $this->kategori->get();
+        $fotoAplikasi = $this->fotoAplikasi->get();
+        return view('tambah_aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
 
     /**
@@ -201,10 +168,10 @@ class AplikasiController extends Controller
     {
         $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->get();
-        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi'));
+        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi')); 
     }
-
-    public function store(StoreAplikasiRequest $request): JsonResponse {
+    
+    public function store(StoreAplikasiRequest $request): JsonResponse { 
         try {
             $validated = $request->validated();
             $validated['id_user'] = Auth::id();
@@ -242,7 +209,7 @@ class AplikasiController extends Controller
         }
     }
 
-    public function detail(Aplikasi $aplikasi): View
+    public function showAplikasi(Aplikasi $aplikasi): View
     {
         // <<< INKREMEN JUMLAH KUNJUNGAN DI SINI <<<
         $aplikasi->increment('jumlah_kunjungan');
@@ -252,24 +219,23 @@ class AplikasiController extends Controller
         return view('aplikasi.detail', compact('aplikasi'));
     }
 
+    public function show(Aplikasi $aplikasi): View
+    {
+        $kategori = $this->kategori->get();
+        $fotoAplikasi = $this->fotoAplikasi->where('id_aplikasi', $aplikasi->id);
+        return view('tambah_aplikasi.show', compact('aplikasi', 'kategori', 'fotoAplikasi'));
+    }
 
     public function edit(Aplikasi $aplikasi): View
     {
         if ($aplikasi->id_user !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
-        $kategori = Kategori::where('sub_kategori', 'aplikasi')->get();
+        $kategori = Kategori::where('sub_kategori', 'aplikasi')->get(); 
         $aplikasi->load('fotoAplikasi');
-        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori'));
+        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori')); 
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateAplikasiRequest  $request
-     * @param  \App\Models\Aplikasi  $aplikasi
-     * @return \Illuminate\Http\JsonResponse // <<< PASTIKAN TIPE KEMBALIAN INI
-     */
     public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): JsonResponse
     {
         try {
