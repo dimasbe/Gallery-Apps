@@ -114,10 +114,11 @@ Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show
 // Rute Admin Berita (untuk CKEditor upload)
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 
+Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_by_nama');
+
 
 require __DIR__.'/auth.php';
 require __DIR__.'/user_login.php';
 
 Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
-Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_by_nama');
