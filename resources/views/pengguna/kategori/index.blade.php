@@ -5,10 +5,11 @@
     <div class="flex flex-col">
         {{-- Pencarian --}}
         {{-- Form Pencarian --}}
-        <div class="self-end relative max-w-lg flex items-center mb-6"> {{-- Added mb-6 for spacing --}}
+        <div class="self-end relative max-w-lg flex items-center mb-6">
             <input type="text" id="searchInput" placeholder="Cari di sini..."
                 class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins">
-            <button class="absolute mr-1 right-0 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]">
+            {{-- Tambahkan ID ke tombol pencarian --}}
+            <button id="searchButton" class="absolute mr-1 right-0 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -20,7 +21,9 @@
         {{-- Semua Kategori --}}
         <div>
             <div class="title flex gap-2">
-                <h2 class="font-semibold text-lg mb-4">Semua Kategori</h2>
+                <a href="{{ url()->current() }}" class="font-semibold text-lg mb-4 cursor-pointer hover:underline">
+                    Semua Kategori
+                </a>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <g fill="none" stroke="#AD1500" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                         <circle cx="17" cy="7" r="3" />
@@ -33,15 +36,15 @@
             <div id="category-group" class="grid grid-cols-3 gap-2 overflow-hidden transition-all duration-300"
                 style="max-height: 10rem;">
                 @foreach ($aplikasiKategoris as $kategori)
-                    {{-- Pastikan nama rute dan parameter sudah benar --}}
-                    <a href="{{ route('kategori.show', ['nama' => $kategori->nama_kategori]) }}"
-                        class="category-item bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">{{ $kategori->nama_kategori }}
+                    <a href="{{ route('kategori.show', ['nama_kategori' => $kategori->nama_kategori]) }}"
+                        class="category-item bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">
+                        {{ $kategori->nama_kategori }}
                     </a>
                 @endforeach
             </div>
 
             {{-- Message for no search results --}}
-            <div id="noResultsMessage" class="text-center text-gray-600 mt-4 hidden">
+            <div id="noResultsMessage" class="text-center text-gray-400 mt-4 hidden">
                 Pencarian tidak tersedia.
             </div>
 
@@ -54,69 +57,83 @@
 
         </div>
     </div>
+@endsection {{-- Penutup section content --}}
 
-    </footer>
-@endsection
-
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const categoryGroup = document.getElementById('category-group');
         const toggleButton = document.getElementById('toggle-button');
         const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
         const noResultsMessage = document.getElementById('noResultsMessage');
-        const categoryItems = Array.from(document.querySelectorAll('.category-item')); // Get all category links
+        const categoryItems = Array.from(document.querySelectorAll('.category-item'));
 
         let expanded = false;
-        const initialMaxHeight = '10rem'; // Store initial max-height
+        const initialMaxHeight = '10rem';
 
-        // Function to update the visibility of categories based on search input
         function filterCategories() {
-            const searchTerm = searchInput.value.toLowerCase();
+            const searchTerm = searchInput.value.toLowerCase().trim();
             let foundResults = false;
 
             categoryItems.forEach(item => {
                 const categoryName = item.textContent.toLowerCase();
                 if (categoryName.includes(searchTerm)) {
-                    item.style.display = 'block'; // Show the item
+                    item.style.display = ''; // Tampilkan item
                     foundResults = true;
                 } else {
-                    item.style.display = 'none'; // Hide the item
+                    item.style.display = 'none'; // Sembunyikan item
                 }
             });
 
-            // Show/hide no results message
             if (!foundResults && searchTerm.length > 0) {
-                noResultsMessage.classList.remove('hidden');
+                noResultsMessage.classList.remove('hidden'); // Tampilkan pesan 'tidak ada hasil'
             } else {
-                noResultsMessage.classList.add('hidden');
+                noResultsMessage.classList.add('hidden'); // Sembunyikan pesan 'tidak ada hasil'
             }
 
-            // Adjust toggle button and max-height based on search
-            if (searchTerm.length > 0) {
-                toggleButton.classList.add('hidden'); // Hide toggle button during search
-                categoryGroup.style.maxHeight = 'none'; // Show all filtered results
+            // Atur tampilan tombol "Tampilkan Semua" dan tinggi grup kategori
+            if (searchTerm.length === 0) {
+                toggleButton.classList.remove('hidden'); // Tampilkan tombol toggle
+                if (!expanded) {
+                    categoryGroup.style.maxHeight = initialMaxHeight; // Kembali ke tinggi awal jika belum diperluas
+                    toggleButton.textContent = 'Tampilkan Semua';
+                } else {
+                    categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // Tetap sesuaikan tinggi jika sedang expanded
+                    toggleButton.textContent = 'Sembunyikan';
+                }
             } else {
-                toggleButton.classList.remove('hidden'); // Show toggle button when search is clear
-                // Reset max-height and expanded state when search is cleared
-                categoryGroup.style.maxHeight = initialMaxHeight;
-                toggleButton.textContent = 'Tampilkan Semua';
-                expanded = false;
+                toggleButton.classList.add('hidden'); // Sembunyikan tombol toggle saat ada pencarian
+                categoryGroup.style.maxHeight = 'none'; // Biarkan tinggi menyesuaikan konten yang difilter
             }
         }
 
-        // Event listener for search input
+        // Aktifkan event listener untuk filter saat mengetik
         searchInput.addEventListener('input', filterCategories);
 
-        // Event listener for the "Tampilkan Semua/Sembunyikan" button
+        // Tambahkan event listener untuk tombol pencarian (opsional, jika ingin tetap ada tombol)
+        searchButton.addEventListener('click', filterCategories);
+
+        // Event listener untuk tombol "Tampilkan Semua/Sembunyikan"
         toggleButton.addEventListener('click', () => {
             if (expanded) {
-                categoryGroup.style.maxHeight = initialMaxHeight; // collapse
+                categoryGroup.style.maxHeight = initialMaxHeight;
                 toggleButton.textContent = 'Tampilkan Semua';
             } else {
-                categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // expand
+                // Pastikan semua item terlihat sebelum menghitung scrollHeight saat diperluas
+                categoryItems.forEach(item => {
+                    item.style.display = '';
+                });
+                categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px';
                 toggleButton.textContent = 'Sembunyikan';
             }
             expanded = !expanded;
         });
+
+        // Panggil filterCategories saat halaman dimuat untuk inisialisasi awal.
+        // Ini memastikan bahwa jika ada teks di input dari refresh atau riwayat browser,
+        // filter akan diterapkan, atau semua kategori ditampilkan jika input kosong.
+        filterCategories();
     });
 </script>
+@endpush

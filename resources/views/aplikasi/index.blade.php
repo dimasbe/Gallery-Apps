@@ -3,13 +3,14 @@
 @section('content')
 <section class="max-w-7xl mx-auto p-6">
     <div class="flex justify-end mb-2">
-        {{-- Form Pencarian --}}
         <form action="{{ route('search') }}" method="GET" class="ml-auto">
             <div class="relative max-w-md">
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari di sini..."
-                    class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins">
+                    class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins"
+                    autocomplete="off">
                 <button type="submit"
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]">
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]"
+                    aria-label="Cari">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -20,291 +21,126 @@
         </form>
     </div>
 
+    {{-- Bagian Paling Populer (berdasarkan jumlah_kunjungan) --}}
     <div class="mb-10 mt-10">
         <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
             Paling populer
-            <a href="/aplikasi/populer" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
+            <a href="{{ route('aplikasi.populer') }}" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
             </a>
         </h3>
-        <div class="grid grid-cols-3 gap-4 mt-8">
-            <div class="space-y-3">
-                {{-- Aplikasi Populer 1 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>1</span>
-                    </div>
-                    {{-- Ubah ini untuk bisa diklik --}}
-                    <a href="/aplikasi/detail" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
-    <img src="{{ asset('images/icon_ml.png') }}" alt="Mobile Legends Icon" class="w-12 h-12 rounded-lg" />
-</a>
+        @php
+            $perPagePopuler = $aplikasiPopuler->perPage();
+            $currentPagePopuler = $aplikasiPopuler->currentPage();
+            $globalStartingIndexPopuler = ($currentPagePopuler - 1) * $perPagePopuler;
+            $actualItemsPerVisualColumnPopuler = ceil($aplikasiPopuler->count() / 3);
+        @endphp
 
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Mobile Legends: Bang Bang</span>
-                        <small class="text-gray-500 text-sm">MOONTOON</small>
-                        <small class="text-gray-500 text-sm">3.8 ★</small>
+        @if ($aplikasiPopuler->isEmpty())
+            <p class="text-gray-600 col-span-3">Tidak ada aplikasi populer yang tersedia.</p>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
+                @foreach ($columnedResultsPopuler as $colIndex => $column)
+                    <div class="space-y-5">
+                        @foreach ($column as $rowInColIndex => $aplikasi)
+                            <div class="flex items-start space-x-3 font-poppins">
+                                @php
+                                    $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumnPopuler) + $rowInColIndex;
+                                    $displayNumber = $globalStartingIndexPopuler + $itemOriginalIndex + 1;
+                                @endphp
+                                <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
+
+                                <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
+                                    @if ($aplikasi->logo)
+                                        <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="Logo {{ $aplikasi->nama_aplikasi }}" class="w-12 h-12 rounded-lg object-cover" />
+                                    @else
+                                        <div class="w-12 h-12 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                        </div>
+                                    @endif
+                                </a>
+                                <div class="flex flex-col">
+                                    <h3 class="text-sm font-semibold text-[#1b1b18] leading-tight">
+                                        <a href="{{ route('aplikasi.detail', $aplikasi->id) }}" class="hover:text-red-600">{{ $aplikasi->nama_aplikasi }}</a>
+                                    </h3>
+                                    <small class="text-gray-500 text-sm">{{ $aplikasi->nama_pemilik ?? 'Developer tidak tersedia' }}</small>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                </div>
-                {{-- Aplikasi Populer 2 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>2</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 2</span>
-                        <small class="text-gray-500 text-sm">Developer 2</small>
-                        <small class="text-gray-500 text-sm">4.5 ★</small>
-                    </div>
-                </div>
-                {{-- Aplikasi Populer 3 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>3</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 3</span>
-                        <small class="text-gray-500 text-sm">Developer 3</small>
-                        <small class="text-gray-500 text-sm">4.2 ★</small>
-                    </div>
-                </div>
+                @endforeach
             </div>
-            <div class="space-y-3">
-                {{-- Aplikasi Populer 4 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>4</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 4</span>
-                        <small class="text-gray-500 text-sm">Developer 4</small>
-                        <small class="text-gray-500 text-sm">4.0 ★</small>
-                    </div>
-                </div>
-                {{-- Aplikasi Populer 5 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>5</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 5</span>
-                        <small class="text-gray-500 text-sm">Developer 5</small>
-                        <small class="text-gray-500 text-sm">3.9 ★</small>
-                    </div>
-                </div>
-                {{-- Aplikasi Populer 6 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>6</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 6</span>
-                        <small class="text-gray-500 text-sm">Developer 6</small>
-                        <small class="text-gray-500 text-sm">4.8 ★</small>
-                    </div>
-                </div>
+            <div class="mt-8">
+                {{ $aplikasiPopuler->links('pagination::tailwind', ['pageName' => 'popular_page']) }} {{-- Pastikan nama paginator sama --}}
             </div>
-            <div class="space-y-3">
-                {{-- Aplikasi Populer 7 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>7</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 7</span>
-                        <small class="text-gray-500 text-sm">Developer 7</small>
-                        <small class="text-gray-500 text-sm">4.1 ★</small>
-                    </div>
-                </div>
-                {{-- Aplikasi Populer 8 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>8</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 8</span>
-                        <small class="text-gray-500 text-sm">Developer 8</small>
-                        <small class="text-gray-500 text-sm">3.7 ★</small>
-                    </div>
-                </div>
-                {{-- Aplikasi Populer 9 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>9</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Another App Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Aplikasi 9</span>
-                        <small class="text-gray-500 text-sm">Developer 9</small>
-                        <small class="text-gray-500 text-sm">4.6 ★</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endif
     </div>
 
-    <div class="mb-10 mt-12">
-        <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4">
-            Permainan
-        </h3>
-        <div class="grid grid-cols-3 gap-4 mt-8">
-            <div class="space-y-3">
-                {{-- Permainan 1 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>1</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 1</span>
-                        <small class="text-gray-500 text-sm">Developer Game 1</small>
-                        <small class="text-gray-500 text-sm">4.3 ★</small>
-                    </div>
+    {{-- Bagian Aplikasi per Kategori --}}
+    @foreach ($categorizedApplications as $categoryGroup)
+        @php
+            $category = $categoryGroup['category'];
+            $applications = $categoryGroup['applications'];
+            $columnedResults = $categoryGroup['columnedResults'];
+
+            $perPageCategory = $applications->perPage();
+            $currentPageCategory = $applications->currentPage();
+            $globalStartingIndexCategory = ($currentPageCategory - 1) * $perPageCategory;
+            $actualItemsPerVisualColumnCategory = ceil($applications->count() / 3);
+        @endphp
+
+        <div class="mb-10 mt-12">
+            <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
+                {{ $category->nama_kategori }}
+                <a href="{{ route('kategori.show', $category->nama_kategori) }}" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </h3>
+
+            @if ($applications->isEmpty())
+                <p class="text-gray-600 col-span-3">Tidak ada aplikasi dalam kategori {{ $category->nama_kategori }} yang tersedia.</p>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
+                    @foreach ($columnedResults as $colIndex => $column)
+                        <div class="space-y-5">
+                            @foreach ($column as $rowInColIndex => $aplikasi)
+                                <div class="flex items-start space-x-3 font-poppins">
+                                    @php
+                                        $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumnCategory) + $rowInColIndex;
+                                        $displayNumber = $globalStartingIndexCategory + $itemOriginalIndex + 1;
+                                    @endphp
+                                    <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
+
+                                    <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
+                                        @if ($aplikasi->logo)
+                                            <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="Logo {{ $aplikasi->nama_aplikasi }}" class="w-12 h-12 rounded-lg object-cover" />
+                                        @else
+                                            <div class="w-12 h-12 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                                            </div>
+                                        @endif
+                                    </a>
+                                    <div class="flex flex-col">
+                                        <h3 class="text-sm font-semibold text-[#1b1b18] leading-tight">
+                                            <a href="{{ route('aplikasi.detail', $aplikasi->id) }}" class="hover:text-red-600">{{ $aplikasi->nama_aplikasi }}</a>
+                                        </h3>
+                                        <small class="text-gray-500 text-sm">{{ $aplikasi->nama_pemilik ?? 'Developer tidak tersedia' }}</small>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endforeach
                 </div>
-                {{-- Permainan 2 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>2</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 2</span>
-                        <small class="text-gray-500 text-sm">Developer Game 2</small>
-                        <small class="text-gray-500 text-sm">4.0 ★</small>
-                    </div>
+                <div class="mt-8">
+                    {{ $applications->links('pagination::tailwind', ['pageName' => 'category_' . $category->id . '_page']) }}
                 </div>
-                {{-- Permainan 3 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>3</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 3</span>
-                        <small class="text-gray-500 text-sm">Developer Game 3</small>
-                        <small class="text-gray-500 text-sm">4.9 ★</small>
-                    </div>
-                </div>
-            </div>
-            <div class="space-y-3">
-                {{-- Permainan 4 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>4</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 4</span>
-                        <small class="text-gray-500 text-sm">Developer Game 4</small>
-                        <small class="text-gray-500 text-sm">3.5 ★</small>
-                    </div>
-                </div>
-                {{-- Permainan 5 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>5</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 5</span>
-                        <small class="text-gray-500 text-sm">Developer Game 5</small>
-                        <small class="text-gray-500 text-sm">4.4 ★</small>
-                    </div>
-                </div>
-                {{-- Permainan 6 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>6</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 6</span>
-                        <small class="text-gray-500 text-sm">Developer Game 6</small>
-                        <small class="text-gray-500 text-sm">4.7 ★</small>
-                    </div>
-                </div>
-            </div>
-            <div class="space-y-3">
-                {{-- Permainan 7 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>7</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 7</span>
-                        <small class="text-gray-500 text-sm">Developer Game 7</small>
-                        <small class="text-gray-500 text-sm">4.2 ★</small>
-                    </div>
-                </div>
-                {{-- Permainan 8 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>8</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 8</span>
-                        <small class="text-gray-500 text-sm">Developer Game 8</small>
-                        <small class="text-gray-500 text-sm">3.6 ★</small>
-                    </div>
-                </div>
-                {{-- Permainan 9 --}}
-                <div class="flex items-center gap-2">
-                    <div class="mr-4">
-                        <span>9</span>
-                    </div>
-                    <a href="{{ route('aplikasi.detail') }}"> {{-- Ganti dengan detail aplikasi yang relevan --}}
-                        <img src="{{ asset('images/icon_ml.png') }}" alt="Game Icon" class="w-12 h-12 rounded-lg" />
-                    </a>
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Nama Game 9</span>
-                        <small class="text-gray-500 text-sm">Developer Game 9</small>
-                        <small class="text-gray-500 text-sm">4.5 ★</small>
-                    </div>
-                </div>
-            </div>
+            @endif
         </div>
-    </div>
+    @endforeach
+
 </section>
 @endsection

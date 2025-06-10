@@ -31,37 +31,19 @@
     </div>
 
     <div class="mb-10 mt-10">
-        <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4">
-            Aplikasi Paling Populer
+        <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
+            Kategori : {{ $category->nama_kategori }}
         </h3>
+
         @php
-            $perPagePopuler = $aplikasiPopuler->perPage();
-            $currentPagePopuler = $aplikasiPopuler->currentPage();
-            $globalStartingIndexPopuler = ($currentPagePopuler - 1) * $perPagePopuler;
-
-            // Hitung jumlah item per kolom visual untuk 3 kolom
-            // Ini untuk memastikan pembagian item antar kolom visual konsisten
-            $totalItems = $aplikasiPopuler->count();
-            $itemsPerVisualColumn = ceil($totalItems / 3);
-
-            // Buat array untuk menampung item yang dibagi ke 3 kolom
-            $columnedResults = [[], [], []];
-            $currentCol = 0;
-            $itemCountInCurrentCol = 0;
-
-            foreach ($aplikasiPopuler as $item) {
-                $columnedResults[$currentCol][] = $item;
-                $itemCountInCurrentCol++;
-
-                if ($itemCountInCurrentCol >= $itemsPerVisualColumn && $currentCol < 2) {
-                    $currentCol++;
-                    $itemCountInCurrentCol = 0;
-                }
-            }
+            $perPageCategory = $applications->perPage();
+            $currentPageCategory = $applications->currentPage();
+            $globalStartingIndexCategory = ($currentPageCategory - 1) * $perPageCategory;
+            $actualItemsPerVisualColumnCategory = ceil($applications->count() / 3);
         @endphp
 
-        @if ($aplikasiPopuler->isEmpty())
-            <p class="text-gray-600 col-span-3">Tidak ada aplikasi populer yang tersedia.</p>
+        @if ($applications->isEmpty())
+            <p class="text-gray-600 col-span-3">Tidak ada aplikasi dalam kategori ini.</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
                 @foreach ($columnedResults as $colIndex => $column)
@@ -69,9 +51,8 @@
                         @foreach ($column as $rowInColIndex => $aplikasi)
                             <div class="flex items-start space-x-3 font-poppins">
                                 @php
-                                    // Hitung index asli item untuk nomor urut
-                                    $itemOriginalIndex = ($colIndex * $itemsPerVisualColumn) + $rowInColIndex;
-                                    $displayNumber = $globalStartingIndexPopuler + $itemOriginalIndex + 1;
+                                    $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumnCategory) + $rowInColIndex;
+                                    $displayNumber = $globalStartingIndexCategory + $itemOriginalIndex + 1;
                                 @endphp
                                 <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
 
@@ -96,10 +77,9 @@
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $aplikasiPopuler->links('pagination::tailwind', ['pageName' => 'popular_page']) }}
+                {{ $applications->links('pagination::tailwind') }}
             </div>
         @endif
     </div>
-
 </section>
 @endsection
