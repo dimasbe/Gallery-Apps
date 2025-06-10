@@ -44,7 +44,7 @@
             </div>
 
             {{-- Message for no search results --}}
-            <div id="noResultsMessage" class="text-center text-gray-600 mt-4 hidden">
+            <div id="noResultsMessage" class="text-center text-gray-400 mt-4 hidden">
                 Pencarian tidak tersedia.
             </div>
 
@@ -79,45 +79,39 @@
             categoryItems.forEach(item => {
                 const categoryName = item.textContent.toLowerCase();
                 if (categoryName.includes(searchTerm)) {
-                    item.style.display = '';
+                    item.style.display = ''; // Tampilkan item
                     foundResults = true;
                 } else {
-                    item.style.display = 'none';
+                    item.style.display = 'none'; // Sembunyikan item
                 }
             });
 
             if (!foundResults && searchTerm.length > 0) {
-                noResultsMessage.classList.remove('hidden');
+                noResultsMessage.classList.remove('hidden'); // Tampilkan pesan 'tidak ada hasil'
             } else {
-                noResultsMessage.classList.add('hidden');
+                noResultsMessage.classList.add('hidden'); // Sembunyikan pesan 'tidak ada hasil'
             }
 
-            // Atur ulang tampilan kategori dan tombol toggle saat search term kosong
-            if (searchTerm.length === 0) { // Hanya jika search term kosong
-                noResultsMessage.classList.add('hidden'); // Sembunyikan pesan no results
-                // Tampilkan semua item kategori jika search term kosong
-                categoryItems.forEach(item => {
-                    item.style.display = '';
-                });
-
-                toggleButton.classList.remove('hidden'); // Tampilkan kembali tombol toggle
+            // Atur tampilan tombol "Tampilkan Semua" dan tinggi grup kategori
+            if (searchTerm.length === 0) {
+                toggleButton.classList.remove('hidden'); // Tampilkan tombol toggle
                 if (!expanded) {
-                    categoryGroup.style.maxHeight = initialMaxHeight; // Kembali ke max-height awal jika tidak diperluas
-                    toggleButton.textContent = 'Tampilkan Semua'; // Reset teks tombol
+                    categoryGroup.style.maxHeight = initialMaxHeight; // Kembali ke tinggi awal jika belum diperluas
+                    toggleButton.textContent = 'Tampilkan Semua';
                 } else {
-                    categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // Sesuaikan tinggi jika sedang expanded
-                    toggleButton.textContent = 'Sembunyikan'; // Reset teks tombol
+                    categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // Tetap sesuaikan tinggi jika sedang expanded
+                    toggleButton.textContent = 'Sembunyikan';
                 }
-            } else { // Jika ada search term
-                toggleButton.classList.add('hidden'); // Sembunyikan tombol toggle
-                categoryGroup.style.maxHeight = 'none'; // Biarkan tinggi menyesuaikan konten
+            } else {
+                toggleButton.classList.add('hidden'); // Sembunyikan tombol toggle saat ada pencarian
+                categoryGroup.style.maxHeight = 'none'; // Biarkan tinggi menyesuaikan konten yang difilter
             }
         }
 
-        // HAPUS BARIS INI untuk menonaktifkan filter saat mengetik:
-        // searchInput.addEventListener('input', filterCategories);
+        // Aktifkan event listener untuk filter saat mengetik
+        searchInput.addEventListener('input', filterCategories);
 
-        // Tambahkan event listener untuk tombol pencarian (Filter hanya saat tombol diklik)
+        // Tambahkan event listener untuk tombol pencarian (opsional, jika ingin tetap ada tombol)
         searchButton.addEventListener('click', filterCategories);
 
         // Event listener untuk tombol "Tampilkan Semua/Sembunyikan"
@@ -126,8 +120,9 @@
                 categoryGroup.style.maxHeight = initialMaxHeight;
                 toggleButton.textContent = 'Tampilkan Semua';
             } else {
+                // Pastikan semua item terlihat sebelum menghitung scrollHeight saat diperluas
                 categoryItems.forEach(item => {
-                    item.style.display = ''; // Pastikan semua item terlihat saat memperluas
+                    item.style.display = '';
                 });
                 categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px';
                 toggleButton.textContent = 'Sembunyikan';

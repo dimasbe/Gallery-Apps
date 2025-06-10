@@ -9,7 +9,6 @@ use App\Contracts\Interfaces\AplikasiInterface;
 use App\Contracts\Interfaces\FotoAplikasiInterface; // Tambahkan ini jika Anda menggunakannya di konstruktor FotoAplikasiService
 use App\Services\FotoAplikasiService;
 use App\Services\LogoAplikasiService;
-use Illuminate\Support\Facades\Storage;
 
 class AplikasiService
 {

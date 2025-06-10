@@ -59,7 +59,6 @@ class FotoAplikasiService
             $foto->delete();
         }
     }
-}
 
     /**
      * Hapus satu file foto dari storage.

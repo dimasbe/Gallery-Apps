@@ -11,7 +11,7 @@
         </a>
     </div>
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Kategori {{ $kategori->nama_kategori }}</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Kategori{{ $kategori->nama_kategori }}</h1>
 
         @if ($aplikasi->isEmpty())
             <p class="text-gray-500 text-center">Tidak ada aplikasi yang tersedia dalam kategori ini.</p>
