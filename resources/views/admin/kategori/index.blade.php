@@ -3,22 +3,33 @@
 @section('title', 'Kategori')
 
 @section('content')
-<div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
-
-    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Kategori</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="flex items-center text-sm text-gray-600">
-                    <li class="flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
-                    </li>
-                    <li class="text-custom-primary-red" aria-current="page">Kategori</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
+     <!-- Wrapper Konten Utama -->
+     <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+        <!-- Navbar Riwayat + Breadcrumbs -->
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-red-700">Kategori</h1>
+                <div class="flex mx-8">
+                    {{-- Tambahkan form untuk pencarian --}}
+                    <form action="{{ route('admin.kategori.index') }}" method="GET" class="flex w-64 md:w-80">
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="Cari di sini..."
+                            class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
+                            value="{{ request('search') }}"
+                        />
+                        <button
+                            type="submit"
+                            class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
+                        >
+                            <i class="fas fa-search text-custom-primary-red"></i>
+                        </button>
+                        <input type="hidden" name="filter" value="{{ $filter }}">
+                    </form>
+                </div>
+            </div>
+        </div>        
 
     <div class="bg-white shadow-md rounded-lg p-6">
         {{-- Main container for the header row --}}
@@ -540,6 +551,21 @@
                     confirmButtonColor: '#dc3545'
                 });
             }
+        });
+    });
+
+    document.querySelectorAll('.btnFilter').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const currentUrl = new URL(window.location.href);
+            const searchParam = currentUrl.searchParams.get('search');
+            const filterValue = this.getAttribute('href').split('filter=')[1];
+            
+            let newUrl = `{{ route('admin.kategori.index') }}?filter=${filterValue}`;
+            if (searchParam) {
+                newUrl += `&search=${searchParam}`;
+            }
+            window.location.href = newUrl;
         });
     });
 </script>
