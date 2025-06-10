@@ -17,18 +17,21 @@
                 </p>
 
                 {{-- Form Pencarian --}}
-                <div class="relative max-w-md">
-                    <input type="text" placeholder="Cari di sini..."
-                        class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins">
-                    <button
-                        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-4.35-4.35M16 10a6 6 0 11-12 0 6 6 0 0112 0z" />
-                        </svg>
+                <form action="{{ route('search') }}" method="GET" class="relative max-w-md">
+                    <input
+                    type="text"
+                    name="q"
+                    placeholder="Cari di sini..."
+                    value="{{ request('q') }}"
+                    class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins"
+                    autocomplete="off"
+                    >
+                    <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]" aria-label="Cari">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16 10a6 6 0 11-12 0 6 6 0 0112 0z" />
+                    </svg>
                     </button>
-                </div>
+                </form>
             </div>
 
             {{-- Gambar Laptop Kanan --}}
@@ -51,90 +54,83 @@
             <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
             <div class="mx-auto w-fit grid grid-cols-2 md:grid-cols-3 gap-x-20 gap-y-6">
                 {{-- Kategori Item --}}
-                <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
+                {{-- Permainan --}}
+                <a href="{{ route('kategori.show_by_nama', ['nama' => 'Permainan']) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     <img src="{{ asset('images/permainan.png') }}"class="w-full h-[200px] object-cover">
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white group-hover:bg-opacity-60 transition duration-300">
                         <div class="bg-white p-2 rounded-full mb-2">
                             <img src="{{ asset('images/icon_permainan.png') }}" class="w-6 h-6">
                         </div>
-                        <p
-                            class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-white px-20 py-2 rounded-full text-base font-bold font-poppins shadow">
+                        <p class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-gray-800 px-20 py-2 rounded-full text-base font-bold font-poppins shadow group-hover:bg-opacity-90 transition duration-300">
                             Permainan
                         </p>
-
                     </div>
-                </div>
+                </a>
 
-                <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
+                {{-- Belanja --}}
+                <a href="{{ route('kategori.show_by_nama', ['nama' => 'Belanja']) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     <img src="{{ asset('images/belanja.png') }}" class="w-full h-[200px] object-cover">
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white group-hover:bg-opacity-60 transition duration-300">
                         <div class="bg-white p-2 rounded-full mb-2">
                             <img src="{{ asset('images/icon_belanja.png') }}" class="w-6 h-6">
                         </div>
-                        <p
-                            class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-white px-20 py-2 rounded-full text-base font-bold font-poppins shadow">
+                        <p class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-gray-800 px-20 py-2 rounded-full text-base font-bold font-poppins shadow group-hover:bg-opacity-90 transition duration-300">
                             Belanja
                         </p>
                     </div>
-                </div>
+                </a>
 
-                <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
+                {{-- Pendidikan --}}
+                <a href="{{ route('kategori.show_by_nama', ['nama' => 'Pendidikan']) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     <img src="{{ asset('images/pendidikan.png') }}" class="w-full h-[200px] object-cover">
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white group-hover:bg-opacity-60 transition duration-300">
                         <div class="bg-white p-2 rounded-full mb-2">
                             <img src="{{ asset('images/icon_pendidikan.png') }}" class="w-6 h-6">
                         </div>
-                        <p
-                            class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-white px-20 py-2 rounded-full text-base font-bold font-poppins shadow">
+                        <p class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-gray-800 px-20 py-2 rounded-full text-base font-bold font-poppins shadow group-hover:bg-opacity-90 transition duration-300">
                             Pendidikan
                         </p>
                     </div>
-                </div>
+                </a>
 
-                <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
+                {{-- Olahraga --}}
+                <a href="{{ route('kategori.show_by_nama', ['nama' => 'Olahraga']) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     <img src="{{ asset('images/olahraga.png') }}" class="w-full h-[200px] object-cover">
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white group-hover:bg-opacity-60 transition duration-300">
                         <div class="bg-white p-2 rounded-full mb-2">
                             <img src="{{ asset('images/icon_olahraga.png') }}" class="w-6 h-6">
                         </div>
-                        <p
-                            class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-white px-20 py-2 rounded-full text-base font-bold font-poppins shadow">
+                        <p class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-gray-800 px-20 py-2 rounded-full text-base font-bold font-poppins shadow group-hover:bg-opacity-90 transition duration-300">
                             Olahraga
                         </p>
                     </div>
-                </div>
+                </a>
 
-                <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
+                {{-- Fashion --}}
+                <a href="{{ route('kategori.show_by_nama', ['nama' => 'Fashion']) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     <img src="{{ asset('images/fashion.png') }}" class="w-full h-[200px] object-cover">
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white group-hover:bg-opacity-60 transition duration-300">
                         <div class="bg-white p-2 rounded-full mb-2">
                             <img src="{{ asset('images/icon_fashion.png') }}" class="w-6 h-6">
                         </div>
-                        <p
-                            class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-white px-20 py-2 rounded-full text-base font-bold font-poppins shadow">
+                        <p class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-gray-800 px-20 py-2 rounded-full text-base font-bold font-poppins shadow group-hover:bg-opacity-90 transition duration-300">
                             Fashion
                         </p>
                     </div>
-                </div>
+                </a>
 
-                <div class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md">
+                {{-- Kesehatan --}}
+                <a href="{{ route('kategori.show_by_nama', ['nama' => 'Kesehatan']) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     <img src="{{ asset('images/kesehatan.png') }}" class="w-full h-[200px] object-cover">
-                    <div
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white group-hover:bg-opacity-60 transition duration-300">
                         <div class="bg-white p-2 rounded-full mb-2">
                             <img src="{{ asset('images/icon_kesehatan.png') }}" class="w-6 h-6">
                         </div>
-                        <p
-                            class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-white px-20 py-2 rounded-full text-base font-bold font-poppins shadow">
+                        <p class="absolute bottom-3 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-70 text-gray-800 px-20 py-2 rounded-full text-base font-bold font-poppins shadow group-hover:bg-opacity-90 transition duration-300">
                             Kesehatan
                         </p>
                     </div>
-                </div>
+                </a>
             </div>
 
             <div class="text-center mt-12">

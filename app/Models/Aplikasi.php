@@ -21,6 +21,7 @@ class Aplikasi extends Model
         'tanggal_rilis',
         'versi',
         'rating_konten',
+        'jumlah_kunjungan', // <<< TAMBAHKAN INI
         'tautan_aplikasi',
         'deskripsi',
         'fitur',
@@ -39,6 +40,8 @@ class Aplikasi extends Model
 
     protected $casts = [
         'tanggal_verifikasi' => 'datetime',
+        'rating_konten' => 'float',
+        'jumlah_kunjungan' => 'integer', // <<< TAMBAHKAN INI
     ];
 
     public function kategori()

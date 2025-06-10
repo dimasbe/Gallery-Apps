@@ -9,7 +9,7 @@ class Kategori extends Model
 {
     use HasFactory;
 
-    protected $table = 'kategori'; // Specify the table name if it's not the plural form of the model name
+    protected $table = 'kategori'; 
 
     protected $fillable = [
         'sub_kategori',
@@ -18,11 +18,9 @@ class Kategori extends Model
         'tanggal_dibuat',
         'tanggal_diedit',
     ];
-
-    // Disable default timestamps if you're managing them manually
+    
     public $timestamps = false;
-
-    // Define custom timestamp column names if they are different from 'created_at' and 'updated_at'
+    
     const CREATED_AT = 'tanggal_dibuat';
     const UPDATED_AT = 'tanggal_diedit';
 
@@ -36,6 +34,12 @@ class Kategori extends Model
         'tanggal_diedit' => 'datetime',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug'; 
+    }
+
+
     public function aplikasi()
     {
         return $this->hasMany(Aplikasi::class, 'id_kategori');
@@ -45,8 +49,9 @@ class Kategori extends Model
      * Relasi many-to-many dengan Berita.
      * Sebuah kategori bisa dimiliki oleh banyak berita.
      */
-    public function berita()
+    public function beritas()
     {
+        // Parameter: Model terkait, nama tabel pivot, foreign key di pivot untuk model ini, foreign key di pivot untuk model terkait
         return $this->belongsToMany(Berita::class, 'berita_kategori', 'kategori_id', 'berita_id');
     }
 }

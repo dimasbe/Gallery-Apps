@@ -5,9 +5,9 @@
     <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
         <!-- Navbar Riwayat + Breadcrumbs -->
         <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-            <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-gray-800">Riwayat</h1>
-                <div class="flex mx-8">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-red-700">Riwayat</h1> {{-- Judul utama halaman --}}
+            <div class="flex mx-8">
             <div class="flex w-64 md:w-80">
                 <input
                     type="text"

@@ -25,10 +25,16 @@ class BeritaService
         $this->kategori = $kategori;
     }
 
-    public function getAllWithKategori()
-    {
-        return $this->berita->getAllWithKategori();
+    public function getAllWithKategori($keyword = null)
+{
+    $query = Berita::with('kategori'); // asumsi relasi kategori
+
+    if ($keyword) {
+        $query->where('judul_berita', 'like', '%' . $keyword . '%');
     }
+
+    return $query->get(); // atau paginate kalau perlu
+}
 
     public function getKategoriBerita()
     {

@@ -6,11 +6,11 @@ use App\Contracts\Interfaces\KategoriInterface;
 use App\Enums\KategoriTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreKategoriRequest;
-use App\Http\Requests\UpdateKategoriRequest; 
+use App\Http\Requests\UpdateKategoriRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use RealRashid\SweetAlert\Facades\Alert; 
+use RealRashid\SweetAlert\Facades\Alert;
 
 class KategoriController extends Controller
 {
@@ -27,15 +27,31 @@ class KategoriController extends Controller
     public function index(Request $request): View
     {
         $filter = $request->query('filter', 'semua');
-        $kategoris = collect(); // Initialize an empty collection
+        $search = $request->query('search'); // Ambil parameter pencarian
 
-        // Filter categories based on the selected type
+        $kategoris = collect(); // Inisialisasi koleksi kosong
+
+        // Dapatkan semua kategori atau yang difilter terlebih dahulu
         if ($filter === KategoriTypeEnum::APLIKASI->value) {
             $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::APLIKASI->value);
         } elseif ($filter === KategoriTypeEnum::BERITA->value) {
             $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::BERITA->value);
         } else {
-            $kategoris = $this->kategori->get();
+            $kategoris = $this->kategori->get(); // Asumsi method get() mengambil semua data
+        }
+
+        // Terapkan pencarian jika ada
+        if ($search) {
+            $kategoris = $kategoris->filter(function ($kategori) use ($search) {
+                // Konversi nama_kategori dan sub_kategori ke lowercase untuk pencarian case-insensitive
+                $searchLower = strtolower($search);
+                $namaKategoriLower = strtolower($kategori->nama_kategori);
+                $subKategoriLower = strtolower($kategori->sub_kategori);
+
+                // Cek apakah search term ada di nama_kategori atau sub_kategori
+                return str_contains($namaKategoriLower, $searchLower) ||
+                       str_contains($subKategoriLower, $searchLower);
+            });
         }
 
         return view('admin.kategori.index', compact('kategoris', 'filter'));
@@ -68,6 +84,7 @@ class KategoriController extends Controller
     {
         $kategori = $this->kategori->show($id);
         return response()->json($kategori);
+
     }
 
     /**

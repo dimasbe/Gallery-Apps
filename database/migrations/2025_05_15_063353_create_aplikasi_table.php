@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->string('nama_aplikasi');
             $table->string('logo');
-            $table->foreignId('id_kategori')->constrained('kategori_aplikasi')->onDelete('cascade');
+            $table->foreignId('id_kategori')->constrained('kategori')->onDelete('cascade');
             $table->string('nama_pemilik');
             $table->date('tanggal_rilis');
             $table->date('tanggal_update')->nullable();
