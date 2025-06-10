@@ -187,15 +187,35 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     @if (session('success'))
-        alert( @json(session('success')));
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: @json(session('success')),
+            // confirmButtonColor: '#ED125F'
+            showConfirmshowConfirmButton: false,
+            timer: 3000
+        });
     @elseif (session('error'))
-        alert(@json(session('error')));
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: @json(session('error')),
+            // confirmButtonColor: '#ED125F'
+            showConfirmButton: false,
+            timer: 1500
+        });
     @endif
 
     @error('alasan_penolakan')
-        alert(@json($message));
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal!',
+            text: @json($message),
+            confirmButtonColor: '#ED125F'
+        });
     @enderror
 
     let selectedId = null;
