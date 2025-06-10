@@ -17,7 +17,7 @@ use App\Http\Controllers\AplikasiController; // <<< PENTING: Gunakan AplikasiCon
 // Prefix 'user-login/aplikasi' cocok dengan URL yang Anda lihat di screenshot
 // Nama route 'tambah_aplikasi.' juga cocok dengan yang digunakan di Blade Anda.
 Route::prefix('user-login/aplikasi')->name('tambah_aplikasi.')->group(function () {
-    Route::get('/', [AplikasiController::class, 'index'])->name('index'); // Misalnya daftar aplikasi
+    Route::get('/', [AplikasiController::class, 'indexPage'])->name('index'); // Misalnya daftar aplikasi
     Route::get('/create', [AplikasiController::class, 'create'])->name('create'); // Form tambah
     Route::post('/', [AplikasiController::class, 'store'])->name('store'); // <<< PENTING: Route POST untuk menyimpan
     Route::get('/{aplikasi}/edit', [AplikasiController::class, 'edit'])->name('edit');

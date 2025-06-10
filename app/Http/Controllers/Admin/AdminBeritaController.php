@@ -21,11 +21,16 @@ class AdminBeritaController extends Controller
         $this->beritaService = $beritaService;
     }
 
-    public function index()
-    {
-        $berita = $this->beritaService->getAllWithKategori();
-        return view('admin.berita.index', compact('berita'));
-    }
+    public function index(Request $request)
+{
+    $keyword = $request->query('keyword');
+
+    // Kirim keyword ke service agar berita bisa difilter
+    $berita = $this->beritaService->getAllWithKategori($keyword);
+
+    return view('admin.berita.index', compact('berita'));
+}
+
 
     public function create()
     {
@@ -147,15 +152,18 @@ class AdminBeritaController extends Controller
         }
     }
 
-    public function search(Request $request)
-    {
-        $keyword = $request->input('keyword');
-        $berita = $this->beritaService->searchBerita($keyword);
-        return view('admin.berita.index', compact('berita', 'keyword'));
-    }
 
     public function show(Berita $berita)
     {
         return view('admin.berita.show', compact('berita'));
     }
+
+    public function search(Request $request)
+{
+    $keyword = $request->input('keyword', '');
+    $result = $this->beritaRepository->search($keyword);
+    // ...
+}
+
+    
 }

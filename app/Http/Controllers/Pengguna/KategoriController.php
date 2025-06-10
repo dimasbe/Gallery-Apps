@@ -42,7 +42,8 @@ class KategoriController extends Controller
     public function showByNama($nama): View
     {
         // Decode the URL parameter to get the actual category name (e.g., 'Permainan' from 'permainan')
-        $kategori = $this->kategori->getByNameWithAplikasi(urldecode($nama));
+        $formattedNama = ucfirst(urldecode($nama));
+        $kategori = $this->kategori->getByNameWithAplikasi($formattedNama);
 
         // Ensure $kategori is not null before accessing its properties.
         // If the category is not found, you might want to redirect or show a 404 page.

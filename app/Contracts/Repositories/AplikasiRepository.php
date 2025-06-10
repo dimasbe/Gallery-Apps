@@ -5,11 +5,12 @@ namespace App\Contracts\Repositories;
 use App\Contracts\Interfaces\AplikasiInterface;
 use App\Models\Aplikasi;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model; // Import Model
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection; // Pastikan ini di-import
 
 class AplikasiRepository extends BaseRepository implements AplikasiInterface
 {
-    protected Model $model; // Ubah tipe menjadi Model
+    protected Model $model;
 
     public function __construct(Aplikasi $aplikasi)
     {
@@ -19,12 +20,12 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
     public function get(): mixed {
         return $this->model->query()->with('kategori', 'fotoAplikasi', 'users')->orderBy('id','DESC')->get();
     }
+
     /**
      * Mengambil semua aplikasi dengan relasi yang diperlukan.
      *
      * @return mixed
      */
-
     public function show(mixed $id): mixed {
         return $this->model->query()->with('kategori.fotoAplikasi', 'foto_aplikasi', 'users')->findOrFail($id);
     }
@@ -105,5 +106,18 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
             ->where('id_user', $userId)
             ->orderBy('id', 'DESC')
             ->get();
+    }
+
+    /**
+     * Implementasi dari getPopularApps.
+     *
+     * @param int $limit
+     * @return \Illuminate\Support\Collection
+     */
+    public function getPopularApps(int $limit): Collection
+    {
+        return Aplikasi::orderBy('jumlah_kunjungan', 'desc')
+                       ->take($limit)
+                       ->get();
     }
 }

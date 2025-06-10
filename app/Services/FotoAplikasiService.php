@@ -18,11 +18,11 @@ class FotoAplikasiService
     public function storeMultiple(array $files, int $idAplikasi): void
     {
         foreach ($files as $file) {
-            $path = $file->store('foto_aplikasi', 'public');
+            $path = $file->store('foto_aplikasi', 'public'); // Path sudah relatif ke root disk 'public'
 
             FotoAplikasi::create([
                 'id_aplikasi' => $idAplikasi,
-                'path_foto' => $path,
+                'path_foto' => $path, // Simpan path ini langsung
             ]);
         }
     }
@@ -41,8 +41,8 @@ class FotoAplikasiService
         // Hapus foto lama dari storage dan database
         $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
         foreach ($fotoLama as $foto) {
-            Storage::disk('public')->delete($foto->path_foto);
-            $foto->delete();
+            $this->delete($foto->path_foto); // Panggil metode delete internal
+            $foto->delete(); // Hapus entri dari database
         }
 
         // Simpan foto baru
@@ -57,6 +57,36 @@ class FotoAplikasiService
                 Storage::disk('public')->delete($foto->path_foto);
             }
             $foto->delete();
+        }
+    }
+
+    /**
+     * Hapus satu file foto dari storage.
+     *
+     * @param string $path Path file foto relatif dari disk 'public'.
+     * @return bool True jika berhasil dihapus, false jika file tidak ditemukan atau gagal.
+     */
+    public function delete(string $path): bool
+    {
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->delete($path);
+        }
+        return false;
+    }
+
+    /**
+     * Hapus semua foto (file dan entri DB) berdasarkan ID Aplikasi.
+     * Metode ini akan dipanggil oleh AplikasiService.
+     *
+     * @param int $idAplikasi
+     * @return void
+     */
+    public function deleteAllByAplikasiId(int $idAplikasi): void
+    {
+        $fotos = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
+        foreach ($fotos as $foto) {
+            $this->delete($foto->path_foto); // Hapus file
+            $foto->delete(); // Hapus entri database
         }
     }
 }
