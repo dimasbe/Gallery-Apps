@@ -2,11 +2,9 @@
 
 @section('content')
 <section class="max-w-7xl mx-auto p-6">
-    {{-- Main content wrapper. Removed max-w-4xl, bg-white, p-6, rounded-lg, shadow-md from this div previously. --}}
     <div class="w-full max-w-7xl">
 
         {{-- Header: Kembali Button --}}
-        {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
             <a href="{{ route('tambah_aplikasi.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,7 +18,7 @@
             {{-- Left Column: App Title, Info, Google Play Button --}}
             <div class="flex-1 md:w-1/2">
                 <h1 class="text-3xl font-bold font-poppins text-gray-800 mt-2 mb-3">{{ $aplikasi->nama_aplikasi }}</h1>
-                <p class="text-gray-600 text-sm font-poppins mt-2 mb-3">{{ $aplikasi->nama_pemilik }}</p>
+                <p class="text-gray-600 text-sm font-poppins mt-2 mb-2">{{ $aplikasi->nama_pemilik }}</p>
 
                 <div class="flex items-center space-x-8 mb-8">
                     {{-- Logo --}}
@@ -69,7 +67,7 @@
         </div>
 
         {{-- Deskripsi Section --}}
-        <div class="mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
+        <div class="mb-8 px-6">
             <div class="flex items-center space-x-2 mb-4">
                 <h2 class="text-2xl font-bold font-poppins text-gray-800">Deskripsi</h2>
                 <button id="deskripsiButton"
@@ -83,12 +81,12 @@
                 </button>
             </div>
             <div class="text-gray-700 font-poppins leading-relaxed">
-                {{ \Illuminate\Support\Str::words(strip_tags($aplikasi->deskripsi), 50, '...') }}
+                {!! \Illuminate\Support\Str::words(strip_tags($aplikasi->deskripsi), 50, '...') !!}
             </div>
         </div>
 
         {{-- Fitur Section --}}
-        <div class="mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
+        <div class="mb-8 px-6">
             <div class="flex items-center space-x-2 mb-4">
                 <h2 class="text-2xl font-bold font-poppins text-gray-800">Fitur</h2>
                 <button id="fiturButton"
@@ -102,7 +100,7 @@
                 </button>
             </div>
             <div class="text-gray-700 font-poppins leading-relaxed">
-                {{ \Illuminate\Support\Str::words(strip_tags($aplikasi->fitur), 50, '...') }}
+                {!! \Illuminate\Support\Str::words(strip_tags($aplikasi->fitur), 50, '...') !!}
             </div>
         </div>
 
@@ -137,7 +135,7 @@
         </div>
 
         {{-- Additional Info Section --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8 px-6">
             <div>
                 <p class="font-semibold">Dirilis Tanggal</p>
                 <p>{{ \Carbon\Carbon::parse($aplikasi->tanggal_rilis)->translatedFormat('d F Y') }}</p>
@@ -157,97 +155,35 @@
         </div>
 
         {{-- Reviews Section --}}
-        <div class="rating-reviews-section px-6"> {{-- Added px-6 for consistent padding --}}
+        <div class="rating-reviews-section px-6">
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Ulasan</h2>
 
             {{-- Review Input Form --}}
             <div class="mb-6">
                 <p class="font-semibold text-gray-700 mb-2 font-poppins">Beri Ulasan:</p>
-                <div class="flex items-center space-x-3">
-                    <input type="text" placeholder="Tulis ulasan..." class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 text-sm font-poppins">
-                    <button class="bg-[#AD1500] text-white px-6 py-2 rounded-lg hover:bg-[#8C1200] transition-colors font-poppins text-sm">
+                @auth
+                <form id="review-form" class="flex items-center space-x-3">
+                    @csrf
+                    <input type="hidden" name="aplikasi_id" value="{{ $aplikasi->id_aplikasi }}">
+                    <textarea id="review-text" name="ulasan_teks" placeholder="Tulis ulasan Anda di sini..." class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 text-sm font-poppins" rows="1"></textarea>
+                    {{-- <select name="rating" id="review-rating" class="border border-gray-300 rounded-lg px-2 py-2 text-sm font-poppins"> --}}
+                    {{-- Baris di atas dan opsinya DIHAPUS --}}
+                    <button type="submit" class="bg-[#AD1500] text-white px-6 py-2 rounded-lg hover:bg-[#8C1200] transition-colors font-poppins text-sm">
                         Kirim
                     </button>
-                </div>
+                </form>
+                @else
+                <p class="text-gray-600 font-poppins text-sm">Silakan <a href="{{ route('login') }}" class="text-red-600 hover:underline">login</a> untuk memberikan ulasan.</p>
+                @endauth
             </div>
 
             {{-- List of Reviews --}}
             <div id="reviews-content" class="reviews-list space-y-6 overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 300px;">
-                {{-- Example Review 1 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Kim Sohun</p>
-                            <span class="text-gray-500 text-xs font-poppins">5 jam yang lalu</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 2 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Minho</p>
-                            <span class="text-gray-500 text-xs font-poppins">12 Maret 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 3 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">UI</p>
-                            <span class="text-gray-500 text-xs font-poppins">13 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 4 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Jongsuk</p>
-                            <span class="text-gray-500 text-xs font-poppins">01 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 5 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Dimas Bagus</p>
-                            <span class="text-gray-500 text-xs font-poppins">15 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya lumayan oke, tapi dari segi tampilan kurang</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 6 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Ari Sandi</p>
-                            <span class="text-gray-500 text-xs font-poppins">23 Desember 2025</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap seru banget</p>
-                    </div>
-                </div>
+                {{-- Ulasan akan dimuat di sini oleh JavaScript --}}
             </div>
 
             <div class="text-left mt-8">
-                <button id="toggle-reviews-btn" class="text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Lihat Semua Ulasan</button>
+                <button id="toggle-reviews-btn" class="text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none hidden">Lihat Semua Ulasan</button>
             </div>
         </div>
 
@@ -285,8 +221,8 @@
         let currentIndex = 0;
 
         function updateCarousel() {
-            if (carouselImages.length > 0) { // Ensure there are images before calculating width
-                const itemWidth = carouselImages[0].offsetWidth; // Use carouselImages[0] instead of carousel.children[0] for robustness
+            if (carouselImages.length > 0) {
+                const itemWidth = carouselImages[0].offsetWidth;
                 carousel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
             }
         }
@@ -302,7 +238,6 @@
         });
 
         window.addEventListener('resize', updateCarousel);
-        // Initial carousel update in case images are loaded before DOMContentLoaded
         updateCarousel();
 
 
@@ -313,18 +248,15 @@
         ];
 
         modals.forEach(({ modalId, buttonId }) => {
-            const modalElement = document.getElementById(modalId); // Renamed to modalElement to avoid conflict
+            const modalElement = document.getElementById(modalId);
             const button = document.getElementById(buttonId);
-            const svg = button ? button.querySelector('svg') : null; // Check if button exists before querying svg
+            const svg = button ? button.querySelector('svg') : null;
 
             if (modalElement && button && svg) {
-                // Initialize Bootstrap Modal instance
                 const bsModal = new bootstrap.Modal(modalElement, {
-                    backdrop: true // Allow closing by clicking outside
+                    backdrop: true
                 });
 
-                // Add event listener to the button to show the modal (though data-bs-toggle handles this)
-                // This part is mainly for the SVG rotation
                 modalElement.addEventListener('shown.bs.modal', () => {
                     svg.classList.add('rotate-90');
                 });
@@ -340,17 +272,126 @@
         const toggleReviewsBtn = document.getElementById('toggle-reviews-btn');
         const initialReviewsHeight = 300;
 
-        // Use a small delay to ensure content is rendered and scrollHeight is accurate
-        setTimeout(() => {
-            if (reviewsContent.scrollHeight > initialReviewsHeight) {
-                reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
-                reviewsContent.style.transition = 'max-height 0.3s ease-out';
-                toggleReviewsBtn.style.display = 'block';
-            } else {
-                toggleReviewsBtn.style.display = 'none';
-            }
-        }, 100); // Increased delay slightly
+        // Function to load reviews from API
+        async function loadReviews() {
+            try {
+                const response = await fetch('/aplikasi/{{ $aplikasi->id_aplikasi }}/ulasan');
+                const reviews = await response.json();
 
+                reviewsContent.innerHTML = ''; // Clear existing reviews
+
+                if (reviews.length === 0) {
+                    reviewsContent.innerHTML = '<p class="text-gray-500 font-poppins">Belum ada ulasan untuk aplikasi ini.</p>';
+                    toggleReviewsBtn.style.display = 'none';
+                    return;
+                }
+
+                reviews.forEach(review => {
+                    const reviewElement = `
+                        <div class="flex items-start space-x-4">
+                            <img src="${review.user_avatar || '{{ asset('images/ulasan.png') }}'}" alt="Avatar ${review.user.name}" class="w-12 h-12 rounded-full object-cover shadow-sm">
+                            <div>
+                                <div class="flex items-center justify-between w-full">
+                                    <p class="font-semibold text-gray-800 font-poppins">${review.user.name}</p>
+                                    <span class="text-gray-500 text-xs font-poppins">${moment(review.created_at).fromNow()}</span>
+                                </div>
+                                <p class="text-gray-700 text-sm mt-1 font-poppins">${review.ulasan}</p>
+                            </div>
+                        </div>
+                    `;
+                    reviewsContent.insertAdjacentHTML('beforeend', reviewElement);
+                });
+
+                // Adjust max-height after loading reviews
+                setTimeout(() => {
+                    if (reviewsContent.scrollHeight > initialReviewsHeight) {
+                        reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
+                        reviewsContent.style.transition = 'max-height 0.3s ease-out';
+                        toggleReviewsBtn.style.display = 'block';
+                    } else {
+                        reviewsContent.style.maxHeight = 'none'; // No need for collapse if content is short
+                        toggleReviewsBtn.style.display = 'none';
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                reviewsContent.innerHTML = '<p class="text-red-500 font-poppins">Gagal memuat ulasan. Silakan coba lagi nanti.</p>';
+            }
+        }
+
+        // Handle review form submission
+        const reviewForm = document.getElementById('review-form');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const aplikasiId = this.querySelector('input[name="aplikasi_id"]').value;
+                const ulasanTeks = document.getElementById('review-text').value;
+
+                if (!ulasanTeks.trim()) {
+                    alert('Ulasan tidak boleh kosong!');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/aplikasi/${aplikasiId}/ulasan`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            aplikasi_id: aplikasiId,
+                            ulasan_teks: ulasanTeks,
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert(data.message);
+                        document.getElementById('review-text').value = ''; // Clear textarea
+
+                        // Add new review to the top of the list without full reload
+                        const newReviewElement = `
+                            <div class="flex items-start space-x-4">
+                                <img src="${data.ulasan.user_avatar}" alt="Avatar ${data.ulasan.user_name}" class="w-12 h-12 rounded-full object-cover shadow-sm">
+                                <div>
+                                    <div class="flex items-center justify-between w-full">
+                                        <p class="font-semibold text-gray-800 font-poppins">${data.ulasan.user_name}</p>
+                                        <span class="text-gray-500 text-xs font-poppins">${data.ulasan.created_at_formatted}</span>
+                                    </div>
+                                    <p class="text-gray-700 text-sm mt-1 font-poppins">${data.ulasan.ulasan_teks}</p>
+                                </div>
+                            </div>
+                        `;
+                        // Insert at the beginning of the reviews list
+                        reviewsContent.insertAdjacentHTML('afterbegin', newReviewElement);
+
+                        // Recalculate max-height if needed
+                        setTimeout(() => {
+                            if (reviewsContent.scrollHeight > initialReviewsHeight) {
+                                reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
+                                toggleReviewsBtn.textContent = 'Lihat Semua Ulasan'; // Reset button text
+                                toggleReviewsBtn.style.display = 'block';
+                            }
+                        }, 50);
+
+                    } else {
+                        alert('Gagal mengirim ulasan: ' + (data.message || 'Terjadi kesalahan.'));
+                    }
+                } catch (error) {
+                    console.error('Error submitting review:', error);
+                    alert('Terjadi kesalahan saat mengirim ulasan. Silakan coba lagi.');
+                }
+            });
+        }
+
+        // Initial load of reviews when page loads
+        loadReviews();
+
+        // Reviews Toggle Functionality
         toggleReviewsBtn.addEventListener('click', () => {
             if (reviewsContent.style.maxHeight === `${initialReviewsHeight}px`) {
                 reviewsContent.style.maxHeight = reviewsContent.scrollHeight + 'px';
@@ -361,11 +402,12 @@
             }
         });
 
+
         // Image Modal Pop-up (Fullscreen Image Viewer)
         const imageModal = document.getElementById('image-modal');
         const modalImage = document.getElementById('modal-image');
         const closeModalBtn = document.getElementById('close-modal-btn');
-        const modalPrevBtn = document.getElementById('modal-prev-btn');
+        const modalPrevBtn = document = document.getElementById('modal-prev-btn');
         const modalNextBtn = document.getElementById('modal-next-btn');
 
         carouselImages.forEach((image, index) => {
@@ -391,16 +433,24 @@
         });
 
         modalPrevBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent closing modal if clicking on button
+            event.stopPropagation();
             currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
             updateModalImage();
         });
 
         modalNextBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent closing modal if clicking on button
+            event.stopPropagation();
             currentIndex = (currentIndex + 1) % carouselImages.length;
             updateModalImage();
         });
     });
+</script>
+
+{{-- Tambahkan CDN untuk Moment.js untuk format waktu yang lebih baik --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/id.min.js"></script>
+<script>
+    // Set locale for Moment.js
+    moment.locale('id');
 </script>
 @endsection
