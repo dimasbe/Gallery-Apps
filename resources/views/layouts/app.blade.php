@@ -97,7 +97,7 @@
                         <div class="py-1 max-h-60 overflow-y-auto custom-scrollbar">
                             {{-- Contoh item notifikasi - GANTI DENGAN DATA DARI DATABASE ANDA --}}
                             {{-- Notifikasi 1: Upload Aplikasi Berhasil--}}
-                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
+                            {{-- <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
                                 <div class="flex-grow overflow-hidden">
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">Upload Aplikasi Berhasil</p>
                                     <p class="text-xs text-gray-600 dark:text-gray-400">Aplikasi "Kalkulator Pintar" sudah berhasil diunggah.</p>
@@ -106,9 +106,9 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="7.14 AM">7.14 AM</p>
                                     <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
                                 </div>
-                            </div>
+                            </div> --}}
                             {{-- Notifikasi 2: Fitur Baru Telah Hadir--}}
-                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
+                            {{-- <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
                                 <div class="flex-grow overflow-hidden">
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">Fitur Baru Telah Hadir</p>
                                     <p class="text-xs text-gray-600 dark:text-gray-400">Sekarang kamu bisa menambahkan changelog aplikasi.</p>
@@ -117,9 +117,9 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="Kemarin">Kemarin</p>
                                     <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
                                 </div>
-                            </div>
+                            </div> --}}
                             {{-- Notifikasi 3: Selamat Datang di Galery Apps!--}}
-                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
+                            {{-- <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
                                 <div class="flex-grow overflow-hidden">
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">Selamat Datang di Galery Apps!</p>
                                     <p class="text-xs text-gray-600 dark:text-gray-400">Yuk mulai unggah aplikasi pertamamu.</p>
@@ -128,19 +128,10 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="Sabtu">Sabtu</p>
                                     <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
                                 </div>
-                            </div>
-                            {{-- Notifikasi 4: Maintenance Terjadwal--}}
-                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
-                                <div class="flex-grow overflow-hidden">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Maintenance Terjadwal</p>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Galery Apps akan offline sementara malam ini.</p>
-                                </div>
-                                <div class="ml-3 flex-shrink-0 text-right">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="05/01/2025">05/01/2025</p>
-                                    {{-- Dot biru tidak ada karena sudah dibaca --}}
-                                </div>
-                            </div>
-                             {{-- Notifikasi 5: Sistem Dalam Pemeliharaan--}}
+                            </div> --}}
+                            
+                            {{-- Notifikasi 5: Sistem Dalam Pemeliharaan--}}
+                            {{--
                             <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
                                 <div class="flex-grow overflow-hidden">
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">Sistem Dalam Pemeliharaan</p>
@@ -148,9 +139,32 @@
                                 </div>
                                 <div class="ml-3 flex-shrink-0 text-right">
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="05/01/2025">05/01/2025</p>
-                                    {{-- Dot biru tidak ada karena sudah dibaca --}}
                                 </div>
-                            </div>
+                            </div> 
+                            --}}
+                            
+                            @if ($notifications->count() > 0)
+                            @foreach($notifications as $notification)
+                                    <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
+                                        <div class="flex-grow overflow-hidden">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
+                                            <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
+                                        </div>
+                                        <div class="ml-3 flex-shrink-0 text-right">
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="{{  $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
+                                            @if(!$notification->dibaca)
+                                                <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="flex-grow overflow-hidden px-4 py-3">
+                                    <p class="text-sm text-gray-400">
+                                        Tidak Ada Notifikasi
+                                    </p>
+                                </div>
+                            @endif 
                         </div>
                         {{-- <a href="/semua-notifikasi" class="block text-center text-sm px-4 py-2 text-[#AD1500] dark:text-[#F39C12] hover:bg-gray-100 dark:hover:bg-[#2a2a27] border-t border-gray-200 dark:border-gray-700">Lihat Semua</a> --}}
                         {{-- Baris di atas dihilangkan untuk menghapus tombol "Lihat Semua" --}}
