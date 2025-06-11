@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('logo');
             $table->foreignId('id_kategori')->constrained('kategori')->onDelete('cascade');
             $table->string('nama_pemilik');
-            $table->date('tanggal_rilis');
+            $table->date('tanggal_rilis')->nullable();
             $table->date('tanggal_update')->nullable();
             $table->string('versi');
             $table->string('rating_konten');

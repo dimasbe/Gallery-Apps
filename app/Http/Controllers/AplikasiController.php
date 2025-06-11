@@ -245,8 +245,9 @@ class AplikasiController extends Controller
     public function showAplikasi(Aplikasi $aplikasi): View
     {
         $aplikasi->increment('jumlah_kunjungan');
-        $aplikasi->load('kategori', 'fotoAplikasi');
-        return view('aplikasi.detail', compact('aplikasi'));
+        $kategori = $this->kategori->get();
+        $fotoAplikasi = $this->fotoAplikasi->where('id_aplikasi', $aplikasi->id);
+        return view('aplikasi.detail', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
 
     public function show(Aplikasi $aplikasi): View

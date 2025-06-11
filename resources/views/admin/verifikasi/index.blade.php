@@ -3,7 +3,7 @@
 @section('title', 'Verifikasi') {{-- Mengatur judul halaman pada tab browser --}}
 
 @section('content')
-<div class="main-content-wrapper p-6 bg-gray-100 min-h-screen"> {{-- Padding dan background untuk area konten utama --}}
+<div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen"> {{-- Padding dan background untuk area konten utama --}}
 
     {{-- KARTU PUTIH UNTUK HEADER & BREADCRUMB --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6"> {{-- Card putih baru untuk header, dengan bayangan dan sudut membulat --}}

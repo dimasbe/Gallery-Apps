@@ -54,7 +54,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
         {{-- Lakukan loop untuk setiap aplikasi dari database --}}
         @forelse ($filteredApps as $app)
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden relative border border-gray-100 transform hover:scale-102 transition-transform duration-300 ease-in-out">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden relative border border-gray-100 transform hover:scale-105 transition-transform duration-300 ease-in-out">
                 {{-- Tampilkan kategori jika ada, atau teks default --}}
                 @php
                     $status = $app->status_verifikasi;
@@ -70,10 +70,10 @@
                     {{ ucfirst($status) }}
                 </span>
                 {{-- Gambar logo aplikasi --}}
-                <img src="{{ asset('storage/' . optional($app->fotoAplikasi()->first())->path_foto) }}"
-                    onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Foto+Tidak+Tersedia';"
-                    alt="{{ $app->nama_aplikasi }}"
-                    class="w-full h-44 object-cover object-center">
+                <img src="{{ asset('storage/' . $app->logo) }}"
+                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Logo+Tidak+Tersedia';"
+                     alt="{{ $app->nama_aplikasi }}"
+                     class="w-full h-44 object-cover object-center">
                 <div class="p-5">
                     <h3 class="font-bold text-gray-900 text-lg mb-2">
                         <a href="{{ route('tambah_aplikasi.show', $app->id) }}" class="hover:text-blue-600 transition-colors duration-200">

@@ -31,6 +31,7 @@ class Aplikasi extends Model
         'tanggal_ditambahkan',
         'tanggal_verifikasi',
         'alasan_penolakan',
+        'tanggal_diarsipkan',
         'slug', // <<< TAMBAHKAN INI: Kolom slug
     ];
 
@@ -38,46 +39,17 @@ class Aplikasi extends Model
         'tanggal_rilis',
         'tanggal_ditambahkan',
         'tanggal_verifikasi',
+        'tanggal_diarsipkan',
     ];
 
     protected $casts = [
+        'tanggal_rilis' => 'datetime',
         'tanggal_verifikasi' => 'datetime',
         'rating_konten' => 'float',
         'jumlah_kunjungan' => 'integer',
+        'tanggal_diarsipkan' => 'datetime',
+        'arsip' => 'boolean', // Cast 'arsip' to a boolean for easier use (0/1 will be true/false)
     ];
-
-    /**
-     * Mendefinisikan kolom yang akan digunakan untuk Route Model Binding.
-     * Dalam kasus ini, kita menggunakan 'slug' alih-alih 'id'.
-     *
-     * @return string
-     */
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
-    /**
-     * Boot method model untuk menangani event.
-     * Digunakan untuk secara otomatis membuat slug sebelum menyimpan atau memperbarui model.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        // Event 'creating' akan dijalankan saat model baru dibuat
-        static::creating(function ($aplikasi) {
-            $aplikasi->slug = Str::slug($aplikasi->nama_aplikasi);
-        });
-
-        // Event 'updating' akan dijalankan saat model yang sudah ada diperbarui
-        static::updating(function ($aplikasi) {
-            // Perbarui slug hanya jika 'nama_aplikasi' berubah
-            if ($aplikasi->isDirty('nama_aplikasi')) {
-                $aplikasi->slug = Str::slug($aplikasi->nama_aplikasi);
-            }
-        });
-    }
 
     public function kategori()
     {

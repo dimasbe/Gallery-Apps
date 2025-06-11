@@ -33,7 +33,7 @@ class BeritaService
         $query->where('judul_berita', 'like', '%' . $keyword . '%');
     }
 
-    return $query->get(); // atau paginate kalau perlu
+    return $query->orderBy('tanggal_dibuat', 'desc')->get(); // tambahkan ini
 }
 
     public function getKategoriBerita()

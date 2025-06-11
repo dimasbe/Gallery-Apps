@@ -11,6 +11,8 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --color-primary-red: #AD1500;
@@ -365,7 +367,7 @@
             @yield('content')
 
         {{-- FOOTER --}}
-        <div class="flex justify-between items-center text-gray-500 text-sm border-t border-gray-100 mt-4 px-6 py-1"
+        <div class="flex justify-between items-center text-gray-500 text-sm border-t bg-white mt-6 px-8 py-4"
             style="margin-left: -1.5rem; margin-right: -1.5rem; width: calc(100% + 3rem);">
             <p>2025 Hummatech All Rights Reserved</p>
             <p>Copyright By GalleryApp</p>

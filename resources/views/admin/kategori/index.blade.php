@@ -4,7 +4,7 @@
 
 @section('content')
      <!-- Wrapper Konten Utama -->
-     <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+     <div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
         <!-- Navbar Riwayat + Breadcrumbs -->
         <div class="bg-white shadow-md rounded-lg p-6 mb-6">
             <div class="flex justify-between items-center">
@@ -248,7 +248,28 @@
                 </tbody>
             </table>
         </div>
-
+         {{-- Pagination (Statis) --}}
+         <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-600">
+                Rows per page:
+                <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-2 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </select>
+            </div>
+            <div id="pagination-info" class="text-sm text-gray-600">
+                1-10 of 30
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
