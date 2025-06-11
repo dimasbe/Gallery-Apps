@@ -6,7 +6,7 @@
 
         {{-- Header: Kembali Button --}}
         <div class="mb-6">
-            <a href="{{ url()->previous() }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+            <a href="{{ route('kategori.index_umum') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -70,18 +70,19 @@
         <div class="mb-8 px-6">
             <div class="flex items-center space-x-2 mb-4">
                 <h2 class="text-2xl font-bold font-poppins text-gray-800">Deskripsi</h2>
-                <button id="deskripsiButton"
+                <button id="deskripsiToggleBtn"
                         type="button"
-                        class="transition-transform duration-300 transform text-gray-800 hover:text-red-600"
-                        data-bs-toggle="modal"
-                        data-bs-target="#deskripsiModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="transition-transform duration-300 transform text-gray-800 hover:text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
             </div>
-            <div class="text-gray-700 font-poppins leading-relaxed">
+            <div id="deskripsiShort" class="text-gray-700 font-poppins leading-relaxed">
                 {!! \Illuminate\Support\Str::words(strip_tags($aplikasi->deskripsi), 50, '...') !!}
+            </div>
+            <div id="deskripsiFull" class="text-gray-700 font-poppins leading-relaxed hidden">
+                {!! nl2br(e($aplikasi->deskripsi)) !!}
             </div>
         </div>
 
@@ -89,51 +90,23 @@
         <div class="mb-8 px-6">
             <div class="flex items-center space-x-2 mb-4">
                 <h2 class="text-2xl font-bold font-poppins text-gray-800">Fitur</h2>
-                <button id="fiturButton"
+                <button id="fiturToggleBtn"
                         type="button"
-                        class="transition-transform duration-300 transform text-gray-800 hover:text-red-600"
-                        data-bs-toggle="modal"
-                        data-bs-target="#fiturModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="transition-transform duration-300 transform text-gray-800 hover:text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
             </div>
-            <div class="text-gray-700 font-poppins leading-relaxed">
+            <div id="fiturShort" class="text-gray-700 font-poppins leading-relaxed">
                 {!! \Illuminate\Support\Str::words(strip_tags($aplikasi->fitur), 50, '...') !!}
             </div>
-        </div>
-
-        {{-- Modal Deskripsi --}}
-        <div class="modal fade" id="deskripsiModal" tabindex="-1" aria-labelledby="deskripsiModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content font-poppins">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deskripsiModalLabel">Deskripsi Lengkap</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        {!! nl2br(e($aplikasi->deskripsi)) !!}
-                    </div>
-                </div>
+            <div id="fiturFull" class="text-gray-700 font-poppins leading-relaxed hidden">
+                {!! nl2br(e($aplikasi->fitur)) !!}
             </div>
         </div>
 
-        {{-- Modal Fitur --}}
-        <div class="modal fade" id="fiturModal" tabindex="-1" aria-labelledby="fiturModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content font-poppins">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="fiturModalLabel">Fitur Lengkap</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        {!! nl2br(e($aplikasi->fitur)) !!}
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        {{-- Modal Deskripsi and Modal Fitur are REMOVED --}}
         {{-- Additional Info Section --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8 px-6">
             <div>
@@ -166,8 +139,6 @@
                     @csrf
                     <input type="hidden" name="aplikasi_id" value="{{ $aplikasi->id_aplikasi }}">
                     <textarea id="review-text" name="ulasan_teks" placeholder="Tulis ulasan Anda di sini..." class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 text-sm font-poppins" rows="1"></textarea>
-                    {{-- <select name="rating" id="review-rating" class="border border-gray-300 rounded-lg px-2 py-2 text-sm font-poppins"> --}}
-                    {{-- Baris di atas dan opsinya DIHAPUS --}}
                     <button type="submit" class="bg-[#AD1500] text-white px-6 py-2 rounded-lg hover:bg-[#8C1200] transition-colors font-poppins text-sm">
                         Kirim
                     </button>
@@ -208,12 +179,14 @@
     </div>
 </div>
 
-{{-- Bootstrap JS Bundle --}}
+{{-- Bootstrap JS Bundle is no longer strictly needed for deskripsi/fitur but keep it if other Bootstrap components are used. --}}
+{{-- However, if it's *only* for the Bootstrap modal (which is now removed), you can safely remove it. --}}
+{{-- For simplicity, we'll keep it here in case other Bootstrap features are used elsewhere, but remove the `defer` as it's not strictly necessary for this logic --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Carousel functionality
+        // Carousel functionality (remains unchanged)
         const carousel = document.getElementById('gallery-carousel');
         const carouselImages = carousel.querySelectorAll('img');
         const prevBtn = document.getElementById('prev-btn');
@@ -241,33 +214,50 @@
         updateCarousel();
 
 
-        // Modal Toggle Functionality (for Deskripsi and Fitur)
-        const modals = [
-            { modalId: 'deskripsiModal', buttonId: 'deskripsiButton' },
-            { modalId: 'fiturModal', buttonId: 'fiturButton' }
-        ];
+        // New functionality for Deskripsi and Fitur (replacing Bootstrap modals)
+        const deskripsiToggleBtn = document.getElementById('deskripsiToggleBtn');
+        const deskripsiShort = document.getElementById('deskripsiShort');
+        const deskripsiFull = document.getElementById('deskripsiFull');
+        const deskripsiSvg = deskripsiToggleBtn ? deskripsiToggleBtn.querySelector('svg') : null;
 
-        modals.forEach(({ modalId, buttonId }) => {
-            const modalElement = document.getElementById(modalId);
-            const button = document.getElementById(buttonId);
-            const svg = button ? button.querySelector('svg') : null;
+        const fiturToggleBtn = document.getElementById('fiturToggleBtn');
+        const fiturShort = document.getElementById('fiturShort');
+        const fiturFull = document.getElementById('fiturFull');
+        const fiturSvg = fiturToggleBtn ? fiturToggleBtn.querySelector('svg') : null;
 
-            if (modalElement && button && svg) {
-                const bsModal = new bootstrap.Modal(modalElement, {
-                    backdrop: true
-                });
-
-                modalElement.addEventListener('shown.bs.modal', () => {
-                    svg.classList.add('rotate-90');
-                });
-
-                modalElement.addEventListener('hidden.bs.modal', () => {
-                    svg.classList.remove('rotate-90');
-                });
+        // Function to toggle content visibility
+        function toggleContent(shortEl, fullEl, svgEl) {
+            if (fullEl.classList.contains('hidden')) {
+                // Show full content
+                shortEl.classList.add('hidden');
+                fullEl.classList.remove('hidden');
+                if (svgEl) {
+                    svgEl.classList.add('rotate-90');
+                }
+            } else {
+                // Show short content
+                fullEl.classList.add('hidden');
+                shortEl.classList.remove('hidden');
+                if (svgEl) {
+                    svgEl.classList.remove('rotate-90');
+                }
             }
-        });
+        }
 
-        // Reviews Toggle Functionality
+        if (deskripsiToggleBtn) {
+            deskripsiToggleBtn.addEventListener('click', () => {
+                toggleContent(deskripsiShort, deskripsiFull, deskripsiSvg);
+            });
+        }
+
+        if (fiturToggleBtn) {
+            fiturToggleBtn.addEventListener('click', () => {
+                toggleContent(fiturShort, fiturFull, fiturSvg);
+            });
+        }
+
+
+        // Reviews Toggle Functionality (remains mostly unchanged)
         const reviewsContent = document.getElementById('reviews-content');
         const toggleReviewsBtn = document.getElementById('toggle-reviews-btn');
         const initialReviewsHeight = 300;
@@ -320,7 +310,7 @@
             }
         }
 
-        // Handle review form submission
+        // Handle review form submission (remains unchanged)
         const reviewForm = document.getElementById('review-form');
         if (reviewForm) {
             reviewForm.addEventListener('submit', async function (e) {
@@ -356,7 +346,7 @@
                         // Add new review to the top of the list without full reload
                         const newReviewElement = `
                             <div class="flex items-start space-x-4">
-                                <img src="${data.ulasan.user_avatar}" alt="Avatar ${data.ulasan.user_name}" class="w-12 h-12 rounded-full object-cover shadow-sm">
+                                <img src="${data.ulasan.user_avatar || '{{ asset('images/ulasan.png') }}'}" alt="Avatar ${data.ulasan.user_name}" class="w-12 h-12 rounded-full object-cover shadow-sm">
                                 <div>
                                     <div class="flex items-center justify-between w-full">
                                         <p class="font-semibold text-gray-800 font-poppins">${data.ulasan.user_name}</p>
@@ -403,11 +393,11 @@
         });
 
 
-        // Image Modal Pop-up (Fullscreen Image Viewer)
+        // Image Modal Pop-up (Fullscreen Image Viewer) - remains unchanged
         const imageModal = document.getElementById('image-modal');
         const modalImage = document.getElementById('modal-image');
         const closeModalBtn = document.getElementById('close-modal-btn');
-        const modalPrevBtn = document = document.getElementById('modal-prev-btn');
+        const modalPrevBtn = document.getElementById('modal-prev-btn'); // Corrected typo: `document = document.getElementById` -> `document.getElementById`
         const modalNextBtn = document.getElementById('modal-next-btn');
 
         carouselImages.forEach((image, index) => {
