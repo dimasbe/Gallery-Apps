@@ -123,29 +123,26 @@
 
         {{-- Description/Features Section --}}
         {{-- Removed px-6 here --}}
-        <div class="mb-8">
+                <div class="mb-8">
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
             <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
                 <p>{{ $aplikasi['deskripsi'] }}</p>
+
                 <p class="mt-4">Fitur Utama:</p>
-                {{ $aplikasi['fitur'] }}
-                {{-- <ul class="list-disc list-inside mt-2"> 
-                    <li>Pertempuran MOBA 5v5 Klasik</li>
-                    <li>Berbagai Pahlawan unik</li>
-                    <li>Kontrol mudah untuk perangkat seluler</li>
-                    <li>Pertandingan cepat dan efisien</li>
-                    <li>Strategi tim yang seru</li>
-                    <li>Grafik memukau dan efek visual imersif</li>
-                    <li>Pembaruan rutin</li>
-                    <li>Komunitas aktif</li>
-                    <li>Sistem peringkat kompetitif</li>
-                    <li>Dukungan multi-bahasa</li>
+                {{-- Kita akan menampilkan fitur-fitur sebagai daftar (bullet points) --}}
+                <ul class="list-disc list-inside mt-2">
+                    {{-- Memisahkan string fitur berdasarkan baris baru dan membuat setiap baris menjadi item daftar --}}
+                    @foreach (explode("\n", $aplikasi['fitur']) as $feature)
+                        {{-- Memastikan item daftar tidak kosong --}}
+                        @if (!empty(trim($feature)))
+                            <li>{{ trim($feature) }}</li>
+                        @endif
+                    @endforeach
                 </ul>
-                <p class="mt-4">Mobile Legends: Bang Bang terus menjadi game yang sangat diminati, menawarkan pengalaman MOBA yang seru dan kompetitif langsung di perangkat seluler Anda.</p> --}}
             </div>
             <button id="read-more-btn" class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
         </div>
-
+        
         {{-- Additional Info Section --}}
         {{-- Removed px-6 here --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
