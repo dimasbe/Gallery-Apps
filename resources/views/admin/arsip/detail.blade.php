@@ -47,34 +47,6 @@
                     {{-- Display the app logo --}}
                     <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Icon" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
                     <div class="flex items-center space-x-4">
-                        {{-- Rating --}}
-                        <div class="flex flex-col items-start">
-                            <div class="flex items-center">
-                                <span class="text-gray-700 text-base font-poppins font-semibold">{{ number_format($aplikasi->ulasan()->avg('rating'), 1) }}</span>
-                                <svg class="w-4 h-4 text-yellow-400 fill-current ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z" />
-                                </svg>
-                            </div>
-                            <span class="text-gray-600 text-xs font-poppins">{{ number_format($aplikasi->ulasan()->count()) }} ulasan</span>
-                        </div>
-
-                        {{-- Separator --}}
-                        <div class="h-10 w-px bg-gray-300"></div>
-
-                        {{-- Downloads (using jumlah_kunjungan as a proxy for downloads/views) --}}
-                        <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">{{ number_format($aplikasi->jumlah_kunjungan) }}+</span>
-                            <span class="text-gray-600 text-xs font-poppins">download/kunjungan</span>
-                        </div>
-
-                        {{-- Separator --}}
-                        <div class="h-10 w-px bg-gray-300"></div>
-
-                        {{-- Age Rating --}}
-                        <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">{{ $aplikasi->rating_konten }}+</span>
-                            <span class="text-gray-600 text-xs font-poppins">rating {{ $aplikasi->rating_konten }}+</span>
-                        </div>
                     </div>
                 </div>
 
