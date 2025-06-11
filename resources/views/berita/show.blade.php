@@ -49,9 +49,10 @@
                 <span>{{ $berita->tanggal_dibuat ? $berita->tanggal_dibuat->format('d F Y') : '-' }}</span>
             </div>
 
-        <div class="prose max-w-none text-gray-800 leading-relaxed">
-            {!! $berita->isi_berita !!}
-        </div>
+            <div class="text-gray-800 leading-relaxed">
+    {!! nl2br(e($berita->isi_berita)) !!}
+</div>
+
     </article>
 
         {{-- Berita Terkait --}}
