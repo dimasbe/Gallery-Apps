@@ -43,11 +43,11 @@
         <div class="flex flex-col md:flex-row md:space-x-8 mb-8 px-6">
             {{-- Left Column: App Title, Info, Google Play Button --}}
             <div class="flex-1 md:w-1/2">
-                <h1 class="text-3xl font-bold font-poppins text-gray-800 mb-1">Mobile Legends: Bang Bang</h1>
-                <p class="text-gray-600 text-sm font-poppins mb-4">MOONTOON</p>
+                <h1 class="text-3xl font-bold font-poppins text-gray-800 mb-1">{{ $aplikasi['nama_aplikasi'] }}</h1>
+                <p class="text-gray-600 text-sm font-poppins mb-4">{{ $aplikasi['nama_pemilik'] }}</p>
 
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="{{ asset('images/icon_ml.png') }}" alt="Mobile Legends Icon" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
+                    <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Logo" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
                     <div class="flex items-center space-x-4">
                         {{-- Rating --}}
                         <div class="flex flex-col items-start">
@@ -103,10 +103,9 @@
                 <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
                     {{-- Reduced max-height for smaller appearance --}}
                     {{-- Added data-index attribute to each image for easy lookup in JS --}}
-                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Screenshot 1" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="0">
-                    <img src="{{ asset('images/mobilelegends2.png') }}" alt="Screenshot 2" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="1">
-                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Screenshot 3" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="2">
-                    <img src="{{ asset('images/mobilelegends2.png') }}" alt="Screenshot 4" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="3">
+                    @foreach($aplikasi->fotoAplikasi as $index => $foto)
+                        <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Screenshot {{ $index + 1 }}" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="{{ $index }}">
+                    @endforeach
                 </div>
 
                 <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
@@ -127,9 +126,10 @@
         <div class="mb-8">
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
             <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
-                <p>Mobile Legends: Bang Bang adalah game seluler bergenre MOBA (Multiplayer Online Battle Arena) yang dikembangkan dan diterbitkan oleh Moonton. Game ini gratis untuk dimainkan dan tersedia di platform seluler Android dan iOS. Game ini menampilkan pertempuran tim 5v5 di mana pemain memilih pahlawan dengan kemampuan unik dan bekerja sama untuk menghancurkan basis musuh. Dengan lebih dari 100 juta unduhan di seluruh dunia, Mobile Legends: Bang Bang telah menjadi salah satu game seluler paling populer.</p>
+                <p>{{ $aplikasi['deskripsi'] }}</p>
                 <p class="mt-4">Fitur Utama:</p>
-                <ul class="list-disc list-inside mt-2">
+                {{ $aplikasi['fitur'] }}
+                {{-- <ul class="list-disc list-inside mt-2"> 
                     <li>Pertempuran MOBA 5v5 Klasik</li>
                     <li>Berbagai Pahlawan unik</li>
                     <li>Kontrol mudah untuk perangkat seluler</li>
@@ -141,29 +141,29 @@
                     <li>Sistem peringkat kompetitif</li>
                     <li>Dukungan multi-bahasa</li>
                 </ul>
-                <p class="mt-4">Mobile Legends: Bang Bang terus menjadi game yang sangat diminati, menawarkan pengalaman MOBA yang seru dan kompetitif langsung di perangkat seluler Anda.</p>
+                <p class="mt-4">Mobile Legends: Bang Bang terus menjadi game yang sangat diminati, menawarkan pengalaman MOBA yang seru dan kompetitif langsung di perangkat seluler Anda.</p> --}}
             </div>
             <button id="read-more-btn" class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
         </div>
 
         {{-- Additional Info Section --}}
         {{-- Removed px-6 here --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
+       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
             <div>
                 <p class="font-semibold">Dirilis Tanggal</p>
-                <p>12 April 2025</p>
+                <p>{{ $aplikasi['tanggal_rilis'] }}</p>
             </div>
             <div>
                 <p class="font-semibold">Diupdate Pada</p>
-                <p>30 April 2025</p>
+                <p>{{ $aplikasi['tanggal_update'] }}</p>
             </div>
             <div>
                 <p class="font-semibold">Versi</p>
-                <p>Bervariasi berdasarkan perangkat</p>
+                <p>{{ $aplikasi['versi'] }}</p>
             </div>
             <div>
                 <p class="font-semibold">Rating Konten</p>
-                <p>Rating 12+ :Kekerasan tingkat menengah </p>
+                <p>{{ $aplikasi['rating_konten'] }}</p>
             </div>
         </div>
 
