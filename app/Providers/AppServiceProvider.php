@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\Interfaces\UlasanInterface;
+use App\Contracts\Repositories\UlasanRepository;
 use App\Models\Notifikasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -40,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FotoBeritaInterface::class, FotoBeritaRepository::class);
         $this->app->bind(VerifikasiAplikasiInterface::class, VerifikasiAplikasiRepository::class);
         $this->app->bind(NotifikasiInterface::class, NotifikasiRepository::class);
+        $this->app->bind(UlasanInterface::class, UlasanRepository::class);
 
         // ... (binding lain jika ada)
     }
