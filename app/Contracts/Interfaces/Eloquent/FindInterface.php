@@ -4,5 +4,11 @@ namespace App\Contracts\Interfaces\Eloquent;
 
 interface FindInterface
 {
-    public function find(int $data): mixed;
+    /**
+     * Find a model by its primary key.
+     *
+     * @param mixed $id
+     * @return mixed
+     */
+    public function find(mixed $id): mixed;
 }

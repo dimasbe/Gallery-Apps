@@ -1,241 +1,247 @@
-@extends('layouts.admin')
+@extends('layouts.admin') {{-- Memastikan halaman ini menggunakan layout admin Anda --}}
+
+@section('title', 'Riwayat Verifikasi') {{-- Mengatur judul halaman pada tab browser --}}
 
 @section('content')
-    <!-- Wrapper Konten Utama -->
-    <div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
-        <!-- Navbar Riwayat + Breadcrumbs -->
+    <div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
         <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Riwayat</h1> {{-- Judul utama halaman --}}
-            <div class="flex mx-8">
-            <div class="flex w-64 md:w-80">
-                <input
-                    type="text"
-                    placeholder="Cari di sini..."
-                    class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
-                />
-                <button
-                    class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none"
-                >
-                    <i class="fas fa-search text-custom-primary-red"></i>
-                </button>
-            </div>
-        </div>
-                <!-- <nav aria-label="breadcrumb">
-                    <ol class="flex items-center text-sm text-gray-600">
-                        <li class="flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                            <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
-                        </li>
-                        <li class="flex items-center">
-                            <a href="#" class="hover:text-custom-primary-red">Riwayat</a>
-                            <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
-                        </li>
-                        <li class="text-custom-primary-red capitalize" aria-current="page">
-                            {{ request('status', 'diterima') }}
-                        </li>
-                    </ol>
-                </nav> -->
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <h1 class="text-3xl font-bold text-red-700">Riwayat</h1>
+                {{-- Form Pencarian Tunggal --}}
+                <form action="{{ route('admin.riwayat.index') }}" method="GET" class="w-full md:w-auto flex justify-end">
+                    {{-- Hidden inputs to preserve current status and per_page when searching --}}
+                    <input type="hidden" name="status" value="{{ request('status', 'semua') }}">
+                    <input type="hidden" name="per_page" value="{{ request('per_page', '10') }}">
+
+                    <div class="flex w-full md:w-80">
+                        <input
+                            type="text"
+                            placeholder="Cari disini..."
+                            class="flex-grow px-4 py-2 rounded-l-xl border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
+                            name="keyword" {{-- Nama input untuk pencarian tunggal --}}
+                            value="{{ request('keyword') }}"
+                        />
+                        <button
+                            type="submit"
+                            class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-xl hover:bg-gray-200 focus:outline-none"
+                        >
+                            <i class="fas fa-search text-custom-primary-red"></i>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Card Riwayat -->
         <div class="bg-white shadow-md rounded-xl p-6">
-    <!-- Tombol Switch Status -->
-    <div class="flex justify-end mb-4">
-        <div class="flex items-center space-x-3">
-            @php
-                $statuses = ['semua' => 'Semua', 'diterima' => 'Diterima', 'ditolak' => 'Ditolak', 'arsip' => 'Arsip'];
-                $currentStatus = request('status', 'semua');
-            @endphp
+            <div class="flex justify-end mb-4">
+                <div class="flex items-center space-x-3">
+                    @php
+                        $statuses = [
+                            'semua' => 'Semua',
+                            'diterima' => 'Diterima',
+                            'ditolak' => 'Ditolak',
+                        ];
+                        $currentStatus = request('status', 'semua');
+                        // Tangkap parameter pencarian yang ada untuk dipertahankan
+                        $searchParams = array_filter([
+                            'keyword' => request('keyword'),
+                            'per_page' => request('per_page'),
+                        ]);
+                    @endphp
 
-            @foreach ($statuses as $key => $label)
-                <a href="?status={{ $key }}">
-                    <button class="px-5 py-2 rounded-2xl font-semibold 
-                        {{ $currentStatus == $key 
-                            ? 'bg-red-700 text-white' 
-                            : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
-                        {{ $label }}
-                    </button>
-                </a>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- Tabel Riwayat -->
-    <div class="overflow-x-auto">
-        <table class="min-w-full text-sm leading-normal">
-            <thead>
-                <tr>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase">No.</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase">Nama Aplikasi</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase">Pemilik</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase">Kategori</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase">Tanggal</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 uppercase">Status</th>
-                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-700">
-                @php
-                    $loopStatuses = $currentStatus == 'semua' ? ['diterima', 'ditolak', 'arsip'] : [$currentStatus];
-                    $no = 1;
-                    $hasData = false;
-                @endphp
-
-                @foreach ($loopStatuses as $status)
-                    @foreach ($riwayatData[$status] ?? [] as $data)
-                        @php $hasData = true; @endphp
-                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
-                            <td class="px-5 py-4 text-center">{{ $no++ }}</td>
-                            <td class="px-5 py-4">{{ $data['nama_aplikasi'] }}</td>
-                            <td class="px-5 py-4">{{ $data['nama_pemilik'] }}</td>
-                            <td class="px-5 py-4">{{ $data->kategori->nama_kategori ?? 'Tidak Ada Kategori' }}</td>
-                            <td class="px-5 py-4">{{ $data['tanggal_verifikasi'] }}</td>
-                            <td class="px-5 py-4">
-                                <span class="text-xs font-medium px-3 py-1 rounded-full
-                                    {{ $data['status_verifikasi'] === 'diterima' ? 'bg-green-100 text-green-700' : 
-                                       ($data['status_verifikasi'] === 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-800') }}">
-                                    {{ ucfirst($data['status_verifikasi']) }}
-                                </span>
-                            </td>
-                            <td class="px-5 py-4">
-                                <div class="flex justify-center gap-2">
-                                    @if ($data['status'] === 'diterima')
-                                        <button onclick="showArsipPopup()" 
-                                            class="bg-yellow-300 hover:bg-yellow-400 text-yellow-900 text-xs font-semibold px-3 py-1 rounded-lg transition">
-                                            Arsipkan
-                                        </button>
-                                    @elseif ($data['status'] === 'ditolak')
-                                        <button onclick="showHapusPopup()" 
-                                            class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1 rounded-lg transition">
-                                            Hapus
-                                        </button>
-                                    @endif
-                                    <a href="{{ route('admin.riwayat.show', $data['id']) }}">
-                                        <button 
-                                            class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-lg transition">
-                                            Lihat
-                                        </button>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                    @foreach ($statuses as $key => $label)
+                        <a href="?{{ http_build_query(array_merge($searchParams, ['status' => $key])) }}">
+                            <button
+                                class="px-5 py-2 rounded-2xl font-semibold
+                                {{ $currentStatus == $key
+                                    ? 'bg-red-700 text-white'
+                                    : 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-100' }}">
+                                {{ $label }}
+                            </button>
+                        </a>
                     @endforeach
-                @endforeach
+                </div>
+            </div>
 
-                @if (!$hasData)
-                    <tr>
-                        <td colspan="7" class="text-center py-5 text-gray-500 italic">
-                            Tidak ada data riwayat pada status <strong>{{ ucfirst($currentStatus) }}</strong>.
-                        </td>
-                    </tr>
-                @endif
-            </tbody>
-        </table>
-    </div>
+            {{-- Kartu (Card) yang Membungkus Tabel Riwayat --}}
+            <div class="overflow-x-auto"> 
+                <table class="min-w-full leading-normal">
+                    <thead>
+                        <tr>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center rounded-tl-lg">
+                                No.
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                                Nama Aplikasi
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                                Pemilik
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                                Kategori
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                                Tanggal
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider text-center">
+                                Status
+                            </th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider text-center rounded-tr-lg">
+                                Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(count($aplikasi) > 0)
+                            @foreach($aplikasi as $data)
+                            <tr>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <p class="text-gray-900 whitespace-no-wrap text-center">{{ $loop->iteration + ($aplikasi->currentPage() - 1) * $aplikasi->perPage() }}</p>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <p class="text-gray-900 whitespace-no-wrap text-center">{{ $data['nama_aplikasi'] }}</p>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <p class="text-gray-900 whitespace-no-wrap text-center">{{ $data['nama_pemilik'] }}</p>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <p class="text-gray-900 whitespace-no-wrap text-center">{{ $data->kategori->nama_kategori ?? 'Tidak Ada Kategori' }}</p>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <p class="text-gray-900 whitespace-no-wrap text-center">{{ \Carbon\Carbon::parse($data['tanggal_verifikasi'])->format('d-m-Y') }}</p>
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                                    @if($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITERIMA->value)
+                                            <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                                                <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                                                <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
+                                            </span>
+                                    @elseif($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITOLAK->value)
+                                            <span class="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
+                                                <span aria-hidden class="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
+                                                <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
+                                            </span>
+                                    @else
+                                            {{-- This state should ideally not be reached if we only show DITERIMA/DITOLAK applications --}}
+                                            <span class="relative inline-block px-3 py-1 font-semibold text-gray-900 leading-tight">
+                                                <span aria-hidden class="absolute inset-0 bg-gray-200 opacity-50 rounded-full"></span>
+                                                <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
+                                            </span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
+                                    <div class="flex space-x-2 justify-center">
+                                        @if($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITOLAK->value)
+                                                {{-- Delete Button (for 'Ditolak' status) --}}
+                                                <form action="{{ route('admin.riwayat.delete', ['id' => $data['id']]) }}" method="POST" class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                        @elseif($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITERIMA->value && !$data['arsip']) {{-- Check if not archived --}}
+                                                {{-- Archive Button (for 'Diterima' status AND not archived) --}}
+                                                <form action="{{ route('admin.riwayat.archive', ['id' => $data['id']]) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                        class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                                        Arsip
+                                                    </button>
+                                                </form>
+                                        @endif
 
-            <!-- Pagination Statis (Sekarang di dalam card) -->
-            <div class="flex justify-between items-center mt-6">
+                                        <a href="{{ route('admin.riwayat.detail', ['id' => $data['id']]) }}"
+                                        class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                            Lihat
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="7" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center text-gray-500">
+                                    Tidak ada data riwayat verifikasi.
+                                </td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Bagian Pagination --}}
+            <div class="flex flex-col md:flex-row justify-between items-center mt-6 space-y-4 md:space-y-0">
                 <div class="text-sm text-gray-600">
                     Rows per page:
-                    <select id="rows-per-page"
-                        class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
-                        <option value="10" selected>10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
+                    <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red"
+                            onchange="changeRowsPerPage(this.value)">
+                        <option value="5" {{ $aplikasi->perPage() == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $aplikasi->perPage() == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ $aplikasi->perPage() == 20 ? 'selected' : '' }}>20</option>
+                        <option value="30" {{ $aplikasi->perPage() == 30 ? 'selected' : '' }}>30</option>
                     </select>
                 </div>
                 <div id="pagination-info" class="text-sm text-gray-600">
-                    1-10 of 30
+                    {{ $aplikasi->firstItem() }}-{{ $aplikasi->lastItem() }} of {{ $aplikasi->total() }}
                 </div>
                 <div class="flex space-x-2">
-                    <button
-                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    <a href="{{ $aplikasi->previousPageUrl(array_merge(request()->query(), ['per_page' => $aplikasi->perPage()])) }}"
+                       class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $aplikasi->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button
-                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200">
+                    </a>
+                    <a href="{{ $aplikasi->nextPageUrl(array_merge(request()->query(), ['per_page' => $aplikasi->perPage()])) }}"
+                       class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $aplikasi->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}">
                         <i class="fas fa-chevron-right"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="arsip-popup-overlay"
-        class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
-            <i class="fas fa-archive text-yellow-500 text-6xl mb-4"></i>
-            <h2 class="text-base font-bold text-gray-800 mb-4">Apakah Anda yakin ingin mengarsipkan data ini?</h2>
-            <div class="flex justify-center space-x-4">
-                {{-- Tombol Batal --}}
-                <button
-                    class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
-                    onclick="hideArsipPopup()">Batal</button>
-                {{-- Tombol Arsipkan --}}
-                <button
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-4 rounded-lg transition duration-200 w-24"
-                    onclick="submitArsip()">Arsipkan</button>
-            </div>
-        </div>
-    </div>
-    <div id="hapus-popup-overlay"
-        class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
-            <i class="fas fa-trash-alt text-red-500 text-6xl mb-4"></i>
-            <h2 class="text-base font-bold text-gray-800 mb-4">Apakah Anda yakin ingin menghapus data ini?</h2>
-            <p class="text-sm text-gray-500 mb-4">Data yang dihapus tidak dapat dikembalikan.</p>
-            <div class="flex justify-center space-x-4">
-                <!-- Tombol Batal -->
-                <button
-                    class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 py-1 px-4 rounded-lg transition duration-200 w-20"
-                    onclick="hideHapusPopup()">Batal</button>
-                <!-- Tombol Hapus -->
-                <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded-lg transition duration-200 w-24"
-                    onclick="alert('Data berhasil dihapus!'); hideHapusPopup();">Hapus</button>
-            </div>
-        </div>
-    </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: @json(session('success')),
-                // confirmButtonColor: '#ED125F'
-                showConfirmshowConfirmButton: false,
-                timer: 3000
-            });
-        @elseif (session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: @json(session('error')),
-                // confirmButtonColor: '#ED125F'
-                showConfirmButton: false,
-                timer: 1500
-            });
-        @endif
-
-
-        function showArsipPopup() {
-            document.getElementById('arsip-popup-overlay').classList.remove('hidden');
-        }
-
-        function hideArsipPopup() {
-            document.getElementById('arsip-popup-overlay').classList.add('hidden');
-        }
-
-        function showHapusPopup() {
-            document.getElementById('hapus-popup-overlay').classList.remove('hidden');
-        }
-
-        function hideHapusPopup() {
-            document.getElementById('hapus-popup-overlay').classList.add('hidden');
-        }
-    </script>
 @endsection
+
+@push('scripts')
+<script>
+    // Existing changeRowsPerPage function, updated to preserve 'keyword'
+    function changeRowsPerPage(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', value);
+
+        // Preserve existing search parameters
+        const keyword = url.searchParams.get('keyword');
+        const status = url.searchParams.get('status');
+
+        if (keyword) url.searchParams.set('keyword', keyword);
+        if (status) url.searchParams.set('status', status);
+
+        window.location.href = url.toString();
+    }
+
+    // SweetAlert2 for delete confirmation
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data ini akan dihapus secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If confirmed, submit the form
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush

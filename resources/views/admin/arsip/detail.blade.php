@@ -1,9 +1,9 @@
-@extends('layouts.admin') {{-- Memastikan halaman ini menggunakan layout admin Anda --}}
+@extends('layouts.admin') 
 
-@section('title', 'Detail Arsip') {{-- INI YANG SAYA UBAH MENJADI 'Detail Arsip' UNTUK KONSISTENSI --}}
+@section('title', 'Detail Arsip') 
 
 @section('content')
-<div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+<div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
     {{-- Konten halaman riwayat Anda di sini --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
@@ -23,13 +23,12 @@
             </nav>
         </div>
     </div>
-    
+
     <div class="bg-white shadow-md rounded-lg p-6">
 
         {{-- Header: Kembali Button --}}
-        {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
-        <a href="{{ route('admin.arsip.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+            <a href="{{ route('admin.arsip.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -38,35 +37,34 @@
         </div>
 
         {{-- NEW FLEX CONTAINER for App Info + Carousel --}}
-        {{-- This container now holds the left (app info) and right (carousel) columns. --}}
-        {{-- px-6 is applied here to give consistent horizontal padding for these two columns. --}}
         <div class="flex flex-col md:flex-row md:space-x-8 mb-8 px-6">
             {{-- Left Column: App Title, Info, Google Play Button --}}
             <div class="flex-1 md:w-1/2">
-                <h1 class="text-3xl font-bold font-poppins text-gray-800 mb-1">Mobile Legends: Bang Bang</h1>
-                <p class="text-gray-600 text-sm font-poppins mb-4">MOONTOON</p>
+                <h1 class="text-3xl font-bold font-poppins text-gray-800 mb-1">{{ $aplikasi->nama_aplikasi }}</h1>
+                <p class="text-gray-600 text-sm font-poppins mb-4">{{ $aplikasi->nama_pemilik }}</p>
 
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="{{ asset('images/icon_ml.png') }}" alt="Mobile Legends Icon" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
+                    {{-- Display the app logo --}}
+                    <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Icon" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
                     <div class="flex items-center space-x-4">
                         {{-- Rating --}}
                         <div class="flex flex-col items-start">
                             <div class="flex items-center">
-                                <span class="text-gray-700 text-base font-poppins font-semibold">3,8</span>
+                                <span class="text-gray-700 text-base font-poppins font-semibold">{{ number_format($aplikasi->ulasan()->avg('rating'), 1) }}</span>
                                 <svg class="w-4 h-4 text-yellow-400 fill-current ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z" />
                                 </svg>
                             </div>
-                            <span class="text-gray-600 text-xs font-poppins">37,2 jt ulasan</span>
+                            <span class="text-gray-600 text-xs font-poppins">{{ number_format($aplikasi->ulasan()->count()) }} ulasan</span>
                         </div>
 
                         {{-- Separator --}}
                         <div class="h-10 w-px bg-gray-300"></div>
 
-                        {{-- Downloads --}}
+                        {{-- Downloads (using jumlah_kunjungan as a proxy for downloads/views) --}}
                         <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">500 jt+</span>
-                            <span class="text-gray-600 text-xs font-poppins">download</span>
+                            <span class="text-gray-700 text-base font-poppins font-semibold">{{ number_format($aplikasi->jumlah_kunjungan) }}+</span>
+                            <span class="text-gray-600 text-xs font-poppins">download/kunjungan</span>
                         </div>
 
                         {{-- Separator --}}
@@ -74,176 +72,118 @@
 
                         {{-- Age Rating --}}
                         <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">12+</span>
-                            <span class="text-gray-600 text-xs font-poppins">rating 12+</span>
+                            <span class="text-gray-700 text-base font-poppins font-semibold">{{ $aplikasi->rating_konten }}+</span>
+                            <span class="text-gray-600 text-xs font-poppins">rating {{ $aplikasi->rating_konten }}+</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Google Play Button - Updated to match the provided image --}}
-                <a href="https://play.google.com/store/apps/details?id=com.mobile.legends" target="_blank"
-                   class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
-                                 hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
-                    {{-- Google Play Icon --}}
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
-                                 alt="Google Play Icon Only"
-                                 class="h-7 w-7"> {{-- Adjusted size to match image --}}
+                @if($aplikasi->tautan_aplikasi)
+                    <a href="{{ $aplikasi->tautan_aplikasi }}" target="_blank"
+                       class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
+                              hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
+                        {{-- Google Play Icon --}}
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
+                             alt="Google Play Icon Only"
+                             class="h-7 w-7"> {{-- Adjusted size to match image --}}
 
-                    {{-- Text for Google Play --}}
-                    <span class="text-sm text-gray-800 font-poppins">
-                        Dapatkan di <br>
-                        <strong class="font-bold">Google Play</strong>
-                    </span>
-                </a>
+                        {{-- Text for Google Play --}}
+                        <span class="text-sm text-gray-800 font-poppins">
+                            Dapatkan di <br>
+                            <strong class="font-bold">Google Play</strong>
+                        </span>
+                    </a>
+                @endif
             </div>
 
             {{-- Right Column: Image Gallery (Carousel) --}}
-            {{-- Added mt-8 for mobile spacing, md:mt-0 to remove it on larger screens --}}
             <div class="flex-1 md:w-1/2 relative overflow-hidden rounded-lg shadow-md mt-8 md:mt-0">
                 <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
-                    {{-- Reduced max-height for smaller appearance --}}
-                    {{-- Added data-index attribute to each image for easy lookup in JS --}}
-                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Screenshot 1" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="0">
-                    <img src="{{ asset('images/mobilelegends2.png') }}" alt="Screenshot 2" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="1">
-                    <img src="{{ asset('images/mobilelegends.png') }}" alt="Screenshot 3" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="2">
-                    <img src="{{ asset('images/mobilelegends2.png') }}" alt="Screenshot 4" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="3">
+                    {{-- Loop through aplikasi->fotoAplikasi to display images --}}
+                    @forelse($aplikasi->fotoAplikasi as $key => $foto)
+                        <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Screenshot {{ $key + 1 }}" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="{{ $key }}">
+                    @empty
+                        <p class="p-4 text-gray-500">Tidak ada gambar yang tersedia.</p>
+                    @endforelse
                 </div>
 
-                <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button id="next-btn" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+                @if($aplikasi->fotoAplikasi->count() > 0)
+                    <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button id="next-btn" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                @endif
             </div>
         </div>
 
         {{-- Description/Features Section --}}
-        {{-- Removed px-6 here --}}
-        <div class="mb-8">
+        <div class="mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
             <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
-                <p>Mobile Legends: Bang Bang adalah game seluler bergenre MOBA (Multiplayer Online Battle Arena) yang dikembangkan dan diterbitkan oleh Moonton. Game ini gratis untuk dimainkan dan tersedia di platform seluler Android dan iOS. Game ini menampilkan pertempuran tim 5v5 di mana pemain memilih pahlawan dengan kemampuan unik dan bekerja sama untuk menghancurkan basis musuh. Dengan lebih dari 100 juta unduhan di seluruh dunia, Mobile Legends: Bang Bang telah menjadi salah satu game seluler paling populer.</p>
-                <p class="mt-4">Fitur Utama:</p>
-                <ul class="list-disc list-inside mt-2">
-                    <li>Pertempuran MOBA 5v5 Klasik</li>
-                    <li>Berbagai Pahlawan unik</li>
-                    <li>Kontrol mudah untuk perangkat seluler</li>
-                    <li>Pertandingan cepat dan efisien</li>
-                    <li>Strategi tim yang seru</li>
-                    <li>Grafik memukau dan efek visual imersif</li>
-                    <li>Pembaruan rutin</li>
-                    <li>Komunitas aktif</li>
-                    <li>Sistem peringkat kompetitif</li>
-                    <li>Dukungan multi-bahasa</li>
-                </ul>
-                <p class="mt-4">Mobile Legends: Bang Bang terus menjadi game yang sangat diminati, menawarkan pengalaman MOBA yang seru dan kompetitif langsung di perangkat seluler Anda.</p>
+                {{-- Display the description --}}
+                <p>{!! nl2br(e($aplikasi->deskripsi)) !!}</p> {{-- nl2br to convert newlines to <br>, e() for escaping --}}
+                @if($aplikasi->fitur)
+                    <p class="mt-4">Fitur Utama:</p>
+                    <ul class="list-disc list-inside mt-2">
+                        {{-- Assuming 'fitur' is stored as a string with each feature on a new line or comma-separated --}}
+                        @foreach(explode("\n", $aplikasi->fitur) as $feature)
+                            @if(trim($feature))
+                                <li>{{ trim($feature) }}</li>
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
             </div>
             <button id="read-more-btn" class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
         </div>
 
         {{-- Additional Info Section --}}
-        {{-- Removed px-6 here --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8 px-6"> {{-- Added px-6 --}}
             <div>
                 <p class="font-semibold">Dirilis Tanggal</p>
-                <p>12 April 2025</p>
+                <p>{{ $aplikasi->tanggal_rilis->format('d F Y') }}</p>
             </div>
             <div>
                 <p class="font-semibold">Diupdate Pada</p>
-                <p>30 April 2025</p>
+                <p>{{ $aplikasi->updated_at->format('d F Y') }}</p> {{-- Using updated_at for "Diupdate Pada" --}}
             </div>
             <div>
                 <p class="font-semibold">Versi</p>
-                <p>Bervariasi berdasarkan perangkat</p>
+                <p>{{ $aplikasi->versi }}</p>
             </div>
             <div>
                 <p class="font-semibold">Rating Konten</p>
-                <p>Rating 12+ :Kekerasan tingkat menengah </p>
+                <p>Rating {{ $aplikasi->rating_konten }}+ :{{ $aplikasi->rating_konten_deskripsi ?? 'Kekerasan tingkat menengah' }} </p> {{-- Assuming you might have a rating_konten_deskripsi field or default it --}}
             </div>
         </div>
 
         {{-- Rating and Reviews Section --}}
-        <div class="rating-reviews-section">
+        <div class="rating-reviews-section px-6"> {{-- Added px-6 --}}
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Ulasan</h2>
 
             {{-- List of Reviews --}}
             <div id="reviews-content" class="reviews-list space-y-6 overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 300px;">
-                {{-- Example Review 1 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Kim Sohun</p>
-                            <span class="text-gray-500 text-xs font-poppins">5 jam yang lalu</span>
+                @forelse($aplikasi->ulasan as $ulasan)
+                    <div class="flex items-start space-x-4">
+                        <img src="{{ asset('images/ulasan.png') }}" alt="Avatar {{ $ulasan->user->name ?? 'Pengguna' }}" class="w-12 h-12 rounded-full object-cover shadow-sm">
+                        <div>
+                            <div class="flex items-center justify-between w-full">
+                                <p class="font-semibold text-gray-800 font-poppins">{{ $ulasan->user->name ?? 'Pengguna Anonim' }}</p>
+                                <span class="text-gray-500 text-xs font-poppins">{{ $ulasan->created_at->diffForHumans() }}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm mt-1 font-poppins">{{ $ulasan->komentar }}</p>
                         </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
                     </div>
-                </div>
-
-                {{-- Example Review 2 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Minho</p>
-                            <span class="text-gray-500 text-xs font-poppins">12 Maret 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 3 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">UI</p>
-                            <span class="text-gray-500 text-xs font-poppins">13 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 4 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Jongsuk</p>
-                            <span class="text-gray-500 text-xs font-poppins">01 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 5 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Dimas Bagus</p>
-                            <span class="text-gray-500 text-xs font-poppins">15 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya lumayan oke, tapi dari segi tampilan kurang</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 6 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Ari Sandi</p>
-                            <span class="text-gray-500 text-xs font-poppins">23 Desember 2025</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap seru banget</p>
-                    </div>
-                </div>
+                @empty
+                    <p class="text-gray-500">Belum ada ulasan untuk aplikasi ini.</p>
+                @endforelse
             </div>
 
             <div class="text-left mt-8">
@@ -282,21 +222,27 @@
         let currentIndex = 0;
 
         function updateCarousel() {
+            // Check if there are any images to prevent errors
+            if (carouselImages.length === 0) return;
+
             // Calculate itemWidth dynamically based on the first child's actual width
-            // This ensures responsiveness if image sizes change or screen resizes
             const itemWidth = carousel.children[0].offsetWidth;
             carousel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
         }
 
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
-            updateCarousel();
-        });
+        // Only add event listeners if there are images
+        if (carouselImages.length > 0) {
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
+                updateCarousel();
+            });
 
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % carouselImages.length;
-            updateCarousel();
-        });
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % carouselImages.length;
+                updateCarousel();
+            });
+        }
+
 
         // Ensure carousel updates on window resize
         window.addEventListener('resize', updateCarousel);
@@ -307,13 +253,17 @@
         const initialDescriptionHeight = 120; // Corresponds to approx 4 lines of text
 
         // Check if description content overflows initially and set max-height
-        if (descriptionContent.scrollHeight > initialDescriptionHeight) {
-            descriptionContent.style.maxHeight = `${initialDescriptionHeight}px`;
-            descriptionContent.style.transition = 'max-height 0.3s ease-out';
-            readMoreBtn.style.display = 'block'; // Ensure button is visible if content overflows
-        } else {
-            readMoreBtn.style.display = 'none'; // Hide button if content is short
-        }
+        // Use setTimeout to ensure scrollHeight is calculated after content is rendered
+        setTimeout(() => {
+            if (descriptionContent.scrollHeight > initialDescriptionHeight) {
+                descriptionContent.style.maxHeight = `${initialDescriptionHeight}px`;
+                descriptionContent.style.transition = 'max-height 0.3s ease-out';
+                readMoreBtn.style.display = 'block'; // Ensure button is visible if content overflows
+            } else {
+                readMoreBtn.style.display = 'none'; // Hide button if content is short
+            }
+        }, 0);
+
 
         readMoreBtn.addEventListener('click', () => {
             if (descriptionContent.style.maxHeight === `${initialDescriptionHeight}px`) {
@@ -328,7 +278,7 @@
         // Read More/Less functionality for Reviews
         const reviewsContent = document.getElementById('reviews-content');
         const toggleReviewsBtn = document.getElementById('toggle-reviews-btn');
-        const initialReviewsHeight = 300; // Height to show a few reviews initially
+        const initialReviewsHeight = 300;
 
         // Check if reviews content overflows initially and set max-height
         // Use setTimeout to ensure scrollHeight is calculated after content is rendered
@@ -336,9 +286,9 @@
             if (reviewsContent.scrollHeight > initialReviewsHeight) {
                 reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
                 reviewsContent.style.transition = 'max-height 0.3s ease-out';
-                toggleReviewsBtn.style.display = 'block'; // Ensure button is visible if content overflows
+                toggleReviewsBtn.style.display = 'block'; 
             } else {
-                toggleReviewsBtn.style.display = 'none'; // Hide button if content is short
+                toggleReviewsBtn.style.display = 'none'; 
             }
         }, 0);
 

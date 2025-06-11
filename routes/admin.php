@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminRegisterController;
 use App\Http\Controllers\Admin\AdminVerifikasiController;
-use App\Http\Controllers\Admin\RiwayatController;
+use App\Http\Controllers\Admin\AdminRiwayatController;
+//use App\Http\Controllers\Admin\RiwayatController;
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ArsipController;
@@ -51,9 +52,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/verifikasi/{id}/detail', [AdminVerifikasiController::class, 'detailVerifikasi'])->name('verifikasi.detail');
 
-    // Rute Resource untuk Riwayat (index, show, destroy)
-    Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);
-
     // Jika ingin menampilkan detail aplikasi di riwayat atau sejenisnya:
     Route::get('/aplikasi/{id}', function($id) {
         // Biasanya Anda perlu passing data $id ke view
@@ -74,4 +72,28 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('arsip', ArsipController::class);
 
     // Tambah rute admin lainnya di sini...
+    
+
+     // Rute Resource untuk Riwayat (index, show, destroy)
+     //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);
+     //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy'])->names([
+        //'index' => 'riwayat.index',   // Akan terdaftar sebagai: 'admin.riwayat.index'
+        //'show' => 'riwayat.show',     // Akan terdaftar sebagai: 'admin.riwayat.show'
+        //'destroy' => 'riwayat.destroy', // Akan terdaftar sebagai: 'admin.riwayat.destroy'
+    //]);
+    // Tambahkan rute khusus untuk fungsi 'archive'
+    // Pastikan ini ada di dalam group 'admin.' agar namanya menjadi 'admin.riwayat.archive'
+    //Route::post('riwayat/{id}/archive', [RiwayatController::class, 'archive'])->name('riwayat.archive');
+
+    // Riwayat (History)
+    Route::get('/riwayat', [AdminRiwayatController::class, 'index'])->name('riwayat.index');
+    Route::get('/riwayat/{id}/detail', [AdminRiwayatController::class, 'detail'])->name('riwayat.detail');
+    Route::delete('/riwayat/{id}/delete', [AdminRiwayatController::class, 'destroy'])->name('riwayat.delete'); 
+    Route::put('/riwayat/{id}/archive', [AdminRiwayatController::class, 'archive'])->name('riwayat.archive');
+
+    // Arsip (Archive)
+    Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
+    Route::get('/arsip/{id}/show', [ArsipController::class, 'show'])->name('arsip.show'); // Changed from 'detail' to 'show' for consistency
+    Route::put('/arsip/{id}/unarchive', [ArsipController::class, 'unarchive'])->name('arsip.unarchive'); // New route for unarchiving
+    Route::delete('/arsip/{id}/delete', [ArsipController::class, 'deleteFromArchive'])->name('arsip.delete_from_archive'); // New route for deleting from archive
 });

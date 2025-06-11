@@ -30,18 +30,23 @@ class Aplikasi extends Model
         'tanggal_ditambahkan',
         'tanggal_verifikasi',
         'alasan_penolakan',
+        'tanggal_diarsipkan',
     ];
 
     protected $dates = [
         'tanggal_rilis',
         'tanggal_ditambahkan',
         'tanggal_verifikasi',
+        'tanggal_diarsipkan',
     ];
 
     protected $casts = [
+        'tanggal_rilis' => 'datetime',
         'tanggal_verifikasi' => 'datetime',
         'rating_konten' => 'float',
-        'jumlah_kunjungan' => 'integer', // <<< TAMBAHKAN INI
+        'jumlah_kunjungan' => 'integer',
+        'tanggal_diarsipkan' => 'datetime',
+        'arsip' => 'boolean', // Cast 'arsip' to a boolean for easier use (0/1 will be true/false)
     ];
 
     public function kategori()
