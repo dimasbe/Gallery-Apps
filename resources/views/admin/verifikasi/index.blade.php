@@ -194,6 +194,8 @@
             icon: 'success',
             title: 'Berhasil!',
             text: @json(session('success')),
+            toast: true,
+            position: 'top-end',
             // confirmButtonColor: '#ED125F'
             showConfirmshowConfirmButton: false,
             timer: 3000

@@ -46,7 +46,7 @@
             {{-- Input Logo --}}
             <div>
                 <label for="logo" class="block text-sm font-medium text-gray-700">Logo</label>
-                <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-700 file:text-white hover:file:bg-red-100" accept="image/*">
+                <input type="file" name="logo" id="logo" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-red-700 file:text-white hover:file:bg-red-100 hover:file:text-black" accept="image/*">
                 <div id="error-logo" class="text-red-500 text-xs mt-1"></div>
             </div>
 
@@ -234,8 +234,10 @@
                         icon: 'success',
                         title: 'Berhasil!',
                         text: data.message,
+                        toast: true,
+                        position: 'top-end',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     }).then(() => {
                         this.reset(); // Clear form
                         filesArray = []; // Clear photo files

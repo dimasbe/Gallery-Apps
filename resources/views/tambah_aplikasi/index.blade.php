@@ -69,11 +69,11 @@
                 <span class="absolute top-3 left-3 {{ $bgColor }} text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
                     {{ ucfirst($status) }}
                 </span>
-                {{-- Gambar logo aplikasi --}}
-                <img src="{{ asset('storage/' . $app->logo) }}"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Logo+Tidak+Tersedia';"
-                     alt="{{ $app->nama_aplikasi }}"
-                     class="w-full h-44 object-cover object-center">
+                {{-- Foto aplikasi --}}
+                <img src="{{ asset('storage/' . optional($app->fotoAplikasi()->first())->path_foto) }}"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Foto+Tidak+Tersedia';"
+                    alt="{{ $app->nama_aplikasi }}"
+                    class="w-full h-44 object-cover object-center">
                 <div class="p-5">
                     <h3 class="font-bold text-gray-900 text-lg mb-2">
                         <a href="{{ route('tambah_aplikasi.show', $app->id) }}" class="hover:text-blue-600 transition-colors duration-200">
@@ -89,7 +89,7 @@
                     <div class="flex justify-between items-center mt-auto">
                         <div class="flex items-center text-sm text-gray-600">
                             @if($app->rating_konten)
-                                <span>Rating: {{ $app->rating_konten }}</span>
+                                <span>Rating konten: {{ $app->rating_konten }}</span>
                             @endif
                         </div>
                         <div class="flex space-x-3">
@@ -190,6 +190,8 @@
                                     icon: 'success',
                                     title: 'Berhasil!',
                                     text: data.message,
+                                    toast: true,
+                                    position: 'top-end',
                                     showConfirmButton: false,
                                     timer: 1500
                                 }).then(() => {

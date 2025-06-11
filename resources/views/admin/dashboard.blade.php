@@ -114,7 +114,7 @@
             </div>
             <div>
                 <p class="text-gray-500 text-sm">Jumlah Pengguna</p>
-                <h2 class="text-3xl font-bold text-gray-800">36.964</h2>
+                <h2 class="text-3xl font-bold text-gray-800">{{ $jumlahPengguna }}</h2>
             </div>
         </div>
 
@@ -125,7 +125,7 @@
             </div>
             <div>
                 <p class="text-gray-500 text-sm">Aplikasi Diunggah</p>
-                <h2 class="text-3xl font-bold text-gray-800">790</h2>
+                <h2 class="text-3xl font-bold text-gray-800">{{ $jumlahAplikasi }}</h2>
             </div>
         </div>
     </div>
@@ -391,5 +391,39 @@
         document.getElementById('monthlyRecapChart').parentNode.style.textIndent = '0';
         document.getElementById('newsPieChart').parentNode.style.textIndent = '0';
     });
+
+    const ctx = document.getElementById('monthlyRecapChart').getContext('2d');
+    let chart;
+
+    function fetchChart(month, year) {
+        fetch(`/dashboard/chart-data?month=${month}&year=${year}`)
+            .then(response => response.json())
+            .then(res => {
+                if (chart) chart.destroy();
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: res.labels,
+                        datasets: [{
+                            label: 'Jumlah Aplikasi',
+                            data: res.data,
+                            backgroundColor: '#AD1500'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+    }
+
+    // Ambil default bulan & tahun
+    const date = new Date();
+    fetchChart(date.getMonth() + 1, date.getFullYear());
 </script>
 @endsection

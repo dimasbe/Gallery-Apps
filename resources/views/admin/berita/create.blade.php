@@ -145,8 +145,10 @@
                         icon: 'success',
                         title: 'Berhasil!',
                         text: data.message,
+                        toast: true,
+                        position: 'top-end',
                         showConfirmButton: false,
-                        timer: 1500
+                        timer: 3000
                     }).then(() => {
                         if (data.redirect) {
                             window.location.href = data.redirect; // Redirect ke halaman index berita

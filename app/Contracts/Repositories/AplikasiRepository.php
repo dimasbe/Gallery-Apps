@@ -32,6 +32,10 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
         return $this->model->query()->with('kategori', 'fotoAplikasi', 'users')->orderBy('id','DESC')->get();
     }
 
+    public function getCount(): int{
+        return $this->model->count();
+    }
+
     /**
      * Retrieve a specific application by ID with related data.
      *

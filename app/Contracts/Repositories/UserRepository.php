@@ -4,9 +4,17 @@ namespace App\Contracts\Repositories;
 use App\Contracts\Interfaces\UserInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
 
-class UserRepository implements UserInterface
+class UserRepository extends BaseRepository implements UserInterface
 {
+    protected Model $model;
+
+    public function __construct(User $user)
+    {
+        $this->model = $user;
+    }
+
     public function findByEmail(string $email): ?User
     {
         return User::where('email', $email)->first();
@@ -21,5 +29,9 @@ class UserRepository implements UserInterface
     {
         $data['password'] = Hash::make($data['password']);
         return User::create($data);
+    }
+
+    public function getCount(): int{
+        return $this->model->where('role', '!=', 'admin')->count();
     }
 }
