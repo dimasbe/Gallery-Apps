@@ -8,7 +8,7 @@
         {{-- Header: Kembali Button --}}
         {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
-        <a href="{{ route('tambah_aplikasi.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+            <a href="{{ route('tambah_aplikasi.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -20,7 +20,7 @@
             {{-- Left Column: App Title, Info, Google Play Button --}}
             <div class="flex-1 md:w-1/2">
                 <h1 class="text-3xl font-bold font-poppins text-gray-800 mt-2 mb-3">{{ $aplikasi->nama_aplikasi }}</h1>
-                <p class="text-gray-600 text-sm font-poppins mt-4 mb-5">{{ $aplikasi->nama_pemilik }}</p>
+                <p class="text-gray-600 text-sm font-poppins mt-2 mb-3">{{ $aplikasi->nama_pemilik }}</p>
 
                 <div class="flex items-center space-x-8 mb-8">
                     {{-- Logo --}}
@@ -47,10 +47,10 @@
             <div class="flex-1 md:w-1/2 relative overflow-hidden rounded-lg shadow-md mt-8 md:mt-0">
                 <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
                     @foreach ($fotoAplikasi as $index => $foto)
-                        <img src="{{ asset('storage/' . $foto->path_foto) }}" 
-                            alt="Screenshot {{ $index + 1 }}" 
-                            class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" 
-                            style="max-height: 300px;" 
+                        <img src="{{ asset('storage/' . $foto->path_foto) }}"
+                            alt="Screenshot {{ $index + 1 }}"
+                            class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer"
+                            style="max-height: 300px;"
                             data-index="{{ $index }}">
                     @endforeach
                 </div>
@@ -68,20 +68,76 @@
             </div>
         </div>
 
-        {{-- Description/Features Section --}}
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
-            <div id="description-content"
-                class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out"
-                style="max-height: 120px;">
-                {!! nl2br(e($aplikasi->deskripsi)) !!}
+        {{-- Deskripsi Section --}}
+        <div class="mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
+            <div class="flex items-center space-x-2 mb-4">
+                <h2 class="text-2xl font-bold font-poppins text-gray-800">Deskripsi</h2>
+                <button id="deskripsiButton"
+                        type="button"
+                        class="transition-transform duration-300 transform text-gray-800 hover:text-red-600"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deskripsiModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
-            <button id="read-more-btn"
-                class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
+            <div class="text-gray-700 font-poppins leading-relaxed">
+                {{ \Illuminate\Support\Str::words(strip_tags($aplikasi->deskripsi), 50, '...') }}
+            </div>
+        </div>
+
+        {{-- Fitur Section --}}
+        <div class="mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
+            <div class="flex items-center space-x-2 mb-4">
+                <h2 class="text-2xl font-bold font-poppins text-gray-800">Fitur</h2>
+                <button id="fiturButton"
+                        type="button"
+                        class="transition-transform duration-300 transform text-gray-800 hover:text-red-600"
+                        data-bs-toggle="modal"
+                        data-bs-target="#fiturModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+            <div class="text-gray-700 font-poppins leading-relaxed">
+                {{ \Illuminate\Support\Str::words(strip_tags($aplikasi->fitur), 50, '...') }}
+            </div>
+        </div>
+
+        {{-- Modal Deskripsi --}}
+        <div class="modal fade" id="deskripsiModal" tabindex="-1" aria-labelledby="deskripsiModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content font-poppins">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deskripsiModalLabel">Deskripsi Lengkap</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        {!! nl2br(e($aplikasi->deskripsi)) !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Fitur --}}
+        <div class="modal fade" id="fiturModal" tabindex="-1" aria-labelledby="fiturModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content font-poppins">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="fiturModalLabel">Fitur Lengkap</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        {!! nl2br(e($aplikasi->fitur)) !!}
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Additional Info Section --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8 px-6"> {{-- Added px-6 for consistent padding --}}
             <div>
                 <p class="font-semibold">Dirilis Tanggal</p>
                 <p>{{ \Carbon\Carbon::parse($aplikasi->tanggal_rilis)->translatedFormat('d F Y') }}</p>
@@ -101,7 +157,7 @@
         </div>
 
         {{-- Reviews Section --}}
-        <div class="rating-reviews-section">
+        <div class="rating-reviews-section px-6"> {{-- Added px-6 for consistent padding --}}
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Ulasan</h2>
 
             {{-- Review Input Form --}}
@@ -216,17 +272,23 @@
     </div>
 </div>
 
+{{-- Bootstrap JS Bundle --}}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Carousel functionality
         const carousel = document.getElementById('gallery-carousel');
-        const carouselImages = carousel.querySelectorAll('img'); // Get all images in the carousel
+        const carouselImages = carousel.querySelectorAll('img');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         let currentIndex = 0;
 
         function updateCarousel() {
-            const itemWidth = carousel.children[0].offsetWidth;
-            carousel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+            if (carouselImages.length > 0) { // Ensure there are images before calculating width
+                const itemWidth = carouselImages[0].offsetWidth; // Use carouselImages[0] instead of carousel.children[0] for robustness
+                carousel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+            }
         }
 
         prevBtn.addEventListener('click', () => {
@@ -240,43 +302,54 @@
         });
 
         window.addEventListener('resize', updateCarousel);
+        // Initial carousel update in case images are loaded before DOMContentLoaded
+        updateCarousel();
 
-        const descriptionContent = document.getElementById('description-content');
-        const readMoreBtn = document.getElementById('read-more-btn');
-        const initialDescriptionHeight = 120; 
 
-        if (descriptionContent.scrollHeight > initialDescriptionHeight) {
-            descriptionContent.style.maxHeight = `${initialDescriptionHeight}px`;
-            descriptionContent.style.transition = 'max-height 0.3s ease-out';
-            readMoreBtn.style.display = 'block'; 
-        } else {
-            readMoreBtn.style.display = 'none'; 
-        }
+        // Modal Toggle Functionality (for Deskripsi and Fitur)
+        const modals = [
+            { modalId: 'deskripsiModal', buttonId: 'deskripsiButton' },
+            { modalId: 'fiturModal', buttonId: 'fiturButton' }
+        ];
 
-        readMoreBtn.addEventListener('click', () => {
-            if (descriptionContent.style.maxHeight === `${initialDescriptionHeight}px`) {
-                descriptionContent.style.maxHeight = descriptionContent.scrollHeight + 'px';
-                readMoreBtn.textContent = 'Baca Lebih Sedikit';
-            } else {
-                descriptionContent.style.maxHeight = `${initialDescriptionHeight}px`;
-                readMoreBtn.textContent = 'Baca Selengkapnya';
+        modals.forEach(({ modalId, buttonId }) => {
+            const modalElement = document.getElementById(modalId); // Renamed to modalElement to avoid conflict
+            const button = document.getElementById(buttonId);
+            const svg = button ? button.querySelector('svg') : null; // Check if button exists before querying svg
+
+            if (modalElement && button && svg) {
+                // Initialize Bootstrap Modal instance
+                const bsModal = new bootstrap.Modal(modalElement, {
+                    backdrop: true // Allow closing by clicking outside
+                });
+
+                // Add event listener to the button to show the modal (though data-bs-toggle handles this)
+                // This part is mainly for the SVG rotation
+                modalElement.addEventListener('shown.bs.modal', () => {
+                    svg.classList.add('rotate-90');
+                });
+
+                modalElement.addEventListener('hidden.bs.modal', () => {
+                    svg.classList.remove('rotate-90');
+                });
             }
         });
 
+        // Reviews Toggle Functionality
         const reviewsContent = document.getElementById('reviews-content');
         const toggleReviewsBtn = document.getElementById('toggle-reviews-btn');
-        const initialReviewsHeight = 300; 
+        const initialReviewsHeight = 300;
 
+        // Use a small delay to ensure content is rendered and scrollHeight is accurate
         setTimeout(() => {
             if (reviewsContent.scrollHeight > initialReviewsHeight) {
                 reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
                 reviewsContent.style.transition = 'max-height 0.3s ease-out';
-                toggleReviewsBtn.style.display = 'block'; 
+                toggleReviewsBtn.style.display = 'block';
             } else {
-                toggleReviewsBtn.style.display = 'none'; 
+                toggleReviewsBtn.style.display = 'none';
             }
-        }, 0);
-
+        }, 100); // Increased delay slightly
 
         toggleReviewsBtn.addEventListener('click', () => {
             if (reviewsContent.style.maxHeight === `${initialReviewsHeight}px`) {
@@ -288,6 +361,7 @@
             }
         });
 
+        // Image Modal Pop-up (Fullscreen Image Viewer)
         const imageModal = document.getElementById('image-modal');
         const modalImage = document.getElementById('modal-image');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -296,7 +370,7 @@
 
         carouselImages.forEach((image, index) => {
             image.addEventListener('click', () => {
-                currentIndex = index; 
+                currentIndex = index;
                 updateModalImage();
                 imageModal.classList.remove('hidden');
             });
@@ -316,12 +390,14 @@
             }
         });
 
-        modalPrevBtn.addEventListener('click', () => {
+        modalPrevBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent closing modal if clicking on button
             currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
             updateModalImage();
         });
 
-        modalNextBtn.addEventListener('click', () => {
+        modalNextBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent closing modal if clicking on button
             currentIndex = (currentIndex + 1) % carouselImages.length;
             updateModalImage();
         });
