@@ -11,7 +11,7 @@ use App\Http\Controllers\AplikasiController;
 use App\Http\Controllers\Pengguna\KategoriController; // Jika ini untuk kategori umum, bukan aplikasi
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\BeritaController;
-use App\Models\Berita; // Penting: Import model Berita untuk mengakses data
+use App\Models\Berita;
 use App\Models\Kategori; // PASTIKAN KATEGORI DI-IMPORT UNTUK APLIKASI CONTROLLER
 
 
@@ -62,15 +62,15 @@ Route::get('/dashboard', function () {
 Route::get('/aplikasi', [AplikasiController::class, 'index'])->name('aplikasi');
 
 // Rute untuk detail aplikasi (penting untuk tautan di hasil pencarian dan halaman aplikasi)
-// Rute ini menerima ID aplikasi dan memanggil metode 'detail' di AplikasiController
-Route::get('/aplikasi/detail/{aplikasi}', [AplikasiController::class, 'detail'])->name('aplikasi.detail');
+// PERBAIKAN: Menggunakan {aplikasi:slug} dan memanggil method showAplikasi
+Route::get('/aplikasi/detail/{aplikasi:slug}', [AplikasiController::class, 'showAplikasi'])->name('aplikasi.detail');
 
 // Rute BARU untuk Aplikasi Paling Populer - Mengarahkan ke metode 'showPopuler' di AplikasiController
 Route::get('/aplikasi/populer', [AplikasiController::class, 'showPopuler'])->name('aplikasi.populer');
 
 // Rute untuk menampilkan aplikasi berdasarkan kategori
-// Menggunakan wildcard {nama_kategori} yang akan ditangkap oleh controller
-Route::get('/kategori-aplikasi/{nama_kategori}', [AplikasiController::class, 'showByCategory'])->name('kategori.show');
+// PERBAIKAN: Menggunakan {kategori:slug} agar cocok dengan Route Model Binding
+Route::get('/kategori-aplikasi/{kategori:slug}', [AplikasiController::class, 'showByCategory'])->name('kategori.show');
 
 
 // --- AKHIR PERBAIKAN DAN PENAMBAHAN ---
@@ -114,6 +114,9 @@ Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show
 // Rute Admin Berita (untuk CKEditor upload)
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 
+// Ini rute duplikat, kemungkinan besar tidak sengaja atau sudah tidak dipakai.
+// Jika ingin kategori umum menggunakan slug juga, ganti {nama} dengan {kategori:slug}
+// dan sesuaikan KategoriController::showByNama menjadi KategoriController::show
 Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_by_nama');
 
 
@@ -121,4 +124,3 @@ require __DIR__.'/auth.php';
 require __DIR__.'/user_login.php';
 
 Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-

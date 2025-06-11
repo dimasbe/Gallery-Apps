@@ -1,4 +1,4 @@
-<?php // Pastikan ini baris pertama, tanpa spasi/komentar di atasnya
+<?php
 
 namespace App\Http\Controllers;
 
@@ -8,7 +8,7 @@ use App\Contracts\Interfaces\KategoriInterface;
 use App\Http\Requests\StoreAplikasiRequest;
 use App\Http\Requests\UpdateAplikasiRequest;
 use App\Models\Aplikasi;
-use App\Models\Kategori; // Pastikan Kategori di-import
+use App\Models\Kategori;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -16,11 +16,11 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str; // Import Str, meskipun tidak digunakan secara langsung untuk slug karena sudah di model boot method.
 
-use App\Services\AplikasiService; // Pastikan ini di-import
-use App\Services\FotoAplikasiService; // Pastikan ini di-import
-use App\Services\LogoAplikasiService; // Pastikan ini di-import
-
+use App\Services\AplikasiService;
+use App\Services\FotoAplikasiService;
+use App\Services\LogoAplikasiService;
 
 class AplikasiController extends Controller
 {
@@ -42,41 +42,65 @@ class AplikasiController extends Controller
         $this->aplikasi = $aplikasi;
         $this->kategori = $kategori;
         $this->fotoAplikasi = $fotoAplikasi;
+        $this->fotoAplikasiService = $fotoAplikasiService;
         $this->logoAplikasiService = $logoAplikasiService;
         $this->aplikasiService = $aplikasiService;
     }
 
     public function index(): View
-    {        
-        $aplikasi = $this->aplikasi->get();
-        $kategori = $this->kategori->get();
+    {
+        $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->get();
-        return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
+
+        $aplikasiTerbaru = Aplikasi::where('status_verifikasi', 'diterima')
+            ->latest()
+            ->paginate(9);
+        $columnedResultsTerbaru = $aplikasiTerbaru->chunk(ceil($aplikasiTerbaru->count() / 3));
+
+        $aplikasiPopuler = Aplikasi::where('status_verifikasi', 'diterima')
+            ->orderByDesc('jumlah_kunjungan')
+            ->paginate(9);
+        $columnedResultsPopuler = $aplikasiPopuler->chunk(ceil($aplikasiPopuler->count() / 3));
+
+        $categorizedApplications = $kategori->map(function ($kat) {
+            $applications = Aplikasi::where('id_kategori', $kat->id)
+                ->where('status_verifikasi', 'diterima')
+                ->paginate(9);
+
+            return [
+                'category' => $kat,
+                'applications' => $applications,
+                'columnedResults' => $applications->chunk(ceil($applications->count() / 3)),
+            ];
+        });
+
+        return view('aplikasi.index', compact(
+            'kategori',
+            'fotoAplikasi',
+            'aplikasiTerbaru',
+            'columnedResultsTerbaru',
+            'aplikasiPopuler',
+            'columnedResultsPopuler',
+            'categorizedApplications'
+        ));
     }
 
     public function indexPage(): View
-    {        
+    {
         $userId = Auth::id();
-
         $aplikasi = $this->aplikasi->getByUserId($userId);
-        $kategori = $this->kategori->get();
+        $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->get();
         return view('tambah_aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
 
-    /**
-     * Menampilkan daftar aplikasi paling populer.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
     public function showPopuler(Request $request): View
     {
-        // Mengambil semua aplikasi populer berdasarkan jumlah_kunjungan
-        $allPopularApplications = Aplikasi::orderBy('jumlah_kunjungan', 'desc')->get();
+        $allPopularApplications = Aplikasi::where('status_verifikasi', 'diterima')
+                                            ->orderBy('jumlah_kunjungan', 'desc')
+                                            ->get();
 
-        // Mengatur paginasi untuk aplikasi populer
-        $perPagePopular = 18; // Sesuaikan dengan jumlah item per halaman yang Anda inginkan
+        $perPagePopular = 18;
         $currentPagePopular = LengthAwarePaginator::resolveCurrentPage('popular_page');
         $pagedPopularApplications = new LengthAwarePaginator(
             $allPopularApplications->forPage($currentPagePopular, $perPagePopular),
@@ -86,22 +110,37 @@ class AplikasiController extends Controller
             ['path' => LengthAwarePaginator::resolveCurrentPath(), 'pageName' => 'popular_page']
         );
 
-        // Mendistribusikan aplikasi ke dalam kolom visual untuk tampilan
         $columnedPopularResults = $this->distributeIntoColumns($pagedPopularApplications);
 
-        // Mengembalikan view 'aplikasi.populer' dengan data aplikasi populer
-        return view('aplikasi.populer', [ // PERUBAHAN: Mengarahkan ke 'aplikasi.populer'
+        return view('aplikasi.populer', [
             'aplikasiPopuler' => $pagedPopularApplications,
             'columnedResultsPopuler' => $columnedPopularResults,
         ]);
     }
 
     /**
-     * Helper function to distribute items into 3 columns for display.
+     * Menampilkan daftar aplikasi berdasarkan kategori.
      *
-     * @param LengthAwarePaginator $paginatedItems
-     * @return array
+     * @param \App\Models\Kategori $kategori Objek Kategori yang ditemukan berdasarkan slug
+     * @return \Illuminate\View\View
      */
+    public function showByCategory(Kategori $kategori): View
+    {
+        // --- DEBUGGING TERAKHIR: UNTUK MEMASTIKAN ROUTE MODEL BINDING BERHASIL ---
+        // Setelah Anda melihat output yang benar (ID 1, slug 'game'), HAPUS atau KOMENTARI baris ini.
+        // dd('ID Kategori Diterima:', $kategori->id, 'Slug Kategori:', $kategori->slug);
+        // -------------------------------------------------------------------------
+
+        $aplikasiByCategory = Aplikasi::where('id_kategori', $kategori->id)
+                                    ->where('status_verifikasi', 'diterima')
+                                    ->paginate(9);
+
+        $columnedResultsCategory = $this->distributeIntoColumns($aplikasiByCategory);
+
+        return view('aplikasi.kategori_detail', compact('kategori', 'aplikasiByCategory', 'columnedResultsCategory'));
+    }
+
+
     private function distributeIntoColumns(LengthAwarePaginator $paginatedItems): array
     {
         $columnedResults = [[], [], []];
@@ -121,55 +160,51 @@ class AplikasiController extends Controller
         return $columnedResults;
     }
 
-
-    /**
-     * Handle the search request for applications by name or category.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
     public function search(Request $request): View
-    {
-        $query = $request->input('q');
-        $allSearchResults = collect();
+        {
+            $query = $request->input('q');
+            $allSearchResults = collect();
 
-        if ($query) {
-            $allSearchResults = Aplikasi::where('nama_aplikasi', 'like', '%' . $query . '%')
-                                       ->orWhereHas('kategori', function ($q) use ($query) {
-                                            $q->where('nama_kategori', 'like', '%' . $query . '%');
-                                       })
-                                       ->get();
+            if ($query) {
+                $allSearchResults = Aplikasi::where('status_verifikasi', 'diterima')
+                    ->where(function ($qbuilder) use ($query) {
+                        $qbuilder->where('nama_aplikasi', 'like', '%' . $query . '%')
+                            ->orWhereHas('kategori', function ($kategoriQuery) use ($query) {
+                                $kategoriQuery->where('sub_kategori', 'aplikasi')
+                                             ->where('nama_kategori', 'like', '%' . $query . '%');
+                            });
+                    })
+                    ->get();
+            }
+
+            $perPage = 18;
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $pagedResults = new LengthAwarePaginator(
+                $allSearchResults->forPage($currentPage, $perPage),
+                $allSearchResults->count(),
+                $perPage,
+                $currentPage,
+                ['path' => LengthAwarePaginator::resolveCurrentPath()]
+            );
+
+            $columnedResults = $this->distributeIntoColumns($pagedResults);
+
+            return view('search_results', [
+                'query' => $query,
+                'results' => $pagedResults,
+                'columnedResults' => $columnedResults,
+            ]);
         }
-
-        $perPage = 18;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $pagedResults = new LengthAwarePaginator(
-            $allSearchResults->forPage($currentPage, $perPage),
-            $allSearchResults->count(),
-            $perPage,
-            $currentPage,
-            ['path' => LengthAwarePaginator::resolveCurrentPath()]
-        );
-
-        $columnedResults = $this->distributeIntoColumns($pagedResults);
-
-
-        return view('search_results', [
-            'query' => $query,
-            'results' => $pagedResults,
-            'columnedResults' => $columnedResults,
-        ]);
-    }
-
 
     public function create(): View
     {
         $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->get();
-        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi')); 
+        return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi'));
     }
-    
-    public function store(StoreAplikasiRequest $request): JsonResponse { 
+
+    public function store(StoreAplikasiRequest $request): JsonResponse
+    {
         try {
             $validated = $request->validated();
             $validated['id_user'] = Auth::id();
@@ -209,17 +244,14 @@ class AplikasiController extends Controller
 
     public function showAplikasi(Aplikasi $aplikasi): View
     {
-        // <<< INKREMEN JUMLAH KUNJUNGAN DI SINI <<<
         $aplikasi->increment('jumlah_kunjungan');
-        // >>> AKHIR INKREMEN <<<
-
         $aplikasi->load('kategori', 'fotoAplikasi');
         return view('aplikasi.detail', compact('aplikasi'));
     }
 
     public function show(Aplikasi $aplikasi): View
     {
-        $kategori = $this->kategori->get();
+        $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->where('id_aplikasi', $aplikasi->id);
         return view('tambah_aplikasi.show', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
@@ -229,9 +261,9 @@ class AplikasiController extends Controller
         if ($aplikasi->id_user !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
-        $kategori = Kategori::where('sub_kategori', 'aplikasi')->get(); 
+        $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $aplikasi->load('fotoAplikasi');
-        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori')); 
+        return view('tambah_aplikasi.edit', compact('aplikasi', 'kategori'));
     }
 
     public function update(UpdateAplikasiRequest $request, Aplikasi $aplikasi): JsonResponse
@@ -239,21 +271,14 @@ class AplikasiController extends Controller
         try {
             $validated = $request->validated();
 
-            // Ambil file logo dan foto dari request, bisa null jika tidak dikirim
             $logoFile = $request->file('path_logo');
             $fotoFiles = $request->file('path_foto');
-
-            // Buat array kosong kalau tidak ada file dikirim
             $fotoFiles = is_array($fotoFiles) && count($fotoFiles) > 0 ? $fotoFiles : null;
 
-            // Tambahkan logo ke validated jika ada
             if ($logoFile) {
                 $validated['path_logo'] = $logoFile;
             }
 
-            $this->aplikasiService->updateWithFotos($aplikasi->id, $validated, $fotoFiles);
-
-            // Panggil service update dengan parameter yang sesuai
             $updatedAplikasi = $this->aplikasiService->updateWithFotos(
                 $aplikasi->id,
                 $validated,
@@ -268,7 +293,7 @@ class AplikasiController extends Controller
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal. Periksa kembali form Anda.',
@@ -276,7 +301,7 @@ class AplikasiController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
-            \Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem, silakan coba lagi.',
@@ -285,7 +310,8 @@ class AplikasiController extends Controller
         }
     }
 
-    public function destroy(Aplikasi $aplikasi): JsonResponse {
+    public function destroy(Aplikasi $aplikasi): JsonResponse
+    {
         try {
             $this->aplikasiService->deleteAplikasiAndFiles($aplikasi->id);
 
@@ -314,45 +340,5 @@ class AplikasiController extends Controller
                 'message' => 'Terjadi kesalahan sistem, silakan coba lagi.'
             ], 500);
         }
-    }
-
-    /**
-     * Display all applications for a specific category.
-     *
-     * @param string $nama_kategori
-     * @param Request $request
-     * @return \Illuminate\View\View
-     */
-    public function showByCategory(string $nama_kategori, Request $request): View
-    {
-        // Temukan kategori berdasarkan nama
-        $category = Kategori::where('nama_kategori', $nama_kategori)
-                            ->where('sub_kategori', 'aplikasi') // Opsional: pastikan hanya kategori aplikasi
-                            ->firstOrFail(); // Akan 404 jika tidak ditemukan
-
-        // Ambil semua aplikasi dalam kategori tersebut
-        $allCategoryApps = Aplikasi::where('id_kategori', $category->id)
-                                   ->orderBy('nama_aplikasi', 'asc')
-                                   ->get();
-
-        // Paginasi hasil
-        $perPage = 18; // Sesuaikan dengan jumlah item per halaman yang Anda inginkan
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $pagedCategoryApps = new LengthAwarePaginator(
-            $allCategoryApps->forPage($currentPage, $perPage),
-            $allCategoryApps->count(),
-            $perPage,
-            $currentPage,
-            ['path' => LengthAwarePaginator::resolveCurrentPath()]
-        );
-
-        // Distribusikan ke kolom jika diperlukan untuk tampilan
-        $columnedResults = $this->distributeIntoColumns($pagedCategoryApps);
-
-        return view('aplikasi.kategori_detail', [ // Buat view baru untuk ini, misal 'kategori_detail.blade.php'
-            'category' => $category,
-            'applications' => $pagedCategoryApps,
-            'columnedResults' => $columnedResults,
-        ]);
     }
 }
