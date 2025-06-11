@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AplikasiController; // <<< PENTING: Gunakan AplikasiController
+use App\Http\Controllers\AplikasiController;
+ // <<< PENTING: Gunakan AplikasiController
 
 /*
 |--------------------------------------------------------------------------
@@ -27,5 +28,3 @@ Route::prefix('user-login/aplikasi')->name('tambah_aplikasi.')->group(function (
     // Anda bisa tambahkan route search jika diperlukan, misal:
     // Route::get('/search', [AplikasiController::class, 'search'])->name('search');
 });
-
-// Jika Anda memiliki route lain yang terkait dengan user_login, letakkan di sini
