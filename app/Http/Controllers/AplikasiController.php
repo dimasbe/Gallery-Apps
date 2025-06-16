@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log; // Pastikan ini sudah ada dan benar
 use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Services\AplikasiService; // Pastikan ini di-import
@@ -47,12 +47,54 @@ class AplikasiController extends Controller
     }
 
     public function index(): View
-    {        
-        $aplikasi = $this->aplikasi->get();
-        $kategori = $this->kategori->get();
-        $fotoAplikasi = $this->fotoAplikasi->get();
-        return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
+    {
+        // Ambil semua kategori
+        $kategori = $this->kategori->get(); // Ini akan mengembalikan semua kategori
+        $fotoAplikasi = $this->fotoAplikasi->get(); // Ambil semua foto aplikasi
+
+        // Inisialisasi array untuk aplikasi yang dikelompokkan berdasarkan kategori
+        $categorizedApplications = [];
+        $perPageForCategory = 18; // Tentukan jumlah item per halaman untuk setiap kategori
+
+        // Loop melalui setiap kategori dan ambil aplikasi terkait
+        foreach ($kategori as $cat) {
+            // Ambil semua aplikasi di kategori ini
+            $allApplicationsInThisCategory = Aplikasi::where('id_kategori', $cat->id)
+                                                    ->with('fotoAplikasi') // Load fotoAplikasi jika perlu ditampilkan
+                                                    ->get();
+
+            // Lakukan paginasi untuk aplikasi di kategori saat ini
+            $currentPageCategory = LengthAwarePaginator::resolveCurrentPage('category_' . $cat->id . '_page');
+            $pagedApplicationsInThisCategory = new LengthAwarePaginator(
+                $allApplicationsInThisCategory->forPage($currentPageCategory, $perPageForCategory),
+                $allApplicationsInThisCategory->count(),
+                $perPageForCategory,
+                $currentPageCategory,
+                ['path' => LengthAwarePaginator::resolveCurrentPath(), 'pageName' => 'category_' . $cat->id . '_page']
+            );
+
+            // Tambahkan ke array categorizedApplications jika ada aplikasi di kategori ini
+            if ($pagedApplicationsInThisCategory->isNotEmpty()) {
+                // Distribusikan aplikasi yang sudah di-paginasi ke dalam kolom
+                $columnedCategoryResults = $this->distributeIntoColumns($pagedApplicationsInThisCategory);
+                
+                $categorizedApplications[] = [
+                    'category' => $cat, // Teruskan objek kategori lengkap jika diperlukan
+                    'applications' => $pagedApplicationsInThisCategory, // Teruskan collection yang sudah di-paginasi
+                    'columnedResults' => $columnedCategoryResults, // Tambahkan hasil kolom di sini
+                ];
+            }
+        }
+
+        // Tambahan: Ambil aplikasi populer berdasarkan jumlah kunjungan
+        $aplikasiPopuler = Aplikasi::orderBy('jumlah_kunjungan', 'desc')
+                                     ->limit(6) // Sesuaikan jumlah yang ingin ditampilkan
+                                     ->get();
+
+        // Teruskan semua variabel yang dibutuhkan ke view
+        return view('aplikasi.index', compact('aplikasiPopuler', 'categorizedApplications', 'kategori', 'fotoAplikasi'));
     }
+
 
     public function indexPage(): View
     {        
@@ -111,9 +153,9 @@ class AplikasiController extends Controller
             $actualItemsPerVisualColumn = ceil($itemsOnCurrentPage / 3);
             $itemsArray = $paginatedItems->items();
 
-            for ($i = 0; $i < $itemsOnCurrentPage; $i++) {
+            for ($i = 0; $i < $itemsOnCurrentPage; ++$i) {
                 $aplikasi = $itemsArray[$i];
-                $colIndex = floor($i / $actualItemsPerVisualColumn);
+                $colIndex = (int)floor($i / $actualItemsPerVisualColumn);
                 $colIndex = min($colIndex, 2);
                 $columnedResults[$colIndex][] = $aplikasi;
             }
@@ -135,10 +177,10 @@ class AplikasiController extends Controller
 
         if ($query) {
             $allSearchResults = Aplikasi::where('nama_aplikasi', 'like', '%' . $query . '%')
-                                       ->orWhereHas('kategori', function ($q) use ($query) {
+                                        ->orWhereHas('kategori', function ($q) use ($query) {
                                             $q->where('nama_kategori', 'like', '%' . $query . '%');
-                                       })
-                                       ->get();
+                                        })
+                                        ->get();
         }
 
         $perPage = 18;
@@ -269,7 +311,7 @@ class AplikasiController extends Controller
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]); // Perbaikan di sini
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal. Periksa kembali form Anda.',
@@ -277,7 +319,7 @@ class AplikasiController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
-            \Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]); // Perbaikan di sini
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem, silakan coba lagi.',
@@ -307,7 +349,7 @@ class AplikasiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan database saat menghapus.'
-            ], 500);
+                ], 500);
         } catch (\Exception $e) {
             Log::error('Error deleting application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
@@ -328,13 +370,13 @@ class AplikasiController extends Controller
     {
         // Temukan kategori berdasarkan nama
         $category = Kategori::where('nama_kategori', $nama_kategori)
-                            ->where('sub_kategori', 'aplikasi') // Opsional: pastikan hanya kategori aplikasi
-                            ->firstOrFail(); // Akan 404 jika tidak ditemukan
+                             ->where('sub_kategori', 'aplikasi') // Opsional: pastikan hanya kategori aplikasi
+                             ->firstOrFail(); // Akan 404 jika tidak ditemukan
 
         // Ambil semua aplikasi dalam kategori tersebut
         $allCategoryApps = Aplikasi::where('id_kategori', $category->id)
-                                   ->orderBy('nama_aplikasi', 'asc')
-                                   ->get();
+                                       ->orderBy('nama_aplikasi', 'asc')
+                                       ->get();
 
         // Paginasi hasil
         $perPage = 18; // Sesuaikan dengan jumlah item per halaman yang Anda inginkan

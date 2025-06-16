@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\AdminRiwayatController;
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ArsipController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController; // PASTIKAN INI DIIMPOR DENGAN ALIAS
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +38,7 @@ Route::post('/register', [AdminRegisterController::class, 'register'])->name('re
 Route::middleware(['auth', 'admin'])->group(function () {
 
     // 📊 Dashboard Admin
+    // Rute ini sudah benar mengarah ke AdminDashboardController::index
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // ⛔ Logout Admin
@@ -74,9 +75,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Tambah rute admin lainnya di sini...
     
 
-     // Rute Resource untuk Riwayat (index, show, destroy)
-     //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);
-     //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy'])->names([
+    // Rute Resource untuk Riwayat (index, show, destroy)
+    //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);
+    //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy'])->names([
         //'index' => 'riwayat.index',   // Akan terdaftar sebagai: 'admin.riwayat.index'
         //'show' => 'riwayat.show',     // Akan terdaftar sebagai: 'admin.riwayat.show'
         //'destroy' => 'riwayat.destroy', // Akan terdaftar sebagai: 'admin.riwayat.destroy'
@@ -88,7 +89,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Riwayat (History)
     Route::get('/riwayat', [AdminRiwayatController::class, 'index'])->name('riwayat.index');
     Route::get('/riwayat/{id}/detail', [AdminRiwayatController::class, 'detail'])->name('riwayat.detail');
-    Route::delete('/riwayat/{id}/delete', [AdminRiwayatController::class, 'destroy'])->name('riwayat.delete'); 
+    Route::delete('/riwayat/{id}/delete', [AdminRiwayatController::class, 'destroy'])->name('riwayat.delete');
     Route::put('/riwayat/{id}/archive', [AdminRiwayatController::class, 'archive'])->name('riwayat.archive');
 
     // Arsip (Archive)

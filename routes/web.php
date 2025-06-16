@@ -8,11 +8,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AplikasiController;
-use App\Http\Controllers\Pengguna\KategoriController; 
+use App\Http\Controllers\Pengguna\KategoriController;
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\BeritaController;
-use App\Models\Berita; 
-use App\Models\Kategori; 
+use App\Http\Controllers\DashboardController; // Pastikan DashboardController diimpor
+use App\Http\Controllers\HomeController;     // Pastikan HomeController diimpor
+use App\Models\Berita;
+use App\Models\Kategori;
 
 
 /*
@@ -26,26 +28,22 @@ use App\Models\Kategori;
 |
 */
 
+// Rute untuk halaman beranda utama (saat belum login)
 Route::get('/', function () {
     if (Auth::check()) {
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } else {
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard'); // Arahkan ke dashboard jika sudah login (non-admin)
         }
     }
-    return app(BeritaController::class)->homepageLatestNews();
+    // Jika belum login, tampilkan halaman welcome melalui HomeController
+    return app(HomeController::class)->index(); // Panggil metode index() dari HomeController
 })->name('welcome');
 
-Route::get('/dashboard', function () {
-    if (Auth::check() && Auth::user()->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
+// Rute Dashboard untuk pengguna yang sudah login (non-admin)
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-    $beritas = Berita::orderBy('tanggal_dibuat', 'desc')->limit(3)->get();
-
-    return view('dashboard', compact('beritas'));
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/aplikasi', [AplikasiController::class, 'index'])->name('aplikasi');
 
@@ -87,4 +85,3 @@ require __DIR__.'/auth.php';
 require __DIR__.'/user_login.php';
 
 Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-
