@@ -8,6 +8,7 @@ use App\Contracts\Interfaces\AplikasiInterface;
 use App\Services\FotoAplikasiService;
 use App\Services\LogoAplikasiService;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log; // <- Tambahan untuk perbaikan P1009
 
 class AplikasiService
 {
@@ -85,7 +86,6 @@ class AplikasiService
             // This assumes FotoAplikasiService has a method to delete multiple photos by aplikasi ID
             $this->fotoAplikasiService->deleteMultipleByAplikasiId($aplikasi->id);
 
-
             // Delete the logo file from storage
             if ($aplikasi->logo && Storage::disk('public')->exists($aplikasi->logo)) {
                 Storage::disk('public')->delete($aplikasi->logo);
@@ -100,7 +100,7 @@ class AplikasiService
         } catch (Exception $e) {
             DB::rollBack(); // Rollback the transaction on error
             // Log the error for debugging purposes
-            \Log::error("Failed to delete application with ID: {$aplikasiId}. Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error("Failed to delete application with ID: {$aplikasiId}. Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             throw new Exception("Gagal menghapus aplikasi dan file terkait: " . $e->getMessage());
         }
     }

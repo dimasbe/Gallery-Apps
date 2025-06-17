@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use Illuminate\Contracts\View\View; // Mengimpor interface View
 
 class AdminBeritaController extends Controller
 {
@@ -22,14 +23,14 @@ class AdminBeritaController extends Controller
     }
 
     public function index(Request $request)
-{
-    $keyword = $request->query('keyword');
+    {
+        $keyword = $request->query('keyword');
 
-    // Kirim keyword ke service agar berita bisa difilter
-    $berita = $this->beritaService->getAllWithKategori($keyword);
+        // Kirim keyword ke service agar berita bisa difilter
+        $berita = $this->beritaService->getAllWithKategori($keyword);
 
-    return view('admin.berita.index', compact('berita'));
-}
+        return view('admin.berita.index', compact('berita'));
+    }
 
 
     public function create()
@@ -152,18 +153,37 @@ class AdminBeritaController extends Controller
         }
     }
 
-
-    public function show(Berita $berita)
+    /**
+     * Menampilkan detail sebuah berita dan mengincrement jumlah kunjungannya.
+     * Logika increment ditambahkan di sini karena permintaan pengguna untuk digabungkan.
+     *
+     * @param  \App\Models\Berita  $berita
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function show(Berita $berita): View
     {
+        // --- Logika untuk mengincrement jumlah_kunjungan ---
+        // Jika method 'show' ini juga digunakan untuk tampilan publik, maka increment ini akan berfungsi.
+        // Jika ini hanya untuk tampilan admin internal, pertimbangkan untuk menghapus baris ini
+        // atau memiliki logika terpisah untuk increment hanya di rute publik.
+        $berita->increment('jumlah_kunjungan');
+
         return view('admin.berita.show', compact('berita'));
     }
 
-    public function search(Request $request)
-{
-    $keyword = $request->input('keyword', '');
-    $result = $this->beritaRepository->search($keyword);
-    // ...
-}
-
-    
+    /**
+     * Mencari berita berdasarkan keyword menggunakan BeritaService.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function search(Request $request): View // Menambahkan type hinting View
+    {
+        $keyword = $request->input('keyword', '');
+        // PERBAIKAN DI SINI: Menggunakan beritaService yang sudah diinjeksikan
+        $berita = $this->beritaService->getAllWithKategori($keyword); 
+        
+        // Asumsi view 'admin.berita.index' atau view lain yang sesuai untuk menampilkan hasil pencarian
+        return view('admin.berita.index', compact('berita')); 
+    }
 }

@@ -1,109 +1,109 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Arsip')
+@section('title', 'Detail Riwayat Aplikasi') {{-- Judul halaman tetap relevan dengan riwayat --}}
 
 @section('content')
 <div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
-    {{-- Konten halaman riwayat Anda di sini --}}
+    {{-- Header dan Breadcrumbs --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Detail</h1>
+            <h1 class="text-3xl font-bold text-red-700">Detail Aplikasi</h1> {{-- Ubah dari "Detail" saja --}}
             <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                        <a href="{{ route('admin.dashboard') }}" class="hover:text-red-700">Beranda</a>
+                        <span class="mx-2 text-red-700 text-base">&bull;</span>
                     </li>
                     <li class="flex items-center">
-                        <a href="{{ route('admin.riwayat.index') }}" class="hover:text-custom-primary-red">Riwayat</a>
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
+                        <a href="{{ route('admin.riwayat.index') }}" class="hover:text-red-700">Riwayat</a> {{-- Sesuaikan rute jika berbeda --}}
+                        <span class="mx-2 text-red-700 text-base">&bull;</span>
                     </li>
-                    <li class="text-custom-primary-red" aria-current="page">Detail</li>
+                    <li class="text-red-700" aria-current="page">Detail</li>
                 </ol>
             </nav>
         </div>
     </div>
-    
+
     <div class="bg-white shadow-md rounded-lg p-6">
 
         {{-- Header: Kembali Button --}}
-        {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
-        <a href="{{ route('admin.riwayat.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+            <a href="{{ route('admin.riwayat.index') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
                 Kembali
             </a>
         </div>
+        
+        {{-- Display Rejected Status --}} 
+        @if($aplikasi->status_verifikasi === \App\Enums\StatusTypeEnum::DITOLAK->value && $aplikasi->alasan_penolakan) 
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-4 rounded-lg shadow-md flex items-center transform transition duration-300 hover:scale-[1.01] mb-6"> 
+            <svg class="h-6 w-6 text-red-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /> 
+            </svg> 
+            <div> 
+                <h3 class="font-bold text-red-900 mb-1">Catatan Ditolak:</h3> 
+                <p class="text-sm">{{ $aplikasi->alasan_penolakan }}</p> 
+            </div> 
+        </div> 
+        @endif 
+            
+        {{-- Display Accepted Status (NEW ADDITION) --}} 
+        @if($aplikasi->status_verifikasi === \App\Enums\StatusTypeEnum::DITERIMA->value) 
+        <div class="bg-green-50 border-l-4 border-green-500 text-green-800 p-4 rounded-lg shadow-md flex items-center transform transition duration-300 hover:scale-[1.01] mb-6"> 
+            <svg class="h-6 w-6 text-green-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> 
+            </svg> 
+            <div> 
+                <h3 class="font-bold text-green-900 mb-1">Terima</h3> 
+                <p class="text-sm">Aplikasi ini telah "diterima".</p> 
+            </div> 
+        </div> 
+        @endif
 
+        {{-- NEW FLEX CONTAINER for App Info + Carousel --}}
         <div class="flex flex-col md:flex-row md:space-x-8 mb-8 px-6">
+            {{-- Left Column: App Title, Info, Google Play Button --}}
             <div class="flex-1 md:w-1/2">
-                <h1 class="text-3xl font-bold font-poppins text-gray-800 mb-1">{{ $aplikasi['nama_aplikasi'] }}</h1>
-                <p class="text-gray-600 text-sm font-poppins mb-4">{{ $aplikasi['nama_pemilik'] }}</p>
+                <h1 class="text-3xl font-bold font-poppins text-gray-800 mb-1">{{ $aplikasi->nama_aplikasi }}</h1>
+                <p class="text-gray-600 text-sm font-poppins mb-4">
+                    {{ $aplikasi->user->name ?? $aplikasi->nama_pemilik ?? 'N/A' }}
+                </p>
 
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Logo" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
+                    <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Logo" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0 object-contain">
                     <div class="flex items-center space-x-4">
-                        {{-- Rating --}}
-                        <div class="flex flex-col items-start">
-                            <div class="flex items-center">
-                                <span class="text-gray-700 text-base font-poppins font-semibold">3,8</span>
-                                <svg class="w-4 h-4 text-yellow-400 fill-current ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z" />
-                                </svg>
-                            </div>
-                            <span class="text-gray-600 text-xs font-poppins">37,2 jt ulasan</span>
-                        </div>
-
-                        {{-- Separator --}}
-                        <div class="h-10 w-px bg-gray-300"></div>
-
-                        {{-- Downloads --}}
-                        <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">500 jt+</span>
-                            <span class="text-gray-600 text-xs font-poppins">download</span>
-                        </div>
-
-                        {{-- Separator --}}
-                        <div class="h-10 w-px bg-gray-300"></div>
-
-                        {{-- Age Rating --}}
-                        <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">12+</span>
-                            <span class="text-gray-600 text-xs font-poppins">rating 12+</span>
-                        </div>
                     </div>
                 </div>
 
-                {{-- Google Play Button - Updated to match the provided image --}}
-                <a href="https://play.google.com/store/apps/details?id=com.mobile.legends" target="_blank"
+                {{-- Google Play Button --}}
+                @if($aplikasi->tautan_aplikasi)
+                <a href="{{ $aplikasi->tautan_aplikasi }}" target="_blank"
                    class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
                                  hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
-                    {{-- Google Play Icon --}}
                     <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
                                  alt="Google Play Icon Only"
-                                 class="h-7 w-7"> {{-- Adjusted size to match image --}}
-
-                    {{-- Text for Google Play --}}
+                                 class="h-7 w-7">
                     <span class="text-sm text-gray-800 font-poppins">
                         Dapatkan di <br>
                         <strong class="font-bold">Google Play</strong>
                     </span>
                 </a>
+                @endif
             </div>
 
             {{-- Right Column: Image Gallery (Carousel) --}}
-            {{-- Added mt-8 for mobile spacing, md:mt-0 to remove it on larger screens --}}
             <div class="flex-1 md:w-1/2 relative overflow-hidden rounded-lg shadow-md mt-8 md:mt-0">
                 <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
-                    {{-- Reduced max-height for smaller appearance --}}
-                    {{-- Added data-index attribute to each image for easy lookup in JS --}}
-                    @foreach($aplikasi->fotoAplikasi as $index => $foto)
+                    @forelse($aplikasi->fotoAplikasi as $index => $foto)
                         <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Screenshot {{ $index + 1 }}" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="{{ $index }}">
-                    @endforeach
+                    @empty
+                        <p class="text-gray-500 text-center py-4 w-full">Tidak ada tangkapan layar yang tersedia.</p>
+                    @endforelse
                 </div>
 
+                @if($aplikasi->fotoAplikasi->count() > 1) {{-- Hanya tampilkan tombol jika ada lebih dari 1 gambar --}}
                 <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -114,137 +114,89 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
+                @endif
             </div>
         </div>
 
         {{-- Description/Features Section --}}
-        {{-- Removed px-6 here --}}
-        <div class="mb-8">
+        <div class="mb-8 px-6"> {{-- Tambahkan kembali px-6 untuk konsistensi --}}
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
             <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
-                <p>{{ $aplikasi['deskripsi'] }}</p>
-                <p class="mt-4">Fitur Utama:</p>
-                {{ $aplikasi['fitur'] }}
-                {{-- <ul class="list-disc list-inside mt-2"> 
-                    <li>Pertempuran MOBA 5v5 Klasik</li>
-                    <li>Berbagai Pahlawan unik</li>
-                    <li>Kontrol mudah untuk perangkat seluler</li>
-                    <li>Pertandingan cepat dan efisien</li>
-                    <li>Strategi tim yang seru</li>
-                    <li>Grafik memukau dan efek visual imersif</li>
-                    <li>Pembaruan rutin</li>
-                    <li>Komunitas aktif</li>
-                    <li>Sistem peringkat kompetitif</li>
-                    <li>Dukungan multi-bahasa</li>
-                </ul>
-                <p class="mt-4">Mobile Legends: Bang Bang terus menjadi game yang sangat diminati, menawarkan pengalaman MOBA yang seru dan kompetitif langsung di perangkat seluler Anda.</p> --}}
+                <p>{{ $aplikasi->deskripsi }}</p>
+                @if($aplikasi->fitur) {{-- Hanya tampilkan bagian fitur jika ada data fitur --}}
+                    <p class="mt-4">Fitur Utama:</p>
+                    {{-- Asumsi fitur adalah teks biasa. Jika berupa list, mungkin perlu di-parse --}}
+                    <p>{{ $aplikasi->fitur }}</p>
+                @endif
             </div>
             <button id="read-more-btn" class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
         </div>
-        
-       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
+
+        {{-- Additional Info Section --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8 px-6"> {{-- Tambahkan kembali px-6 --}}
             <div>
                 <p class="font-semibold">Dirilis Tanggal</p>
-                <p>{{ $aplikasi['tanggal_rilis'] }}</p>
+                <p>{{ \Carbon\Carbon::parse($aplikasi->tanggal_rilis)->format('d F Y') }}</p>
             </div>
             <div>
                 <p class="font-semibold">Diupdate Pada</p>
-                <p>{{ $aplikasi['tanggal_update'] }}</p>
+                <p>{{ $aplikasi->tanggal_update ? \Carbon\Carbon::parse($aplikasi->tanggal_update)->format('d F Y') : '-' }}</p>
             </div>
             <div>
                 <p class="font-semibold">Versi</p>
-                <p>{{ $aplikasi['versi'] }}</p>
+                <p>{{ $aplikasi->versi }}</p>
             </div>
             <div>
                 <p class="font-semibold">Rating Konten</p>
-                <p>{{ $aplikasi['rating_konten'] }}</p>
+                <p>{{ $aplikasi->rating_konten }}</p>
             </div>
         </div>
 
-        {{-- Rating and Reviews Section --}}
-        <div class="rating-reviews-section">
-            <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Ulasan</h2>
+        {{-- Admin Action Buttons (Jika masih dibutuhkan di halaman riwayat) --}}
+        {{-- Jika ini halaman "Riwayat", kemungkinan tombol aksi seperti Verifikasi/Tolak
+             sudah tidak relevan karena aplikasi sudah diverifikasi.
+             Namun, tombol Arsip/Unarchive mungkin masih relevan untuk pengelolaan.
+             Saya akan mengembalikan bagian ini sesuai permintaan awal, dengan penyesuaian jika statusnya sudah tidak PENDING. --}}
 
-            {{-- List of Reviews --}}
-            <div id="reviews-content" class="reviews-list space-y-6 overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 300px;">
-                {{-- Example Review 1 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Kim Sohun</p>
-                            <span class="text-gray-500 text-xs font-poppins">5 jam yang lalu</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 2 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Minho</p>
-                            <span class="text-gray-500 text-xs font-poppins">12 Maret 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 3 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">UI</p>
-                            <span class="text-gray-500 text-xs font-poppins">13 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Gamenya seru banget, fitur-fiturnya juga lengkap</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 4 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Lee Jongsuk</p>
-                            <span class="text-gray-500 text-xs font-poppins">01 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap, seru banget, Sukses selalu</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 5 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Dimas Bagus</p>
-                            <span class="text-gray-500 text-xs font-poppins">15 April 2024</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya lumayan oke, tapi dari segi tampilan kurang</p>
-                    </div>
-                </div>
-
-                {{-- Example Review 6 --}}
-                <div class="flex items-start space-x-4">
-                    <img src="{{ asset('images/ulasan.png') }}" alt="Avatar Kim Sohun" class="w-12 h-12 rounded-full object-cover shadow-sm">
-                    <div>
-                        <div class="flex items-center justify-between w-full">
-                            <p class="font-semibold text-gray-800 font-poppins">Ari Sandi</p>
-                            <span class="text-gray-500 text-xs font-poppins">23 Desember 2025</span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-1 font-poppins">Aplikasi nya mantap seru banget</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-left mt-8">
-                <button id="toggle-reviews-btn" class="text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Lihat Semua Ulasan</button>
+        @if($aplikasi->status_verifikasi === \App\Enums\StatusTypeEnum::PENDING->value)
+        <div class="bg-white shadow-xl rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 transform transition duration-300 hover:scale-[1.01]">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">Aksi Verifikasi</h2>
+            <div class="flex flex-wrap gap-4 justify-center sm:justify-end">
+                <form action="{{ route('admin.riwayat.verify', $aplikasi->id) }}" method="POST" class="w-full sm:w-auto">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status" value="diterima">
+                    <button type="submit" class="w-full px-8 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
+                        Verifikasi Aplikasi
+                    </button>
+                </form>
+                <button type="button" onclick="showRejectModal()" class="w-full sm:w-auto px-8 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
+                    Tolak Aplikasi
+                </button>
             </div>
         </div>
 
+        {{-- Reject Modal --}}
+        <div id="rejectModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-8 w-full max-w-md shadow-2xl animate-fade-in-up">
+                <h3 class="text-2xl font-bold mb-6 text-red-700 text-center">Tolak Aplikasi</h3>
+                <form action="{{ route('admin.riwayat.reject', $aplikasi->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status" value="ditolak">
+                    <div class="mb-6">
+                        <label for="alasan_penolakan" class="block text-gray-700 text-base font-semibold mb-2">Alasan Penolakan:</label>
+                        <textarea id="alasan_penolakan" name="alasan_penolakan" rows="5" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none" placeholder="Masukkan alasan penolakan aplikasi..." required></textarea>
+                    </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="hideRejectModal()" class="px-6 py-2.5 bg-gray-300 text-gray-800 font-semibold rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition duration-200 ease-in-out">Batal</button>
+                        <button type="submit" class="px-6 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-200 ease-in-out">Tolak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @elseif($aplikasi->status_verifikasi === \App\Enums\StatusTypeEnum::DITOLAK->value && $aplikasi->alasan_penolakan)
+        @endif
     </div>
 </div>
 
@@ -266,47 +218,69 @@
     </div>
 </div>
 
+{{-- Inline CSS for custom scrollbar and animations --}}
+<style>
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Opera */
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none; /* For Internet Explorer and Edge */
+        scrollbar-width: none; /* For Firefox */
+    }
+    @keyframes fadeInFromTop {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+        animation: fadeInFromTop 0.3s ease-out forwards;
+    }
+</style>
+
+{{-- Inline JavaScript for carousel and modal --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Carousel functionality
         const carousel = document.getElementById('gallery-carousel');
-        const carouselImages = carousel.querySelectorAll('img'); // Get all images in the carousel
+        const carouselImages = carousel.querySelectorAll('img');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         let currentIndex = 0;
 
         function updateCarousel() {
-            // Calculate itemWidth dynamically based on the first child's actual width
-            // This ensures responsiveness if image sizes change or screen resizes
-            const itemWidth = carousel.children[0].offsetWidth;
+            if (carouselImages.length === 0) return; // Prevent error if no images
+            const itemWidth = carouselImages[0].offsetWidth; // Get width of first image
             carousel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
         }
 
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
-            updateCarousel();
-        });
+        if (prevBtn && nextBtn) { // Only add event listeners if buttons exist
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + carouselImages.length) % carouselImages.length;
+                updateCarousel();
+            });
 
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % carouselImages.length;
-            updateCarousel();
-        });
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % carouselImages.length;
+                updateCarousel();
+            });
+        }
 
-        // Ensure carousel updates on window resize
+
         window.addEventListener('resize', updateCarousel);
+        updateCarousel(); // Initial call to set correct position on load
 
         // Read More functionality for Description
         const descriptionContent = document.getElementById('description-content');
         const readMoreBtn = document.getElementById('read-more-btn');
         const initialDescriptionHeight = 120; // Corresponds to approx 4 lines of text
 
-        // Check if description content overflows initially and set max-height
-        if (descriptionContent.scrollHeight > initialDescriptionHeight) {
-            descriptionContent.style.maxHeight = `${initialDescriptionHeight}px`;
-            descriptionContent.style.transition = 'max-height 0.3s ease-out';
-            readMoreBtn.style.display = 'block'; // Ensure button is visible if content overflows
-        } else {
-            readMoreBtn.style.display = 'none'; // Hide button if content is short
+        // Check if content overflows and adjust button visibility
+        function checkOverflow() {
+            // Temporarily set height to auto to get full scrollHeight
+            descriptionContent.style.maxHeight = 'none';
+            const isOverflowing = descriptionContent.scrollHeight > initialDescriptionHeight;
+            descriptionContent.style.maxHeight = isOverflowing ? `${initialDescriptionHeight}px` : 'none';
+            readMoreBtn.style.display = isOverflowing ? 'block' : 'none';
+            readMoreBtn.textContent = 'Baca Selengkapnya';
         }
 
         readMoreBtn.addEventListener('click', () => {
@@ -319,33 +293,10 @@
             }
         });
 
-        // Read More/Less functionality for Reviews
-        const reviewsContent = document.getElementById('reviews-content');
-        const toggleReviewsBtn = document.getElementById('toggle-reviews-btn');
-        const initialReviewsHeight = 300; // Height to show a few reviews initially
+        // Initial check and re-check on window resize
+        window.addEventListener('resize', checkOverflow);
+        checkOverflow();
 
-        // Check if reviews content overflows initially and set max-height
-        // Use setTimeout to ensure scrollHeight is calculated after content is rendered
-        setTimeout(() => {
-            if (reviewsContent.scrollHeight > initialReviewsHeight) {
-                reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
-                reviewsContent.style.transition = 'max-height 0.3s ease-out';
-                toggleReviewsBtn.style.display = 'block'; // Ensure button is visible if content overflows
-            } else {
-                toggleReviewsBtn.style.display = 'none'; // Hide button if content is short
-            }
-        }, 0);
-
-
-        toggleReviewsBtn.addEventListener('click', () => {
-            if (reviewsContent.style.maxHeight === `${initialReviewsHeight}px`) {
-                reviewsContent.style.maxHeight = reviewsContent.scrollHeight + 'px';
-                toggleReviewsBtn.textContent = 'Lihat Lebih Sedikit';
-            } else {
-                reviewsContent.style.maxHeight = `${initialReviewsHeight}px`;
-                toggleReviewsBtn.textContent = 'Lihat Semua Ulasan';
-            }
-        });
 
         // Image Modal Functionality
         const imageModal = document.getElementById('image-modal');
@@ -365,7 +316,9 @@
 
         // Update modal image based on currentIndex
         function updateModalImage() {
-            modalImage.src = carouselImages[currentIndex].src;
+            if (carouselImages.length > 0) {
+                modalImage.src = carouselImages[currentIndex].src;
+            }
         }
 
         // Close modal when close button is clicked
@@ -390,6 +343,15 @@
             currentIndex = (currentIndex + 1) % carouselImages.length;
             updateModalImage();
         });
+
+        // For Reject Modal (if still used)
+        window.showRejectModal = function() {
+            document.getElementById('rejectModal').classList.remove('hidden');
+        }
+
+        window.hideRejectModal = function() {
+            document.getElementById('rejectModal').classList.add('hidden');
+        }
     });
 </script>
 @endsection

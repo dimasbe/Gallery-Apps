@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str; // Import Str helper untuk membuat slug
 
 class Aplikasi extends Model
 {
@@ -21,7 +22,7 @@ class Aplikasi extends Model
         'tanggal_rilis',
         'versi',
         'rating_konten',
-        'jumlah_kunjungan', // <<< TAMBAHKAN INI
+        'jumlah_kunjungan',
         'tautan_aplikasi',
         'deskripsi',
         'fitur',
@@ -31,6 +32,7 @@ class Aplikasi extends Model
         'tanggal_verifikasi',
         'alasan_penolakan',
         'tanggal_diarsipkan',
+        'slug', // <<< TAMBAHKAN INI: Kolom slug
     ];
 
     protected $dates = [
@@ -67,6 +69,11 @@ class Aplikasi extends Model
     public function fotoAplikasi()
     {
         return $this->hasMany(FotoAplikasi::class, 'id_aplikasi');
+    }
+
+    public function fotoUtama()
+    {
+        return $this->hasOne(FotoAplikasi::class, 'id_aplikasi')->latestOfMany();
     }
 
 }

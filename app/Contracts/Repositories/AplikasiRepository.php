@@ -193,9 +193,23 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
      */
     public function getVerifiedPaginated(Request $request, int $perPage = 10): LengthAwarePaginator
     {
-        return $this->applyFilters($request, false) // Pass false for non-archived query
-                    ->orderBy('tanggal_verifikasi', 'desc')
-                    ->paginate($perPage);
+        $paginatedResults = $this->applyFilters($request, false)
+                                ->orderBy('tanggal_verifikasi', 'desc')
+                                ->paginate($perPage);
+
+        // dd(
+        //     '--- DEBUGGING PAGINATOR ---',
+        //     'Total Data Ditemukan: ' . $paginatedResults->total(),
+        //     'Jumlah Item Per Halaman: ' . $paginatedResults->perPage(),
+        //     'Halaman Saat Ini: ' . $paginatedResults->currentPage(),
+        //     'Total Halaman: ' . $paginatedResults->lastPage(),
+        //     'Apakah ada halaman berikutnya?: ' . $paginatedResults->hasMorePages(),
+        //     // SOLUSI: Konversi ke Collection sebelum memanggil pluck()
+        //     'Item di Halaman Ini (sample IDs): ' . collect($paginatedResults->items())->pluck('id')->implode(', '),
+        //     // Anda juga bisa melihat seluruh koleksi item jika perlu
+        //     // 'Semua Item di Halaman Ini:', collect($paginatedResults->items())->toArray()
+        // );
+        return $paginatedResults;
     }
 
     /**

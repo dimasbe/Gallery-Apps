@@ -32,21 +32,23 @@
 
     <div class="mb-10 mt-10">
         <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
-            Kategori : {{ $category->nama_kategori }}
+            Kategori : {{ $kategori->nama_kategori }}
         </h3>
 
         @php
-            $perPageCategory = $applications->perPage();
-            $currentPageCategory = $applications->currentPage();
+            // Pastikan $aplikasiByCategory adalah LengthAwarePaginator sebelum menggunakan method-nya
+            $perPageCategory = $aplikasiByCategory instanceof \Illuminate\Pagination\LengthAwarePaginator ? $aplikasiByCategory->perPage() : 9;
+            $currentPageCategory = $aplikasiByCategory instanceof \Illuminate\Pagination\LengthAwarePaginator ? $aplikasiByCategory->currentPage() : 1;
             $globalStartingIndexCategory = ($currentPageCategory - 1) * $perPageCategory;
-            $actualItemsPerVisualColumnCategory = ceil($applications->count() / 3);
+            // Gunakan count() langsung pada collection/paginator
+            $actualItemsPerVisualColumnCategory = ceil($aplikasiByCategory->count() / 3);
         @endphp
 
-        @if ($applications->isEmpty())
+        @if ($aplikasiByCategory->isEmpty())
             <p class="text-gray-600 col-span-3">Tidak ada aplikasi dalam kategori ini.</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
-                @foreach ($columnedResults as $colIndex => $column)
+                @foreach ($columnedResultsCategory as $colIndex => $column) {{-- Menggunakan $columnedResultsCategory --}}
                     <div class="space-y-5">
                         @foreach ($column as $rowInColIndex => $aplikasi)
                             <div class="flex items-start space-x-3 font-poppins">
@@ -77,7 +79,7 @@
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $applications->links('pagination::tailwind') }}
+                {{ $aplikasiByCategory->links('pagination::tailwind') }} {{-- PERBAIKAN DI SINI --}}
             </div>
         @endif
     </div>
