@@ -367,7 +367,7 @@
             @yield('content')
 
         {{-- FOOTER --}}
-        <div class="flex justify-between items-center text-gray-500 text-sm border-t bg-white mt-6 px-8 py-4"
+        <div class="flex justify-between items-center text-gray-500 text-sm border-t mt-6 px-8 py-4"
             style="margin-left: -1.5rem; margin-right: -1.5rem; width: calc(100% + 3rem);">
             <p>2025 Hummatech All Rights Reserved</p>
             <p>Copyright By GalleryApp</p>

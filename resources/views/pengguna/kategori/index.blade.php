@@ -36,7 +36,7 @@
             <div id="category-group" class="grid grid-cols-3 gap-2 overflow-hidden transition-all duration-300"
                 style="max-height: 10rem;">
                 @foreach ($aplikasiKategoris as $kategori)
-                    <a href="{{ route('kategori.show', ['nama_kategori' => $kategori->nama_kategori]) }}"
+                    <a href="{{ route('kategori.show', ['kategori' => $kategori->nama_kategori]) }}"
                         class="category-item bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">
                         {{ $kategori->nama_kategori }}
                     </a>
