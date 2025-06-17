@@ -8,6 +8,7 @@ use App\Models\Notifikasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 // Import Interfaces Anda (Hanya Repository Interface)
 use App\Contracts\Interfaces\AplikasiInterface;
@@ -63,5 +64,7 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('notifications', collect());
             }
         });
+        
+        Paginator::useTailwind();
     }
 }

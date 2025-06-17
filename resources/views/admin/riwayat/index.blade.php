@@ -1,6 +1,8 @@
-@extends('layouts.admin') {{-- Memastikan halaman ini menggunakan layout admin Anda --}}
+{{-- admin/riwayat/index.blade.php --}}
 
-@section('title', 'Riwayat Verifikasi') {{-- Mengatur judul halaman pada tab browser --}}
+@extends('layouts.admin')
+
+@section('title', 'Riwayat Verifikasi')
 
 @section('content')
     <div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
@@ -64,7 +66,7 @@
             </div>
 
             {{-- Kartu (Card) yang Membungkus Tabel Riwayat --}}
-            <div class="overflow-x-auto"> 
+            <div class="overflow-x-auto">
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr>
@@ -112,44 +114,43 @@
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                     @if($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITERIMA->value)
-                                            <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                                                <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-                                                <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
-                                            </span>
+                                        <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                                            <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
+                                            <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
+                                        </span>
                                     @elseif($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITOLAK->value)
-                                            <span class="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
-                                                <span aria-hidden class="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
-                                                <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
-                                            </span>
+                                        <span class="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight">
+                                            <span aria-hidden class="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
+                                            <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
+                                        </span>
                                     @else
-                                            {{-- This state should ideally not be reached if we only show DITERIMA/DITOLAK applications --}}
-                                            <span class="relative inline-block px-3 py-1 font-semibold text-gray-900 leading-tight">
-                                                <span aria-hidden class="absolute inset-0 bg-gray-200 opacity-50 rounded-full"></span>
-                                                <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
-                                            </span>
+                                        <span class="relative inline-block px-3 py-1 font-semibold text-gray-900 leading-tight">
+                                            <span aria-hidden class="absolute inset-0 bg-gray-200 opacity-50 rounded-full"></span>
+                                            <span class="relative">{{ ucfirst($data['status_verifikasi']) }}</span>
+                                        </span>
                                     @endif
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                     <div class="flex space-x-2 justify-center">
                                         @if($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITOLAK->value)
-                                                {{-- Delete Button (for 'Ditolak' status) --}}
-                                                <form action="{{ route('admin.riwayat.delete', ['id' => $data['id']]) }}" method="POST" class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
-                                                        Hapus
-                                                    </button>
-                                                </form>
+                                            {{-- Delete Button (for 'Ditolak' status) --}}
+                                            <form action="{{ route('admin.riwayat.delete', ['id' => $data['id']]) }}" method="POST" class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                                    Hapus
+                                                </button>
+                                            </form>
                                         @elseif($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITERIMA->value && !$data['arsip']) {{-- Check if not archived --}}
-                                                {{-- Archive Button (for 'Diterima' status AND not archived) --}}
-                                                <form action="{{ route('admin.riwayat.archive', ['id' => $data['id']]) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit"
-                                                        class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
-                                                        Arsip
-                                                    </button>
-                                                </form>
+                                            {{-- Archive Button (for 'Diterima' status AND not archived) --}}
+                                            <form action="{{ route('admin.riwayat.archive', ['id' => $data['id']]) }}" method="POST" class="archive-form">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit"
+                                                    class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                                    Arsip
+                                                </button>
+                                            </form>
                                         @endif
 
                                         <a href="{{ route('admin.riwayat.detail', ['id' => $data['id']]) }}"
@@ -176,16 +177,30 @@
                 <div class="text-sm text-gray-600">
                     Rows per page:
                     <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red"
-                            onchange="changeRowsPerPage(this.value)">
+                                onchange="changeRowsPerPage(this.value)">
                         <option value="5" {{ $aplikasi->perPage() == 5 ? 'selected' : '' }}>5</option>
                         <option value="10" {{ $aplikasi->perPage() == 10 ? 'selected' : '' }}>10</option>
                         <option value="20" {{ $aplikasi->perPage() == 20 ? 'selected' : '' }}>20</option>
+                        <option value="20" {{ $aplikasi->perPage() == 20 ? 'selected' : '' }}>20</option>
                         <option value="30" {{ $aplikasi->perPage() == 30 ? 'selected' : '' }}>30</option>
+                        <option value="40" {{ $aplikasi->perPage() == 40 ? 'selected' : '' }}>40</option>
+                        <option value="50" {{ $aplikasi->perPage() == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $aplikasi->perPage() == 100 ? 'selected' : '' }}>100</option>
+                        <option value="500" {{ $aplikasi->perPage() == 500 ? 'selected' : '' }}>500</option>
+                        <option value="1000" {{ $aplikasi->perPage() == 1000 ? 'selected' : '' }}>1000</option>
                     </select>
                 </div>
                 <div id="pagination-info" class="text-sm text-gray-600">
                     {{ $aplikasi->firstItem() }}-{{ $aplikasi->lastItem() }} of {{ $aplikasi->total() }}
                 </div>
+
+                {{-- Tambahkan $aplikasi->links() di sini --}}
+                <div class="flex space-x-2">
+                    {{ $aplikasi->links() }}
+                </div>
+
+                {{-- Anda bisa menghapus bagian ini karena sudah dicakup oleh $aplikasi->links() --}}
+                {{--
                 <div class="flex space-x-2">
                     <a href="{{ $aplikasi->previousPageUrl(array_merge(request()->query(), ['per_page' => $aplikasi->perPage()])) }}"
                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $aplikasi->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
@@ -196,12 +211,14 @@
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
+                --}}
             </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Existing changeRowsPerPage function, updated to preserve 'keyword'
     function changeRowsPerPage(value) {
@@ -232,6 +249,30 @@
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If confirmed, submit the form
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // SweetAlert2 for archive confirmation
+        document.querySelectorAll('.archive-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                Swal.fire({
+                    title: 'Konfirmasi Arsip',
+                    text: "Anda yakin ingin mengarsipkan data ini?",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#F59E0B', // Tailwind yellow-500
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Arsipkan!',
                     cancelButtonText: 'Batal',
                     reverseButtons: true
                 }).then((result) => {

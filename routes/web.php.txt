@@ -1,0 +1,92 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationController;
+
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AplikasiController;
+use App\Http\Controllers\Pengguna\KategoriController; 
+use App\Http\Controllers\Admin\AdminBeritaController;
+use App\Http\Controllers\BeritaController;
+use App\Models\Berita; 
+use App\Models\Kategori; 
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    if (Auth::check()) {
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('dashboard');
+        }
+    }
+    return app(BeritaController::class)->homepageLatestNews();
+})->name('welcome');
+
+Route::get('/dashboard', function () {
+    if (Auth::check() && Auth::user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    $beritas = Berita::orderBy('tanggal_dibuat', 'desc')->limit(3)->get();
+
+    return view('dashboard', compact('beritas'));
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/aplikasi', [AplikasiController::class, 'index'])->name('aplikasi');
+
+Route::get('/aplikasi/detail/{aplikasi}', [AplikasiController::class, 'showAplikasi'])->name('aplikasi.detail');
+
+Route::get('/aplikasi/populer', [AplikasiController::class, 'showPopuler'])->name('aplikasi.populer');
+
+Route::get('/kategori-aplikasi/{nama_kategori}', [AplikasiController::class, 'showByCategory'])->name('kategori.show');
+
+Route::get('/login/google', [GoogleController::class, 'redirect'])->name('google.redirect');
+Route::get('/login/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
+
+Route::get('/register', [RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store'])
+    ->middleware('guest');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index_umum');
+Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_umum');
+Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_by_nama');
+
+
+Route::get('/search', [AplikasiController::class, 'search'])->name('search');
+
+Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show');
+
+Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
+
+
+
+
+require __DIR__.'/auth.php';
+require __DIR__.'/user_login.php';
+
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+

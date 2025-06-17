@@ -27,9 +27,9 @@ class AdminRiwayatController extends Controller
      */
     public function index(Request $request): View
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 5); // Change 10 to 5
         $aplikasi = $this->aplikasi->getVerifiedPaginated($request, $perPage);
-
+        
         return view('admin.riwayat.index', compact('aplikasi'));
     }
 
