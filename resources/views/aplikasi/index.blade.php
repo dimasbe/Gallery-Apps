@@ -46,15 +46,21 @@
             <p class="text-gray-600">Tidak ada aplikasi populer yang tersedia.</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
-                @foreach ($columnedResultsPopuler as $colIndex => $column)
+                @php
+                    // Inisialisasi penghitung global untuk aplikasi populer
+                    // Variabel ini datang dari controller
+                    $currentPopularNumber = $globalStartingIndexPopuler;
+                @endphp
+
+                @foreach ($columnedPopularResults as $colIndex => $column)
                     <div class="space-y-5">
                         @foreach ($column as $rowInColIndex => $aplikasi)
                             <div class="flex items-start space-x-3 font-poppins">
                                 @php
-                                    $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumnPopuler) + $rowInColIndex;
-                                    $displayNumber = $globalStartingIndexPopuler + $itemOriginalIndex + 1;
+                                    // Setiap kali aplikasi ditampilkan, tingkatkan nomor urut
+                                    $currentPopularNumber++;
                                 @endphp
-                                <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
+                                <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $currentPopularNumber }}</span>
 
                                 <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
                                     @if ($aplikasi->logo)
@@ -77,7 +83,7 @@
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $aplikasiPopuler->links('pagination::tailwind', ['pageName' => 'popular_page']) }} {{-- Pastikan nama paginator sama --}}
+                {{ $aplikasiPopuler->links('pagination::tailwind', ['pageName' => 'popular_page']) }}
             </div>
         @endif
     </div>
@@ -88,11 +94,11 @@
         @php
             $category = $group['category'];
             $apps = $group['applications'];
-            $perPage = $apps->perPage();
-            $currentPage = $apps->currentPage();
-            $startIndex = ($currentPage - 1) * $perPage;
-            $columns = 3;
-            $chunked = $apps->values()->chunk(ceil($apps->count() / $columns));
+            $columnedResultsCategory = $group['columnedResults']; // Gunakan hasil pembagian kolom dari controller
+            $globalStartingIndexCategory = $group['globalStartingIndex']; // Gunakan indeks awal global dari controller
+
+            // Inisialisasi penghitung global untuk kategori ini
+            $currentCategoryNumber = $globalStartingIndexCategory;
         @endphp
 
         <div class="mb-10 mt-12">
@@ -110,12 +116,17 @@
                 <p class="text-gray-600">Tidak ada aplikasi dalam kategori {{ $category->nama_kategori }}.</p>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
-                    @foreach ($chunked as $colIndex => $column)
+                    {{-- Loop melalui kolom yang sudah diatur oleh controller --}}
+                    @foreach ($columnedResultsCategory as $colIndex => $column)
                         <div class="space-y-5">
-                            @foreach ($column as $rowIndex => $aplikasi)
+                            @foreach ($column as $aplikasi) {{-- $rowIndex tidak diperlukan lagi untuk penomoran --}}
                                 <div class="flex items-start space-x-3 font-poppins">
+                                    @php
+                                        // Setiap kali aplikasi ditampilkan, tingkatkan nomor urut
+                                        $currentCategoryNumber++;
+                                    @endphp
                                     <span class="text-sm font-bold text-[#1b1b18] w-5">
-                                        {{ $startIndex + ($colIndex * ceil($apps->count() / $columns)) + $rowIndex + 1 }}
+                                        {{ $currentCategoryNumber }}
                                     </span>
                                     <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
                                         @if ($aplikasi->logo)

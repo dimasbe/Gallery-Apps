@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="max-w-7xl mx-auto p-6">
-    <div class="flex justify-between mb-2 items-center"> {{-- Adjusted to justify-between for left and right alignment --}}
+    <div class="flex justify-between mb-2 items-center">
         {{-- Tombol Kembali --}}
         <a href="{{ route('kategori.index_umum') }}" class="flex items-center text-gray-500 hover:text-gray-700 p-2 rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,31 +32,28 @@
 
     <div class="mb-10 mt-10">
         <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
-            Kategori : {{ $kategori->nama_kategori }}
+            Kategori : {{ $category->nama_kategori }} {{-- PERBAIKAN: Gunakan $category --}}
         </h3>
 
+        {{-- Logika penomoran dipindahkan atau disederhanakan --}}
         @php
-            // Pastikan $aplikasiByCategory adalah LengthAwarePaginator sebelum menggunakan method-nya
-            $perPageCategory = $aplikasiByCategory instanceof \Illuminate\Pagination\LengthAwarePaginator ? $aplikasiByCategory->perPage() : 9;
-            $currentPageCategory = $aplikasiByCategory instanceof \Illuminate\Pagination\LengthAwarePaginator ? $aplikasiByCategory->currentPage() : 1;
-            $globalStartingIndexCategory = ($currentPageCategory - 1) * $perPageCategory;
-            // Gunakan count() langsung pada collection/paginator
-            $actualItemsPerVisualColumnCategory = ceil($aplikasiByCategory->count() / 3);
+            // Inisialisasi penghitung global menggunakan variabel yang diterima dari controller
+            $currentCategoryNumber = $globalStartingIndex;
         @endphp
 
-        @if ($aplikasiByCategory->isEmpty())
+        @if ($applications->isEmpty()) {{-- Gunakan $applications untuk mengecek apakah kosong --}}
             <p class="text-gray-600 col-span-3">Tidak ada aplikasi dalam kategori ini.</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
-                @foreach ($columnedResultsCategory as $colIndex => $column) {{-- Menggunakan $columnedResultsCategory --}}
+                @foreach ($columnedResults as $colIndex => $column) {{-- PERBAIKAN: Gunakan $columnedResults --}}
                     <div class="space-y-5">
-                        @foreach ($column as $rowInColIndex => $aplikasi)
+                        @foreach ($column as $aplikasi) {{-- $rowInColIndex tidak lagi diperlukan untuk penomoran --}}
                             <div class="flex items-start space-x-3 font-poppins">
                                 @php
-                                    $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumnCategory) + $rowInColIndex;
-                                    $displayNumber = $globalStartingIndexCategory + $itemOriginalIndex + 1;
+                                    // Setiap kali aplikasi ditampilkan, tingkatkan nomor urut
+                                    $currentCategoryNumber++;
                                 @endphp
-                                <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
+                                <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $currentCategoryNumber }}</span>
 
                                 <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
                                     @if ($aplikasi->logo)
@@ -79,7 +76,7 @@
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $aplikasiByCategory->links('pagination::tailwind') }} {{-- PERBAIKAN DI SINI --}}
+                {{ $applications->links('pagination::tailwind') }} {{-- PERBAIKAN: Gunakan $applications untuk paginasi --}}
             </div>
         @endif
     </div>
