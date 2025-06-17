@@ -30,7 +30,7 @@
         </form>
     </div>
 
-    {{-- Aplikasi Paling Populer --}}
+    {{-- Bagian Paling Populer (berdasarkan jumlah_kunjungan) --}}
     <div class="mb-10 mt-10">
         <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
             Paling populer
@@ -45,40 +45,29 @@
         @if ($aplikasiPopuler->isEmpty())
             <p class="text-gray-600">Tidak ada aplikasi populer yang tersedia.</p>
         @else
-            @php
-                $perPage = $aplikasiPopuler->perPage();
-                $currentPage = $aplikasiPopuler->currentPage();
-                $startIndex = ($currentPage - 1) * $perPage;
-                $columns = 3;
-                $chunked = $aplikasiPopuler->values()->chunk(ceil($aplikasiPopuler->count() / $columns));
-            @endphp
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
-                @foreach ($chunked as $colIndex => $column)
+                @foreach ($columnedResultsPopuler as $colIndex => $column)
                     <div class="space-y-5">
-                        @foreach ($column as $rowIndex => $aplikasi)
+                        @foreach ($column as $rowInColIndex => $aplikasi)
                             <div class="flex items-start space-x-3 font-poppins">
-                                <span class="text-sm font-bold text-[#1b1b18] w-5">
-                                    {{ $startIndex + ($colIndex * ceil($aplikasiPopuler->count() / $columns)) + $rowIndex + 1 }}
-                                </span>
+                                @php
+                                    $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumnPopuler) + $rowInColIndex;
+                                    $displayNumber = $globalStartingIndexPopuler + $itemOriginalIndex + 1;
+                                @endphp
+                                <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
+
                                 <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
                                     @if ($aplikasi->logo)
-                                        <img src="{{ asset('storage/' . $aplikasi->logo) }}"
-                                            alt="Logo {{ $aplikasi->nama_aplikasi }}"
-                                            class="w-12 h-12 rounded-lg object-cover" />
+                                        <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="Logo {{ $aplikasi->nama_aplikasi }}" class="w-12 h-12 rounded-lg object-cover" />
                                     @else
                                         <div class="w-12 h-12 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                            </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                                         </div>
                                     @endif
                                 </a>
                                 <div class="flex flex-col">
                                     <h3 class="text-sm font-semibold text-[#1b1b18] leading-tight">
-                                        <a href="{{ route('aplikasi.detail', $aplikasi->id) }}"
-                                            class="hover:text-red-600">{{ $aplikasi->nama_aplikasi }}</a>
+                                        <a href="{{ route('aplikasi.detail', $aplikasi->id) }}" class="hover:text-red-600">{{ $aplikasi->nama_aplikasi }}</a>
                                     </h3>
                                     <small class="text-gray-500 text-sm">{{ $aplikasi->nama_pemilik ?? 'Developer tidak tersedia' }}</small>
                                 </div>
@@ -88,10 +77,11 @@
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $aplikasiPopuler->links('pagination::tailwind', ['pageName' => 'popular_page']) }}
+                {{ $aplikasiPopuler->links('pagination::tailwind', ['pageName' => 'popular_page']) }} {{-- Pastikan nama paginator sama --}}
             </div>
         @endif
     </div>
+
 
     {{-- Aplikasi per Kategori --}}
     @foreach ($categorizedApplications as $group)

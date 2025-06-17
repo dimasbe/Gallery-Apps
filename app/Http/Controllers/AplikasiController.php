@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log; // Pastikan ini sudah ada dan benar
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str; // Import Str, meskipun tidak digunakan secara langsung untuk slug karena sudah di model boot method.
 
@@ -48,42 +48,13 @@ class AplikasiController extends Controller
     }
 
     public function index(): View
-    {
-        $kategori = $this->kategori->filterBySubKategori('aplikasi');
+    {        
+        $aplikasi = $this->aplikasi->get();
+        $kategori = $this->kategori->get();
         $fotoAplikasi = $this->fotoAplikasi->get();
-
-        $aplikasiTerbaru = Aplikasi::where('status_verifikasi', 'diterima')
-            ->latest()
-            ->paginate(9);
-        $columnedResultsTerbaru = $aplikasiTerbaru->chunk(ceil($aplikasiTerbaru->count() / 3));
-
-        $aplikasiPopuler = Aplikasi::where('status_verifikasi', 'diterima')
-            ->orderByDesc('jumlah_kunjungan')
-            ->paginate(9);
-        $columnedResultsPopuler = $aplikasiPopuler->chunk(ceil($aplikasiPopuler->count() / 3));
-
-        $categorizedApplications = $kategori->map(function ($kat) {
-            $applications = Aplikasi::where('id_kategori', $kat->id)
-                ->where('status_verifikasi', 'diterima')
-                ->paginate(9);
-
-            return [
-                'category' => $kat,
-                'applications' => $applications,
-                'columnedResults' => $applications->chunk(ceil($applications->count() / 3)),
-            ];
-        });
-
-        return view('aplikasi.index', compact(
-            'kategori',
-            'fotoAplikasi',
-            'aplikasiTerbaru',
-            'columnedResultsTerbaru',
-            'aplikasiPopuler',
-            'columnedResultsPopuler',
-            'categorizedApplications'
-        ));
+        return view('aplikasi.index', compact('aplikasi', 'kategori', 'fotoAplikasi'));
     }
+
 
     public function indexPage(): View
     {
@@ -150,9 +121,9 @@ class AplikasiController extends Controller
             $actualItemsPerVisualColumn = ceil($itemsOnCurrentPage / 3);
             $itemsArray = $paginatedItems->items();
 
-            for ($i = 0; $i < $itemsOnCurrentPage; $i++) {
+            for ($i = 0; $i < $itemsOnCurrentPage; ++$i) {
                 $aplikasi = $itemsArray[$i];
-                $colIndex = floor($i / $actualItemsPerVisualColumn);
+                $colIndex = (int)floor($i / $actualItemsPerVisualColumn);
                 $colIndex = min($colIndex, 2);
                 $columnedResults[$colIndex][] = $aplikasi;
             }
@@ -165,17 +136,13 @@ class AplikasiController extends Controller
             $query = $request->input('q');
             $allSearchResults = collect();
 
-            if ($query) {
-                $allSearchResults = Aplikasi::where('status_verifikasi', 'diterima')
-                    ->where(function ($qbuilder) use ($query) {
-                        $qbuilder->where('nama_aplikasi', 'like', '%' . $query . '%')
-                            ->orWhereHas('kategori', function ($kategoriQuery) use ($query) {
-                                $kategoriQuery->where('sub_kategori', 'aplikasi')
-                                             ->where('nama_kategori', 'like', '%' . $query . '%');
-                            });
-                    })
-                    ->get();
-            }
+        if ($query) {
+            $allSearchResults = Aplikasi::where('nama_aplikasi', 'like', '%' . $query . '%')
+                                       ->orWhereHas('kategori', function ($q) use ($query) {
+                                            $q->where('nama_kategori', 'like', '%' . $query . '%');
+                                       })
+                                       ->get();
+        }
 
             $perPage = 18;
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
@@ -294,7 +261,7 @@ class AplikasiController extends Controller
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            \Log::error('Validation Error updating application: ' . $e->getMessage(), ['errors' => $e->errors()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal. Periksa kembali form Anda.',
@@ -302,7 +269,7 @@ class AplikasiController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
-            Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            \Log::error('Error updating application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem, silakan coba lagi.',
@@ -333,7 +300,7 @@ class AplikasiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan database saat menghapus.'
-            ], 500);
+                ], 500);
         } catch (\Exception $e) {
             Log::error('Error deleting application: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
@@ -341,5 +308,45 @@ class AplikasiController extends Controller
                 'message' => 'Terjadi kesalahan sistem, silakan coba lagi.'
             ], 500);
         }
+    }
+
+    /**
+     * Display all applications for a specific category.
+     *
+     * @param string $nama_kategori
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function showByCategory(string $nama_kategori, Request $request): View
+    {
+        // Temukan kategori berdasarkan nama
+        $category = Kategori::where('nama_kategori', $nama_kategori)
+                            ->where('sub_kategori', 'aplikasi') // Opsional: pastikan hanya kategori aplikasi
+                            ->firstOrFail(); // Akan 404 jika tidak ditemukan
+
+        // Ambil semua aplikasi dalam kategori tersebut
+        $allCategoryApps = Aplikasi::where('id_kategori', $category->id)
+                                   ->orderBy('nama_aplikasi', 'asc')
+                                   ->get();
+
+        // Paginasi hasil
+        $perPage = 18; // Sesuaikan dengan jumlah item per halaman yang Anda inginkan
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $pagedCategoryApps = new LengthAwarePaginator(
+            $allCategoryApps->forPage($currentPage, $perPage),
+            $allCategoryApps->count(),
+            $perPage,
+            $currentPage,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        // Distribusikan ke kolom jika diperlukan untuk tampilan
+        $columnedResults = $this->distributeIntoColumns($pagedCategoryApps);
+
+        return view('aplikasi.kategori_detail', [ // Buat view baru untuk ini, misal 'kategori_detail.blade.php'
+            'category' => $category,
+            'applications' => $pagedCategoryApps,
+            'columnedResults' => $columnedResults,
+        ]);
     }
 }
