@@ -268,8 +268,8 @@
                 <div class="text-sm text-gray-600">
                     Rows per page:
                     <select id="rows-per-page"
-                        class="ml-2 border border-gray-300 rounded-md py-2 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red">
-                        @foreach ([5, 10, 20, 30, 40, 50, 100, 500] as $perPageOption)
+                        class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red" onchange="changePerPage(this.value)">
+                        @foreach ([5, 10, 20, 30, 40, 50, 100, 500, 1000] as $perPageOption) {{-- Added 1000 to match verifikasi --}}
                             <option value="{{ $perPageOption }}" {{ (request('per_page', 5) == $perPageOption) ? 'selected' : '' }}>
                                 {{ $perPageOption }}
                             </option>
@@ -279,58 +279,54 @@
 
                 {{-- Pagination Info (e.g., 1 - 1 of 1) --}}
                 <div id="pagination-info" class="text-sm text-gray-600">
-                    {{ $kategoris->firstItem() }}-{{ $kategoris->lastItem() }} of {{ $kategoris->total() }}
+                    {{ $kategoris->firstItem() }} - {{ $kategoris->lastItem() }} of {{ $kategoris->total() }}
                 </div>
 
                 {{-- Custom Pagination Navigation (Previous, Page Number, and Next buttons) --}}
                 <div class="flex space-x-2">
                     {{-- Previous Button --}}
-                    <a href="{{ $kategoris->previousPageUrl() }}"
-                    class="inline-flex items-center p-2 border border-gray-300 rounded-md
-                    @if($kategoris->onFirstPage())
-                        bg-gray-100 text-gray-500 cursor-not-allowed
-                    @else
-                        bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-red
-                    @endif">
-                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 010 1.06L9.06 10l3.73 3.71a.75.75 0 11-1.06 1.06l-4.25-4.25a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0z" clip-rule="evenodd" />
-                        </svg>
+                    <a href="{{ $kategoris->previousPageUrl() ? $kategoris->previousPageUrl() . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') : '#' }}"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $kategoris->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                        <i class="fas fa-chevron-left"></i>
                     </a>
 
                     {{-- Page Numbers --}}
-                    {{-- Loop through available pages to create numbered buttons --}}
                     @foreach ($kategoris->getUrlRange(1, $kategoris->lastPage()) as $page => $url)
-                        <a href="{{ $url }}"
-                        class="inline-flex items-center px-4 py-2 text-sm font-medium border rounded-md shadow-sm
-                        @if ($page == $kategoris->currentPage())
-                            bg-custom-primary-red text-white border-custom-primary-red
-                        @else
-                            bg-white text-gray-700 border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-red
-                        @endif">
+                        <a href="{{ $url . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') }}"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition duration-200 {{ $page == $kategoris->currentPage() ? 'bg-custom-primary-red text-white' : '' }}">
                             {{ $page }}
                         </a>
                     @endforeach
 
-
                     {{-- Next Button --}}
-                    <a href="{{ $kategoris->nextPageUrl() }}"
-                    class="inline-flex items-center p-2 border border-gray-300 rounded-md
-                    @if(!$kategoris->hasMorePages())
-                        bg-gray-100 text-gray-500 cursor-not-allowed
-                    @else
-                        bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-red
-                    @endif">
-                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 010-1.06L10.94 10 7.21 6.29a.75.75 0 011.06-1.06l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0z" clip-rule="evenodd" />
-                        </svg>
+                    <a href="{{ $kategoris->nextPageUrl() ? $kategoris->nextPageUrl() . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') : '#' }}"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ !$kategoris->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                        <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
+        </div>
+    </div>
 
 {{-- SweetAlert2 CDN --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // Fungsi untuk mengubah jumlah baris per halaman
+    function changePerPage(value) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('per_page', value);
+        // Ensure keyword parameter is also carried over
+        const keyword = document.getElementById('search-input') ? document.getElementById('search-input').value : ''; // Assuming search input has 'search-input' ID
+        if (keyword) {
+            currentUrl.searchParams.set('keyword', keyword);
+        } else {
+            currentUrl.searchParams.delete('keyword');
+        }
+        currentUrl.searchParams.delete('page'); // Reset to page 1 when changing per_page
+        window.location.href = currentUrl.toString();
+    }
+
     // Function to close modal
     function tutupModal(id) {
         document.getElementById(id).classList.add('hidden');

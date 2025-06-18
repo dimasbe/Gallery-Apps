@@ -175,66 +175,40 @@
                 </table>
             </div>
 
-            {{-- Bagian Pagination - Disesuaikan agar SAMA PERSIS dengan ff1.PNG --}}
-            <div class="flex flex-col md:flex-row justify-between items-center mt-6 space-y-4 md:space-y-0">
-                {{-- Rows per page dropdown --}}
-                <div class="text-sm text-gray-600 flex items-center">
+            {{-- Bagian Pagination --}}
+            <div class="flex justify-between items-center mt-6">
+                <div class="text-sm text-gray-600">
                     Rows per page:
-                    <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-red-500"
-                            onchange="changeRowsPerPage(this.value)">
-                        <option value="5" {{ $aplikasi->perPage() == 5 ? 'selected' : '' }}>5</option>
-                        <option value="10" {{ $aplikasi->perPage() == 10 ? 'selected' : '' }}>10</option>
-                        <option value="20" {{ $aplikasi->perPage() == 20 ? 'selected' : '' }}>20</option>
-                        <option value="30" {{ $aplikasi->perPage() == 30 ? 'selected' : '' }}>30</option>
-                        <option value="40" {{ $aplikasi->perPage() == 40 ? 'selected' : '' }}>40</option>
-                        <option value="50" {{ $aplikasi->perPage() == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ $aplikasi->perPage() == 100 ? 'selected' : '' }}>100</option>
-                        <option value="500" {{ $aplikasi->perPage() == 500 ? 'selected' : '' }}>500</option>
-                        <option value="1000" {{ $aplikasi->perPage() == 1000 ? 'selected' : '' }}>1000</option>
+                    <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red" onchange="changePerPage(this.value)">
+                        <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ request('per_page', 5) == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ request('per_page', 5) == 20 ? 'selected' : '' }}>20</option>
+                        <option value="30" {{ request('per_page', 5) == 30 ? 'selected' : '' }}>30</option>
+                        <option value="40" {{ request('per_page', 5) == 40 ? 'selected' : '' }}>40</option>
+                        <option value="50" {{ request('per_page', 5) == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request('per_page', 5) == 100 ? 'selected' : '' }}>100</option>
+                        <option value="500" {{ request('per_page', 5) == 500 ? 'selected' : '' }}>500</option>
+                        <option value="1000" {{ request('per_page', 5) == 1000 ? 'selected' : '' }}>1000</option>
                     </select>
                 </div>
-
-                {{-- Pagination Info (X - Y of Z) --}}
                 <div id="pagination-info" class="text-sm text-gray-600">
-                    @if ($aplikasi->total() > 0)
-                        {{ $aplikasi->firstItem() }} - {{ $aplikasi->lastItem() }} of {{ $aplikasi->total() }}
-                    @else
-                        Tidak ada data.
-                    @endif
+                    {{ $aplikasi->firstItem() }} - {{ $aplikasi->lastItem() }} of {{ $aplikasi->total() }}
                 </div>
-
-                {{-- Custom Pagination Navigation with individual buttons as in ff1.PNG --}}
-                <div class="flex space-x-2"> {{-- Space between buttons --}}
-                    {{-- Previous Button --}}
-                    <a href="{{ $aplikasi->previousPageUrl(array_merge(request()->query(), ['per_page' => $aplikasi->perPage()])) }}"
-                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-300 transition duration-200
-                              {{ $aplikasi->onFirstPage() ? 'bg-white text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-100' }}">
+                <div class="flex space-x-2">
+                    {{-- Tombol Previous --}}
+                    <a href="{{ $aplikasi->previousPageUrl() }}" class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $aplikasi->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-left"></i>
                     </a>
 
-                    {{-- Page Numbers --}}
-                    @foreach ($aplikasi->links()->elements as $element)
-                        @if (is_string($element))
-                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-700 bg-white border border-gray-300">
-                                {{ $element }}
-                            </span>
-                        @endif
-
-                        @if (is_array($element))
-                            @foreach ($element as $page => $url)
-                                <a href="{{ $url }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-semibold transition duration-200
-                                           {{ $page == $aplikasi->currentPage() ? 'bg-red-700 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100' }}">
-                                    {{ $page }}
-                                </a>
-                            @endforeach
-                        @endif
+                    {{-- Tampilkan Link Halaman --}}
+                    @foreach ($aplikasi->getUrlRange(1, $aplikasi->lastPage()) as $page => $url)
+                        <a href="{{ $url . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') . (request('status') ? '&status=' . request('status') : '') }}" class="px-3 py-1 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition duration-200 {{ $page == $aplikasi->currentPage() ? 'bg-custom-primary-red text-white' : '' }}">
+                            {{ $page }}
+                        </a>
                     @endforeach
 
-                    {{-- Next Button --}}
-                    <a href="{{ $aplikasi->nextPageUrl(array_merge(request()->query(), ['per_page' => $aplikasi->perPage()])) }}"
-                       class="inline-flex items-center justify-中止 w-8 h-8 rounded-lg border border-gray-300 transition duration-200
-                              {{ $aplikasi->hasMorePages() ? 'bg-white text-gray-700 hover:bg-gray-100' : 'bg-white text-gray-400 cursor-not-allowed' }}">
+                    {{-- Tombol Next --}}
+                    <a href="{{ $aplikasi->nextPageUrl() }}" class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ !$aplikasi->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
@@ -242,28 +216,11 @@
         </div>
     </div>
 
-    {{-- Custom Success Alert (Hidden by default) --}}
-    <div id="success-alert" class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
-        <div class="flex items-center">
-            <i class="fas fa-check-circle mr-2"></i>
-            <span id="alert-message"></span>
-        </div>
-    </div>
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Function to display the custom success alert
-    function showSuccessAlert(message) {
-        const alert = document.getElementById('success-alert');
-        const alertMessage = document.getElementById('alert-message');
-        alertMessage.textContent = message;
-        alert.classList.remove('hidden');
-        setTimeout(() => {
-            alert.classList.add('hidden');
-        }, 3000); // Hide after 3 seconds
-    }
 
     // Existing changeRowsPerPage function, updated to preserve 'keyword' and 'status'
     function changeRowsPerPage(value) {
@@ -281,8 +238,8 @@
         window.location.href = url.toString();
     }
 
-    // SweetAlert2 for delete confirmation
     document.addEventListener('DOMContentLoaded', function () {
+        // SweetAlert2 for delete confirmation
         document.querySelectorAll('.delete-form').forEach(form => {
             form.addEventListener('submit', function (e) {
                 e.preventDefault(); // Prevent the default form submission
@@ -330,19 +287,28 @@
             });
         });
 
-        // Check for success messages from the session and display custom alert
-        @if(session('success'))
-            showSuccessAlert("{{ session('success') }}");
-        @endif
+        // Check for success messages from the session and display SweetAlert toast
+        if(session('success'))
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        endif
 
         // Check for error messages from the session and display SweetAlert error
-        @if(session('error'))
+        if(session('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: "{{ session('error') }}",
             });
-        @endif
+        endif
     });
 </script>
 @endpush

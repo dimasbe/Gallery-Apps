@@ -4,7 +4,6 @@ namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\BeritaInterface;
 use App\Models\Berita;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -16,20 +15,32 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
     }
 
     /**
-     * Mengambil semua berita dengan relasi (kategori, fotoBerita).
+     * Mengambil semua berita dengan relasi (kategori, fotoBerita) dengan paginasi dan pencarian.
      *
-     * @return Collection
+     * @param int $perPage
+     * @param string|null $keyword
+     * @return LengthAwarePaginator
      */
-    public function getAllWithKategori(): Collection
+    public function getAllWithKategori(int $perPage = 10, string $keyword = null): LengthAwarePaginator
     {
-        return $this->model->with([
-                'kategori',
-                'fotoBerita' => function ($query) {
-                    $query->where('tipe', 'thumbnail');
-                }
-            ])
-            ->orderBy('tanggal_dibuat', 'desc')
-            ->get();
+        $query = $this->model->with([
+            'kategori',
+            'fotoBerita' => function ($query) {
+                $query->where('tipe', 'thumbnail');
+            }
+        ]);
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('judul_berita', 'like', "%{$keyword}%")
+                  ->orWhere('isi_berita', 'like', "%{$keyword}%")
+                  ->orWhereHas('kategori', function ($subQ) use ($keyword) {
+                      $subQ->where('nama_kategori', 'like', "%{$keyword}%");
+                  });
+            });
+        }
+
+        return $query->orderBy('tanggal_dibuat', 'desc')->paginate($perPage);
     }
 
     /**
@@ -85,15 +96,16 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
 
     /**
      * Mencari berita berdasarkan keyword di judul atau kategori.
+     * Catatan: Metode ini di repository akan dipanggil oleh Service, bukan Request langsung.
+     * Ubah tanda tangannya agar sesuai dengan kebutuhan service Anda.
      *
-     * @param Request $request
+     * @param string|null $keyword
+     * @param int|null $kategoriId
      * @return Collection
      */
-    public function search(Request $request): Collection
-    {
-        $keyword = $request->input('keyword');
-        $kategoriId = $request->input('kategori_id');
 
+     /*public function search(?string $keyword = null, ?int $kategoriId = null): Collection 
+    {
         $query = $this->model->with([
             'kategori',
             'fotoBerita' => function ($q) {
@@ -118,7 +130,7 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
         }
 
         return $query->orderBy('tanggal_dibuat', 'desc')->get();
-    }
+    }*/
 
     /**
      * Mendapatkan sejumlah berita terbaru.
@@ -139,12 +151,7 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
             ->get();
     }
 
-    /**
-     * Paginasi umum tanpa filter.
-     *
-     * @param int $pagination
-     * @return LengthAwarePaginator
-     */
+    // Metode paginate dan getAllPaginated kemungkinan bisa dihapus jika getAllWithKategori sudah memadai.
     public function paginate(int $pagination = 10): LengthAwarePaginator
     {
         return $this->model->with([
@@ -157,13 +164,6 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
             ->paginate($pagination);
     }
 
-    /**
-     * Paginasi dengan filter kategori.
-     *
-     * @param int|null $perPage
-     * @param int|null $kategoriId
-     * @return LengthAwarePaginator
-     */
     public function getAllPaginated(?int $perPage = 10, ?int $kategoriId = null): LengthAwarePaginator
     {
         $query = $this->model->with([

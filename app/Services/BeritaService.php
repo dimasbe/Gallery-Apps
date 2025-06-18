@@ -7,145 +7,163 @@ use App\Contracts\Interfaces\FotoBeritaInterface;
 use App\Contracts\Interfaces\KategoriInterface;
 use App\Models\Berita; // Diperlukan untuk metode-metode yang langsung berinteraksi dengan model
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request; // Import kelas Request
+use Illuminate\Http\UploadedFile; // Import UploadedFile untuk type hinting
+use Illuminate\Pagination\LengthAwarePaginator; // Import LengthAwarePaginator
 
 class BeritaService
 {
-    protected BeritaInterface $berita;
-    protected FotoBeritaInterface $fotoBerita;
-    protected KategoriInterface $kategori;
+    protected BeritaInterface $beritaRepository; // Ganti nama variabel untuk kejelasan
+    protected FotoBeritaInterface $fotoBeritaRepository; // Ganti nama variabel untuk kejelasan
+    protected KategoriInterface $kategoriRepository; // Ganti nama variabel untuk kejelasan
 
     public function __construct(
         BeritaInterface $berita,
         FotoBeritaInterface $fotoBerita,
         KategoriInterface $kategori
     ) {
-        $this->berita = $berita;
-        $this->fotoBerita = $fotoBerita;
-        $this->kategori = $kategori;
+        $this->beritaRepository = $berita;
+        $this->fotoBeritaRepository = $fotoBerita;
+        $this->kategoriRepository = $kategori;
     }
 
-    public function getAllWithKategori($keyword = null)
-{
-    $query = Berita::with('kategori'); // asumsi relasi kategori
-
-    if ($keyword) {
-        $query->where('judul_berita', 'like', '%' . $keyword . '%');
+    /**
+     * Mengambil semua berita dengan kategori terkait, paginasi, dan opsi pencarian.
+     *
+     * @param int $perPage
+     * @param string|null $keyword
+     * @return LengthAwarePaginator
+     */
+    public function getAllWithKategori(int $perPage = 10, string $keyword = null): LengthAwarePaginator
+    {
+        // Panggil metode getAllWithKategori dari repository yang sudah menangani paginasi dan keyword
+        return $this->beritaRepository->getAllWithKategori($perPage, $keyword);
     }
-
-    return $query->orderBy('tanggal_dibuat', 'desc')->get(); // tambahkan ini
-}
 
     public function getKategoriBerita()
     {
-        return $this->kategori->filterBySubKategori('berita');
+        return $this->kategoriRepository->filterBySubKategori('berita');
     }
 
-    public function createBerita(array $data, $thumbnailFile = null)
+    /**
+     * Membuat berita baru.
+     *
+     * @param array $data
+     * @param UploadedFile|null $thumbnailFile
+     * @return Berita
+     */
+    public function createBerita(array $data, ?UploadedFile $thumbnailFile = null): Berita
     {
         $data['tanggal_dibuat'] = now();
         $data['tanggal_diedit'] = now();
 
-        $berita = $this->berita->store($data);
+        $berita = $this->beritaRepository->store($data);
 
         if ($thumbnailFile) {
             $fileName = $thumbnailFile->store('berita-thumbnails', 'public');
 
-            $this->fotoBerita->store([
+            $this->fotoBeritaRepository->store([
                 'berita_id' => $berita->id,
                 'nama_gambar' => $fileName,
                 'tipe' => 'thumbnail',
+                // Anda mungkin perlu menambahkan kolom url jika model FotoBerita memilikinya
+                'url' => Storage::url($fileName), // Tambahkan ini jika dibutuhkan
+                'ukuran_file' => $thumbnailFile->getSize(), // Tambahkan ini
+                'mime_type' => $thumbnailFile->getMimeType(), // Tambahkan ini
             ]);
+        }
+
+        // Asumsi ada relasi many-to-many atau kategori_id langsung
+        if (isset($data['kategori_id'])) {
+            // Jika relasinya many-to-many:
+            // $berita->kategori()->sync($data['kategori_id']);
+            // Jika relasinya one-to-many (hanya 1 kategori_id):
+            // $berita->update(['kategori_id' => $data['kategori_id']]);
+            // Anda harus sesuaikan ini dengan model Berita Anda
         }
 
         return $berita;
     }
 
-    public function updateBerita($berita, array $data, $thumbnailFile = null)
+    /**
+     * Memperbarui berita yang sudah ada.
+     *
+     * @param Berita $berita
+     * @param array $data
+     * @param UploadedFile|null $thumbnailFile
+     * @return void
+     */
+    public function updateBerita(Berita $berita, array $data, ?UploadedFile $thumbnailFile = null): void
     {
         $data['tanggal_diedit'] = now();
 
-        $this->berita->update($berita->id, $data);
+        $this->beritaRepository->update($berita->id, $data);
 
         if ($thumbnailFile) {
             $existingThumbnail = $berita->fotoBerita()->where('tipe', 'thumbnail')->first();
 
             if ($existingThumbnail) {
                 Storage::disk('public')->delete($existingThumbnail->nama_gambar);
-                $this->fotoBerita->delete($existingThumbnail->id);
+                $this->fotoBeritaRepository->delete($existingThumbnail->id);
             }
 
             $fileName = $thumbnailFile->store('berita-thumbnails', 'public');
-            $this->fotoBerita->store([
+            $this->fotoBeritaRepository->store([
                 'berita_id' => $berita->id,
                 'nama_gambar' => $fileName,
                 'tipe' => 'thumbnail',
+                'url' => Storage::url($fileName), // Tambahkan ini jika dibutuhkan
+                'ukuran_file' => $thumbnailFile->getSize(), // Tambahkan ini
+                'mime_type' => $thumbnailFile->getMimeType(), // Tambahkan ini
             ]);
         }
-    }
 
-    public function deleteBerita($berita)
-    {
-        foreach ($berita->fotoBerita as $foto) {
-            Storage::disk('public')->delete($foto->nama_gambar);
-            $this->fotoBerita->delete($foto->id);
+        // Asumsi ada relasi many-to-many atau kategori_id langsung
+        if (isset($data['kategori_id'])) {
+            // Jika relasinya many-to-many:
+            // $berita->kategori()->sync($data['kategori_id']);
+            // Jika relasinya one-to-many (hanya 1 kategori_id):
+            // $berita->update(['kategori_id' => $data['kategori_id']]);
+            // Anda harus sesuaikan ini dengan model Berita Anda
         }
-
-        $this->berita->delete($berita->id);
     }
 
     /**
-     * Memperbaiki tipe parameter agar sesuai dengan yang diharapkan oleh BeritaInterface::search().
-     * Asumsi BeritaInterface::search() mengharapkan objek Request.
-     * @param  \Illuminate\Http\Request  $request Objek Request yang berisi keyword pencarian
-     * @return mixed
+     * Menghapus berita.
+     *
+     * @param Berita $berita
+     * @return void
      */
-    public function searchBerita(Request $request) // Mengubah tipe parameter menjadi Request
+    public function deleteBerita(Berita $berita): void
     {
-        // Meneruskan objek Request langsung ke metode search pada interface
-        return $this->berita->search($request);
-    }
-
-    public function getAllPaginated($perPage = null, $kategoriId = null, $search = null)
-{
-    $query = Berita::with([
-        'kategori',
-        'fotoBerita' => function ($query) {
-            $query->where('tipe', 'thumbnail');
+        foreach ($berita->fotoBerita as $foto) {
+            Storage::disk('public')->delete($foto->nama_gambar);
+            $this->fotoBeritaRepository->delete($foto->id);
         }
-    ])->orderBy('tanggal_dibuat', 'desc');
 
-    if ($kategoriId) {
-        $query->where('kategori_id', $kategoriId);
+        // Jika Anda memiliki relasi many-to-many dengan kategori, detach terlebih dahulu
+        // $berita->kategori()->detach();
+
+        $this->beritaRepository->delete($berita->id);
     }
 
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('judul_berita', 'like', '%' . $search . '%')
-              ->orWhere('isi_berita', 'like', '%' . $search . '%');
-        });
-    }
-
-    if ($perPage) {
-        return $query->paginate($perPage)->withQueryString(); // agar query URL tetap ada saat paging
-    }
-
-    return $query->get();
-}
-
-    
-    public function findById($id)
+    /**
+     * Mendapatkan detail berita berdasarkan ID.
+     *
+     * @param int $id
+     * @return Berita
+     */
+    public function findById(int $id): Berita
     {
-        return Berita::with(['kategori', 'fotoBerita'])->findOrFail($id);
+        return $this->beritaRepository->findById($id);
     }
 
-    public function getBeritaTerkait($kategoriId, $excludeBeritaId, $limit = 5)
+    public function getBeritaTerkait(int $kategoriId, int $excludeBeritaId, int $limit = 5): \Illuminate\Database\Eloquent\Collection
     {
         return Berita::with(['kategori', 'fotoBerita' => function ($q) {
                 $q->where('tipe', 'thumbnail');
             }])
-            ->where('kategori_id', $kategoriId)        // berita dari kategori yang sama
-            ->where('id', '!=', $excludeBeritaId)      // kecuali berita yang sedang dibuka
+            ->where('kategori_id', $kategoriId)
+            ->where('id', '!=', $excludeBeritaId)
             ->orderBy('tanggal_dibuat', 'desc')
             ->limit($limit)
             ->get();

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+<div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-red-800">Berita</h1>

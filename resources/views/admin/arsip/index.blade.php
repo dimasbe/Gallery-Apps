@@ -147,61 +147,99 @@
 
         {{-- Bagian Pagination --}}
         <div class="flex flex-col md:flex-row justify-between items-center mt-6 space-y-4 md:space-y-0">
-            <div class="text-sm text-gray-600">
+            {{-- Rows per page dropdown --}}
+            <div class="text-sm text-gray-600 flex items-center">
                 Rows per page:
-                <select id="baris-per-halaman" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-red-700"
+                <select id="baris-per-halaman" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-red-500"
                     onchange="ubahBarisPerHalaman(this.value)">
                     <option value="5" {{ $arsip->perPage() == 5 ? 'selected' : '' }}>5</option>
                     <option value="10" {{ $arsip->perPage() == 10 ? 'selected' : '' }}>10</option>
                     <option value="20" {{ $arsip->perPage() == 20 ? 'selected' : '' }}>20</option>
                     <option value="30" {{ $arsip->perPage() == 30 ? 'selected' : '' }}>30</option>
+                    <option value="40" {{ $arsip->perPage() == 40 ? 'selected' : '' }}>40</option>
+                    <option value="50" {{ $arsip->perPage() == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ $arsip->perPage() == 100 ? 'selected' : '' }}>100</option>
+                    <option value="500" {{ $arsip->perPage() == 500 ? 'selected' : '' }}>500</option>
+                    <option value="1000" {{ $arsip->perPage() == 1000 ? 'selected' : '' }}>1000</option>
                 </select>
             </div>
+
+            {{-- Pagination Info (X - Y of Z) --}}
             <div id="info-paginasi" class="text-sm text-gray-600">
-                {{ $arsip->firstItem() }}-{{ $arsip->lastItem() }} of {{ $arsip->total() }}
+                @if ($arsip->total() > 0)
+                    {{ $arsip->firstItem() }} - {{ $arsip->lastItem() }} of {{ $arsip->total() }}
+                @else
+                    Tidak ada data.
+                @endif
             </div>
-            <div class="flex space-x-2">
+
+            {{-- Custom Pagination Navigation with individual buttons as in ff1.PNG --}}
+            <div class="flex space-x-2"> {{-- Space between buttons --}}
+                {{-- Previous Button --}}
                 <a href="{{ $arsip->previousPageUrl(array_merge(request()->query(), ['per_page' => $arsip->perPage()])) }}"
-                class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $arsip->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-300 transition duration-200
+                        {{ $arsip->onFirstPage() ? 'bg-white text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-100' }}">
                     <i class="fas fa-chevron-left"></i>
                 </a>
+
+                {{-- Page Numbers --}}
+                @foreach ($arsip->links()->elements as $element)
+                    @if (is_string($element))
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-700 bg-white border border-gray-300">
+                            {{ $element }}
+                        </span>
+                    @endif
+
+                    @if (is_array($element))
+                        @foreach ($element as $page => $url)
+                            <a href="{{ $url }}"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-semibold transition duration-200
+                                    {{ $page == $arsip->currentPage() ? 'bg-red-700 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100' }}">
+                                {{ $page }}
+                            </a>
+                        @endforeach
+                    @endif
+                @endforeach
+
+                {{-- Next Button --}}
                 <a href="{{ $arsip->nextPageUrl(array_merge(request()->query(), ['per_page' => $arsip->perPage()])) }}"
-                class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $arsip->hasMorePages() ? '' : 'opacity-50 cursor-not-allowed' }}">
+                class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-300 transition duration-200
+                        {{ $arsip->hasMorePages() ? 'bg-white text-gray-700 hover:bg-gray-100' : 'bg-white text-gray-400 cursor-not-allowed' }}">
                     <i class="fas fa-chevron-right"></i>
                 </a>
             </div>
         </div>
     </div>
-</div>
 
     {{-- Pop-up Hapus --}}
-    <div id="delete-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
-            <div class="text-red-600 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7L5 7M10 11V17M14 11V17M6 7L6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7M9 7V4H15V7" />
-                </svg>
-            </div>
+        {{-- (Biarkan kode pop-up hapus seperti aslinya, karena ini tidak terkait langsung dengan pagination) --}}
+        <div id="delete-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
+                <div class="text-red-600 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7L5 7M10 11V17M14 11V17M6 7L6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7M9 7V4H15V7" />
+                    </svg>
+                </div>
 
-            <p id="delete-popup-message" class="text-gray-800 text-lg font-semibold mb-6">Apakah Anda yakin ingin menghapus aplikasi ini?</p>
+                <p id="delete-popup-message" class="text-gray-800 text-lg font-semibold mb-6">Apakah Anda yakin ingin menghapus aplikasi ini?</p>
 
-            <div class="flex justify-center space-x-4">
-                <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 font-medium py-1.5 px-4 rounded-md transition duration-200"
-                        onclick="hideDeletePopup()">Batal</button>
-                {{-- The form for deletion --}}
-                <form id="delete-form" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    {{-- This hidden input will hold the ID of the item to be deleted --}}
-                    <input type="hidden" name="aplikasi_id" id="aplikasi_id_to_delete">
-                    <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-medium py-1.5 px-4 rounded-md transition duration-200">
-                        Hapus
-                    </button>
-                </form>
+                <div class="flex justify-center space-x-4">
+                    <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 font-medium py-1.5 px-4 rounded-md transition duration-200"
+                            onclick="hideDeletePopup()">Batal</button>
+                    {{-- The form for deletion --}}
+                    <form id="delete-form" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        {{-- This hidden input will hold the ID of the item to be deleted --}}
+                        <input type="hidden" name="aplikasi_id" id="aplikasi_id_to_delete">
+                        <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-medium py-1.5 px-4 rounded-md transition duration-200">
+                            Hapus
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
@@ -227,19 +265,69 @@
     function ubahBarisPerHalaman(value) {
         const url = new URL(window.location.href);
         url.searchParams.set('per_page', value);
+        url.searchParams.delete('page'); // Reset to first page when changing per_page
 
         // Get all potential search parameters from the current URL and re-add them
-        const searchFields = ['nama_aplikasi', 'nama_pemilik', 'nama_kategori', 'tanggal_diarsipkan'];
+        const searchFields = ['keyword', 'nama_aplikasi', 'nama_pemilik', 'nama_kategori', 'tanggal_diarsipkan']; // Add 'keyword' here if you have a general search on arsip
         searchFields.forEach(field => {
-            const fieldValue = new URLSearchParams(window.location.search).get(field); // Get from current URL
+            const fieldValue = new URLSearchParams(window.location.search).get(field);
             if (fieldValue) {
                 url.searchParams.set(field, fieldValue);
             } else {
-                url.searchParams.delete(field); // Remove if not present in current search
+                url.searchParams.delete(field);
             }
         });
 
         window.location.href = url.toString();
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // SweetAlert2 for delete confirmation
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data ini akan dihapus secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If confirmed, submit the form
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // Check for success messages from the session and display SweetAlert toast
+        if(session('success'))
+            Swal.fire({
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        endif
+
+        // Check for error messages from the session and display SweetAlert error
+        if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "{{ session('error') }}",
+            });
+        endif
+    });
 </script>
 @endpush

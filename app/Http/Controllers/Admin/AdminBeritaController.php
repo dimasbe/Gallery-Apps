@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBeritaRequest;
-use App\Http\Requests\UpdateBeritaRequest; // Pastikan ini diimpor
+use App\Http\Requests\UpdateBeritaRequest;
 use App\Models\Berita;
-use App\Services\BeritaService; // Pastikan ini diimpor
+use App\Services\BeritaService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
-use Illuminate\Contracts\View\View; // Mengimpor interface View
+use Illuminate\Contracts\View\View;
 
 class AdminBeritaController extends Controller
 {
@@ -25,13 +25,13 @@ class AdminBeritaController extends Controller
     public function index(Request $request)
     {
         $keyword = $request->query('keyword');
+        $perPage = $request->query('per_page', 5); // Default 5 berita per halaman
 
-        // Kirim keyword ke service agar berita bisa difilter
-        $berita = $this->beritaService->getAllWithKategori($keyword);
+        // Kirim keyword dan perPage ke service untuk paginasi dan filter
+        $berita = $this->beritaService->getAllWithKategori($perPage, $keyword);
 
         return view('admin.berita.index', compact('berita'));
     }
-
 
     public function create()
     {
@@ -48,12 +48,17 @@ class AdminBeritaController extends Controller
     public function store(StoreBeritaRequest $request): JsonResponse
     {
         try {
-            $this->beritaService->createBerita($request->validated(), $request->file('thumbnail'));
+            // Jika ada kolom kategori_id langsung di data yang divalidasi, tambahkan ke sini
+            $validatedData = $request->validated();
+            if ($request->has('kategori_id')) {
+                $validatedData['kategori_id'] = $request->input('kategori_id'); // Pastikan ini sesuai dengan struktur kategori Anda
+            }
+            $this->beritaService->createBerita($validatedData, $request->file('thumbnail'));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Berita berhasil ditambahkan!',
-                'redirect' => route('admin.berita.index') // Redirect ke halaman index setelah berhasil
+                'redirect' => route('admin.berita.index')
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -75,9 +80,9 @@ class AdminBeritaController extends Controller
     public function edit(Berita $berita)
     {
         $kategori = $this->beritaService->getKategoriBerita();
-        $selectedKategoris = $berita->kategori->pluck('id')->toArray(); // Jika ada relasi many-to-many atau kategori tunggal
-        // Jika kategori_id adalah kolom langsung di tabel berita, Anda bisa gunakan $berita->kategori_id
-        // Atau jika hanya satu kategori, $selectedKategoris mungkin tidak diperlukan
+        // Pastikan cara Anda mendapatkan kategori terpilih sesuai dengan relasi di model Berita
+        $selectedKategoris = $berita->kategori->pluck('id')->toArray(); // Jika relasi many-to-many
+        // Atau jika hanya satu kategori: $selectedKategoris = [$berita->kategori_id];
         return view('admin.berita.edit', compact('berita', 'kategori', 'selectedKategoris'));
     }
 
@@ -91,12 +96,16 @@ class AdminBeritaController extends Controller
     public function update(UpdateBeritaRequest $request, Berita $berita): JsonResponse
     {
         try {
-            $this->beritaService->updateBerita($berita, $request->validated(), $request->file('thumbnail'));
+            $validatedData = $request->validated();
+            if ($request->has('kategori_id')) {
+                $validatedData['kategori_id'] = $request->input('kategori_id');
+            }
+            $this->beritaService->updateBerita($berita, $validatedData, $request->file('thumbnail'));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Berita berhasil diperbarui!',
-                'redirect' => route('admin.berita.index') // Redirect ke halaman index setelah berhasil
+                'redirect' => route('admin.berita.index')
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -136,7 +145,7 @@ class AdminBeritaController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Berita tidak dapat dihapus karena ada relasi data lain.'
-                ], 409); // Conflict
+                ], 409);
             }
             Log::error('Error deleting news (QueryException): ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
@@ -155,35 +164,25 @@ class AdminBeritaController extends Controller
 
     /**
      * Menampilkan detail sebuah berita dan mengincrement jumlah kunjungannya.
-     * Logika increment ditambahkan di sini karena permintaan pengguna untuk digabungkan.
      *
      * @param  \App\Models\Berita  $berita
      * @return \Illuminate\Contracts\View\View
      */
     public function show(Berita $berita): View
     {
-        // --- Logika untuk mengincrement jumlah_kunjungan ---
-        // Jika method 'show' ini juga digunakan untuk tampilan publik, maka increment ini akan berfungsi.
-        // Jika ini hanya untuk tampilan admin internal, pertimbangkan untuk menghapus baris ini
-        // atau memiliki logika terpisah untuk increment hanya di rute publik.
         $berita->increment('jumlah_kunjungan');
-
         return view('admin.berita.show', compact('berita'));
     }
 
     /**
-     * Mencari berita berdasarkan keyword menggunakan BeritaService.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
+     * Metode search ini sekarang sudah diintegrasikan ke index, bisa dihapus jika tidak ada rute terpisah yang memanggilnya.
+     * Jika dipertahankan, pastikan juga menggunakan per_page.
      */
-    public function search(Request $request): View // Menambahkan type hinting View
-    {
-        $keyword = $request->input('keyword', '');
-        // PERBAIKAN DI SINI: Menggunakan beritaService yang sudah diinjeksikan
-        $berita = $this->beritaService->getAllWithKategori($keyword); 
-        
-        // Asumsi view 'admin.berita.index' atau view lain yang sesuai untuk menampilkan hasil pencarian
-        return view('admin.berita.index', compact('berita')); 
-    }
+    // public function search(Request $request): View
+    // {
+    //     $keyword = $request->input('keyword', '');
+    //     $perPage = $request->query('per_page', 5);
+    //     $berita = $this->beritaService->getAllWithKategori($perPage, $keyword);
+    //     return view('admin.berita.index', compact('berita'));
+    // }
 }

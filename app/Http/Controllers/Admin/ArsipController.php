@@ -26,7 +26,7 @@ class ArsipController extends Controller
      */
     public function index(Request $request): View
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 5);
         $arsip = $this->aplikasi->getArchivedPaginated($request, $perPage);
 
         return view('admin.arsip.index', compact('arsip'));
