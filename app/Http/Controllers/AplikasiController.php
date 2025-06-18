@@ -216,7 +216,7 @@ class AplikasiController extends Controller
 
     public function create(): View
     {
-        $kategori = $this->kategori->get();
+        $kategori = $this->kategori->filterBySubKategori('aplikasi');
         $fotoAplikasi = $this->fotoAplikasi->get();
         return view('tambah_aplikasi.create', compact('kategori', 'fotoAplikasi'));
     }
