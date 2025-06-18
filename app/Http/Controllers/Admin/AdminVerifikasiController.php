@@ -29,29 +29,16 @@ class AdminVerifikasiController extends Controller
      * Menampilkan daftar aplikasi yang perlu diverifikasi.
      */
     public function index(Request $request)
-{
-    $keyword = $request->query('keyword');
+    {
+        $keyword = $request->query('keyword');
+        $perPage = $request->query('per_page', 5); // Ambil per_page dari request, default 10
 
-    // Ambil semua aplikasi yang statusnya pending
-    $aplikasi = $this->aplikasi->getByStatus(StatusTypeEnum::PENDING->value);
+        // Ambil semua aplikasi yang statusnya pending dengan paginasi
+        // Gunakan metode paginate dari repository atau Query Builder
+        $aplikasi = $this->aplikasi->getByStatusPaginated(StatusTypeEnum::PENDING->value, $perPage, $keyword);
 
-    // Jika ada keyword, lakukan pencarian
-    if ($keyword) {
-        $keyword = strtolower($keyword);
-
-        $aplikasi = $aplikasi->filter(function ($item) use ($keyword) {
-            $namaAplikasi = strtolower($item->nama_aplikasi ?? '');
-            $namaPemilik = strtolower($item->user->name ?? '');
-            $kategori = strtolower($item->kategori->nama_kategori ?? '');
-
-            return str_contains($namaAplikasi, $keyword) ||
-                   str_contains($namaPemilik, $keyword) ||
-                   str_contains($kategori, $keyword);
-        });
+        return view('admin.verifikasi.index', compact('aplikasi'));
     }
-
-    return view('admin.verifikasi.index', compact('aplikasi'));
-}
 
 
     /**

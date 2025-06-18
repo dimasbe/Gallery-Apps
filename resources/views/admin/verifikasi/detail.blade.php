@@ -1,9 +1,9 @@
-@extends('layouts.admin') {{-- Memastikan halaman ini menggunakan layout admin Anda --}}
+@extends('layouts.admin') 
 
-@section('title', 'Detail Verifikasi') {{-- INI YANG SAYA UBAH MENJADI 'Detail Arsip' UNTUK KONSISTENSI --}}
+@section('title', 'Detail Verifikasi') 
 
 @section('content')
-<div class="main-content-wrapper p-6 bg-gray-100 min-h-screen">
+<div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
     {{-- Konten halaman riwayat Anda di sini --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">

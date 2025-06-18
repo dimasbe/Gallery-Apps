@@ -9,4 +9,5 @@ use App\Contracts\Interfaces\Eloquent\UpdateInterface;
 
 interface VerifikasiAplikasiInterface extends GetByStatusInterface,  ShowInterface, UpdateInterface {
     public function getByStatus(string $requeststatus);
+    public function getByStatusPaginated(string $status, int $perPage, ?string $keyword = null);
 }

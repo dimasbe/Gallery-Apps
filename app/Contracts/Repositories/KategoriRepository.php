@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class KategoriRepository extends BaseRepository implements KategoriInterface
 {
@@ -27,6 +29,16 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     public function get(): mixed
     {
         return $this->model->orderBy('tanggal_dibuat', 'desc')->get();
+    }
+
+    /**
+     * Mengembalikan instance query builder untuk model Kategori.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function query(): Builder
+    {
+        return $this->model->newQuery();
     }
 
     /**
@@ -146,15 +158,15 @@ class KategoriRepository extends BaseRepository implements KategoriInterface
     public function getAplikasiGroupedByKategori(int $month, int $year): Collection
     {
         $startDate = Carbon::create($year, $month, 1)->startOfMonth();
-        $endDate = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay(); 
+        $endDate = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
 
         // Gabungkan tabel 'kategoris' dengan 'aplikasi'
         // Hitung aplikasi yang dibuat dalam rentang bulan/tahun tertentu
-        return $this->model->select('kategori.nama_kategori', \DB::raw('COUNT(aplikasi.id_aplikasi) as aplikasi_count'))
-                           ->leftJoin('aplikasi', 'kategori.id_kategori', '=', 'aplikasi.id_kategori') 
-                           ->whereBetween('aplikasi.created_at', [$startDate, $endDate])
-                           ->groupBy('kategori.nama_kategori')
-                           ->orderBy('kategori.nama_kategori')
-                           ->get();
+        return $this->model->select('kategori.nama_kategori', DB::raw('COUNT(aplikasi.id_aplikasi) as aplikasi_count'))
+                            ->leftJoin('aplikasi', 'kategori.id_kategori', '=', 'aplikasi.id_kategori')
+                            ->whereBetween('aplikasi.created_at', [$startDate, $endDate])
+                            ->groupBy('kategori.nama_kategori')
+                            ->orderBy('kategori.nama_kategori')
+                            ->get();
     }
 }

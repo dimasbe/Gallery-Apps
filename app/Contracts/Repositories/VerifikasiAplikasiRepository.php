@@ -20,10 +20,28 @@ class VerifikasiAplikasiRepository implements VerifikasiAplikasiInterface {
     public function update(mixed $id, array $data): mixed {
         $aplikasi = $this->model->query()->findOrFail($id);
         $aplikasi->update($data);
-        return $aplikasi; // Mengembalikan aplikasi yang diperbarui
+        return $aplikasi; 
     }
 
     public function getByStatus(string $requeststatus) {
         return Aplikasi::where('status_verifikasi', $requeststatus)->get();
+    }
+
+    public function getByStatusPaginated(string $status, int $perPage, ?string $keyword = null) {
+        $query = $this->model->where('status_verifikasi', $status);
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->whereRaw('LOWER(nama_aplikasi) LIKE ?', ['%' . strtolower($keyword) . '%'])
+                  ->orWhereHas('user', function ($qUser) use ($keyword) {
+                      $qUser->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                  })
+                  ->orWhereHas('kategori', function ($qKategori) use ($keyword) {
+                      $qKategori->whereRaw('LOWER(nama_kategori) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                  });
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 }

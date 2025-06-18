@@ -27,32 +27,29 @@ class KategoriController extends Controller
     public function index(Request $request): View
     {
         $filter = $request->query('filter', 'semua');
-        $search = $request->query('search'); // Ambil parameter pencarian
+        $search = $request->query('search');
+        $perPage = $request->query('per_page', 5);
 
-        $kategoris = collect(); // Inisialisasi koleksi kosong
+        // Inisialisasi query builder
+        $query = $this->kategori->query();
 
-        // Dapatkan semua kategori atau yang difilter terlebih dahulu
+        // Terapkan filter
         if ($filter === KategoriTypeEnum::APLIKASI->value) {
-            $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::APLIKASI->value);
+            $query->where('sub_kategori', KategoriTypeEnum::APLIKASI->value);
         } elseif ($filter === KategoriTypeEnum::BERITA->value) {
-            $kategoris = $this->kategori->filterBySubKategori(KategoriTypeEnum::BERITA->value);
-        } else {
-            $kategoris = $this->kategori->get(); // Asumsi method get() mengambil semua data
+            $query->where('sub_kategori', KategoriTypeEnum::BERITA->value);
         }
 
-        // Terapkan pencarian jika ada
+        // Terapkan pencarian
         if ($search) {
-            $kategoris = $kategoris->filter(function ($kategori) use ($search) {
-                // Konversi nama_kategori dan sub_kategori ke lowercase untuk pencarian case-insensitive
-                $searchLower = strtolower($search);
-                $namaKategoriLower = strtolower($kategori->nama_kategori);
-                $subKategoriLower = strtolower($kategori->sub_kategori);
-
-                // Cek apakah search term ada di nama_kategori atau sub_kategori
-                return str_contains($namaKategoriLower, $searchLower) ||
-                       str_contains($subKategoriLower, $searchLower);
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(nama_kategori) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(sub_kategori) LIKE ?', ['%' . strtolower($search) . '%']);
             });
         }
+
+        // Urutkan dan lakukan pagination
+        $kategoris = $query->orderBy('tanggal_dibuat', 'desc')->paginate($perPage);
 
         return view('admin.kategori.index', compact('kategoris', 'filter'));
     }

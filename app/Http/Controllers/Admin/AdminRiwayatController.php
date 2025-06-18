@@ -8,7 +8,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Enums\StatusTypeEnum;
 use App\Contracts\Interfaces\AplikasiInterface;
-use App\Http\Requests\RejectAplikasiRequest; 
+use App\Http\Requests\RejectAplikasiRequest;
 
 class AdminRiwayatController extends Controller
 {
@@ -29,7 +29,7 @@ class AdminRiwayatController extends Controller
     {
         $perPage = $request->input('per_page', 5); // Change 10 to 5
         $aplikasi = $this->aplikasi->getVerifiedPaginated($request, $perPage);
-        
+
         return view('admin.riwayat.index', compact('aplikasi'));
     }
 
