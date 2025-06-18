@@ -58,6 +58,7 @@ class AplikasiController extends Controller
         foreach ($kategori as $cat) {
             $allApplicationsInThisCategory = Aplikasi::where('id_kategori', $cat->id)
                                                     ->where('status_verifikasi', 'diterima')
+                                                    ->where('arsip', '0')
                                                     ->orderBy('nama_aplikasi', 'asc')
                                                     ->get();
 
@@ -73,22 +74,22 @@ class AplikasiController extends Controller
             if ($pagedApplicationsInThisCategory->isNotEmpty()) {
                 $columnedCategoryResults = $this->distributeIntoColumns($pagedApplicationsInThisCategory);
 
-                // Hitung startIndex untuk kategori
                 $globalStartingIndexCategory = ($pagedApplicationsInThisCategory->currentPage() - 1) * $pagedApplicationsInThisCategory->perPage();
 
                 $categorizedApplications[] = [
                     'category' => $cat,
                     'applications' => $pagedApplicationsInThisCategory,
                     'columnedResults' => $columnedCategoryResults,
-                    'globalStartingIndex' => $globalStartingIndexCategory, // <--- Tambahkan ini
+                    'globalStartingIndex' => $globalStartingIndexCategory,
                 ];
             }
         }
 
-        // --- Logic untuk Aplikasi Paling Populer ---
+        // --- Aplikasi Populer ---
         $allPopularApplications = Aplikasi::where('status_verifikasi', 'diterima')
-                                         ->orderBy('jumlah_kunjungan', 'desc')
-                                         ->get();
+                                        ->where('arsip', '0')
+                                        ->orderBy('jumlah_kunjungan', 'desc')
+                                        ->get();
 
         $perPagePopular = 18;
         $currentPagePopular = LengthAwarePaginator::resolveCurrentPage('popular_page');
@@ -101,10 +102,25 @@ class AplikasiController extends Controller
         );
 
         $columnedPopularResults = $this->distributeIntoColumns($aplikasiPopuler);
-
-        // Menghitung indeks awal global untuk paginasi populer
         $globalStartingIndexPopuler = ($aplikasiPopuler->currentPage() - 1) * $aplikasiPopuler->perPage();
-        // --- End Logic untuk Aplikasi Paling Populer ---
+
+        // --- Semua Aplikasi (flat mendatar) ---
+        $allAplikasis = Aplikasi::where('status_verifikasi', 'diterima')
+                                ->where('arsip', '0')
+                                ->orderBy('nama_aplikasi', 'asc')
+                                ->get();
+
+        $perPageAll = 18;
+        $currentPageAll = LengthAwarePaginator::resolveCurrentPage('all_page');
+        $paginatedAplikasis = new LengthAwarePaginator(
+            $allAplikasis->forPage($currentPageAll, $perPageAll),
+            $allAplikasis->count(),
+            $perPageAll,
+            $currentPageAll,
+            ['path' => LengthAwarePaginator::resolveCurrentPath(), 'pageName' => 'all_page']
+        );
+
+        $globalStartingIndexAll = ($paginatedAplikasis->currentPage() - 1) * $paginatedAplikasis->perPage();
 
         return view('aplikasi.index', compact(
             'aplikasiPopuler',
@@ -112,7 +128,9 @@ class AplikasiController extends Controller
             'categorizedApplications',
             'kategori',
             'fotoAplikasi',
-            'globalStartingIndexPopuler' // <--- Pastikan ini ada
+            'globalStartingIndexPopuler',
+            'paginatedAplikasis',
+            'globalStartingIndexAll' 
         ));
     }
 
@@ -129,6 +147,7 @@ class AplikasiController extends Controller
     public function showPopuler(Request $request): View
     {
         $allPopularApplications = Aplikasi::where('status_verifikasi', 'diterima')
+                                         ->where('arsip', '0')
                                          ->orderBy('jumlah_kunjungan', 'desc')
                                          ->get();
 

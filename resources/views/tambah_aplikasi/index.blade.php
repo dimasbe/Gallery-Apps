@@ -46,9 +46,9 @@
         <div class="flex space-x-4 overflow-x-auto pb-2">
             @foreach ($buttons as $btn)
                 <a href="{{ route('tambah_aplikasi.index', ['status' => $btn['status'], 'arsip' => $btn['arsip']]) }}"
-                    class="px-6 py-2 
-                    {{ ($status === $btn['status'] || (is_null($status) && is_null($btn['status']))) && 
-                    ($arsip == $btn['arsip'] || (is_null($arsip) && is_null($btn['arsip']))) 
+                    class="px-6 py-2
+                    {{ ($status === $btn['status'] || (is_null($status) && is_null($btn['status']))) &&
+                    ($arsip == $btn['arsip'] || (is_null($arsip) && is_null($btn['arsip'])))
                     ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-700' }}
                     rounded-full text-sm font-semibold whitespace-nowrap shadow-md hover:bg-red-700 hover:text-white transition-colors duration-200 flex items-center">
                     {{ $btn['label'] }}
@@ -81,14 +81,11 @@
                     {{-- Badge untuk Status Arsip (hanya tampil jika $app->arsip adalah 1) --}}
                     @if ($app->arsip == 1)
                         <span class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
-                            Di Arsip
+                            Diarsip
                         </span>
                     @endif
                 </div>
 
-                <span class="absolute top-3 left-3 {{ $bgColor }} text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
-                    {{ ucfirst($status) }}
-                </span>
                 {{-- Foto aplikasi --}}
                 <img src="{{ asset('storage/' . optional($app->fotoAplikasi()->first())->path_foto) }}"
                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Foto+Tidak+Tersedia';"
@@ -114,14 +111,15 @@
                         </div>
                         <div class="flex space-x-3">
                             {{-- Tombol Edit --}}
-                            @if(in_array($app->status_verifikasi, ['diterima', 'ditolak']))
+                            {{-- Add condition: $app->arsip != 1 --}}
+                            @if(in_array($app->status_verifikasi, ['diterima', 'ditolak']) && $app->arsip != 1)
                                 <a href="{{ route('tambah_aplikasi.edit', $app->id) }}" class="text-blue-600 hover:text-blue-800 transition-colors duration-200 p-1 rounded-full hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" aria-label="Edit Aplikasi">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
                                 </a>
                             @else
-                                <span class="text-gray-400 cursor-not-allowed p-1 rounded-full" title="Belum bisa diedit">
+                                <span class="text-gray-400 cursor-not-allowed p-1 rounded-full" title="Belum bisa diedit (status pending atau diarsip)">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>

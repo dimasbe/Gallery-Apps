@@ -20,6 +20,8 @@ class DashboardController extends Controller
     {
         // Ambil 6 aplikasi populer berdasarkan jumlah_kunjungan
         $aplikasiPopuler = Aplikasi::orderBy('jumlah_kunjungan', 'desc')
+            ->where('status_verifikasi', 'diterima')
+            ->where('arsip', '0')
             ->limit(6)
             ->with('fotoAplikasi')
             ->get();
