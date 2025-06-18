@@ -215,13 +215,11 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
     // Existing changeRowsPerPage function, updated to preserve 'keyword' and 'status'
     function changeRowsPerPage(value) {
         const url = new URL(window.location.href);
@@ -288,7 +286,7 @@
         });
 
         // Check for success messages from the session and display SweetAlert toast
-        if(session('success'))
+        @if(session('success'))
             Swal.fire({
                 title: 'Berhasil!',
                 text: "{{ session('success') }}",
@@ -299,16 +297,16 @@
                 timer: 3000,
                 timerProgressBar: true
             });
-        endif
+        @endif
 
         // Check for error messages from the session and display SweetAlert error
-        if(session('error'))
+        @if(session('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: "{{ session('error') }}",
             });
-        endif
+        @endif
     });
 </script>
 @endpush
