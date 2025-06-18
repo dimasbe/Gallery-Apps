@@ -2,76 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use App\Models\Aplikasi;
 use App\Models\Berita;
 use App\Models\Kategori;
-use App\Models\Aplikasi;
-use App\Contracts\Interfaces\AplikasiInterface;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    protected AplikasiInterface $aplikasiRepository;
-
-    public function __construct(AplikasiInterface $aplikasiRepository)
+    /**
+     * Menampilkan halaman dashboard dengan data yang relevan untuk pengguna terautentikasi.
+     * Menampilkan aplikasi populer, berita terbaru, dan kategori aplikasi.
+     *
+     * @return View
+     */
+    public function index(): View
     {
-        $this->aplikasiRepository = $aplikasiRepository;
-    }
+        // Ambil 6 aplikasi populer berdasarkan jumlah_kunjungan
+        $aplikasiPopuler = Aplikasi::orderBy('jumlah_kunjungan', 'desc')
+            ->limit(6)
+            ->with('fotoAplikasi')
+            ->get();
 
-    public function index()
-    {
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return $this->renderUserDashboard();
-    }
-
-    public function welcome()
-    {
-        $aplikasiPopuler = $this->aplikasiRepository->getPopularApps(6); // ✔️ Sudah sesuai dengan interface
-        return view('welcome', compact('aplikasiPopuler'));
-    }
-
-    private function renderUserDashboard()
-    {
+        // Ambil 3 berita terbaru berdasarkan tanggal_dibuat
         $beritas = Berita::orderBy('tanggal_dibuat', 'desc')->limit(3)->get();
 
+        // Ambil kategori yang memiliki sub_kategori 'aplikasi'
+        // Eager load aplikasi pertama dari setiap kategori, dan fotoAplikasi dari aplikasi tersebut
         $kategoriAplikasi = Kategori::where('sub_kategori', 'aplikasi')
-            ->latest()
-            ->take(6)
             ->with(['aplikasi' => function ($query) {
-                $query->where('status_verifikasi', 'diterima')
-                    ->with('fotoUtama')
-                    ->select('id', 'id_kategori', 'nama_aplikasi', 'slug')
-                    ->latest()
-                    ->limit(1);
+                $query->with('fotoAplikasi')->limit(1);
             }])
             ->get();
 
-        $aplikasiTerbaru = Aplikasi::with('fotoUtama')
-            ->where('status_verifikasi', 'diterima')
-            ->orderBy('created_at', 'desc')
-            ->take(6)
-            ->get();
-
-        // ✅ Tambahkan ini
-        $aplikasiPopuler = $this->aplikasiRepository->getPopularApps(6);
-
-        return view('dashboard', compact(
-            'kategoriAplikasi',
-            'beritas',
-            'aplikasiTerbaru',
-            'aplikasiPopuler' // ← kirim ke blade
-        ));
-    }
-
-
-    public function showAplikasi(Aplikasi $aplikasi): View
-    {
-        $aplikasi->increment('jumlah_kunjungan');
-        $aplikasi->load('kategori', 'fotoAplikasi');
-        return view('aplikasi.detail', compact('aplikasi'));
+        // Teruskan data ke view dashboard
+        return view('dashboard', compact('aplikasiPopuler', 'beritas', 'kategoriAplikasi'));
     }
 }
+
+

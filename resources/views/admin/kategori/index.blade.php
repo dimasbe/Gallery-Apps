@@ -368,6 +368,8 @@
                 icon: 'success',
                 title: 'Berhasil!',
                 text: data.message,
+                toast: true,
+                position: 'top-end',
                 confirmButtonColor: '#28a745'
             }).then(() => {
                 tutupModal('modalTambah');
@@ -466,6 +468,8 @@
                 icon: 'success',
                 title: 'Berhasil!',
                 text: data.message,
+                toast: true,
+                position: 'top-end',
                 confirmButtonColor: '#28a745'
             }).then(() => {
                 tutupModal('modalEdit');
@@ -525,7 +529,9 @@
                         Swal.fire(
                             'Dihapus!',
                             data.message,
-                            'success'
+                            'success',
+                            toast: true,
+                            position: 'top-end',
                         ).then(() => {
                             window.location.reload(); // Reload to see the updated data
                         });

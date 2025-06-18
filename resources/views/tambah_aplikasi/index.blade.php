@@ -21,9 +21,21 @@
         {{-- Tampilkan jumlah aplikasi secara dinamis --}}
         @php
             $status = request('status');
-            $filteredApps = $aplikasi->filter(function ($app) use ($status) {
-                return is_null($status) || $app->status_verifikasi === $status;
+            $arsip = request('arsip');
+
+            $filteredApps = $aplikasi->filter(function ($app) use ($status, $arsip) {
+                $statusMatch = is_null($status) || $app->status_verifikasi === $status;
+                $arsipMatch = is_null($arsip) || $app->arsip == $arsip;
+                return $statusMatch && $arsipMatch;
             });
+
+            $buttons = [
+                ['label' => 'Semua', 'status' => null, 'arsip' => null],
+                ['label' => 'Pending', 'status' => 'pending', 'arsip' => null],
+                ['label' => 'Diterima', 'status' => 'diterima', 'arsip' => null],
+                ['label' => 'Ditolak', 'status' => 'ditolak', 'arsip' => null],
+                ['label' => 'Diarsip', 'status' => null, 'arsip' => 1],
+            ];
         @endphp
 
         <h2 class="text-xl font-semibold text-gray-800 mb-4">
@@ -32,19 +44,13 @@
 
         {{-- Tombol filter --}}
         <div class="flex space-x-4 overflow-x-auto pb-2">
-            @php
-                $buttons = [
-                    ['label' => 'Semua', 'value' => null],
-                    ['label' => 'Pending', 'value' => 'pending'],
-                    ['label' => 'Diterima', 'value' => 'diterima'],
-                    ['label' => 'Ditolak', 'value' => 'ditolak'],
-                ];
-            @endphp
-
             @foreach ($buttons as $btn)
-                <a href="{{ route('tambah_aplikasi.index', ['status' => $btn['value']]) }}"
-                class="px-6 py-2 {{ $status === $btn['value'] || (is_null($status) && is_null($btn['value'])) ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-700' }}
-                rounded-full text-sm font-semibold whitespace-nowrap shadow-md hover:bg-red-700 hover:text-white transition-colors duration-200 flex items-center">
+                <a href="{{ route('tambah_aplikasi.index', ['status' => $btn['status'], 'arsip' => $btn['arsip']]) }}"
+                    class="px-6 py-2 
+                    {{ ($status === $btn['status'] || (is_null($status) && is_null($btn['status']))) && 
+                    ($arsip == $btn['arsip'] || (is_null($arsip) && is_null($btn['arsip']))) 
+                    ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-700' }}
+                    rounded-full text-sm font-semibold whitespace-nowrap shadow-md hover:bg-red-700 hover:text-white transition-colors duration-200 flex items-center">
                     {{ $btn['label'] }}
                 </a>
             @endforeach
@@ -52,10 +58,8 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
-        {{-- Lakukan loop untuk setiap aplikasi dari database --}}
         @forelse ($filteredApps as $app)
             <div class="bg-white rounded-xl shadow-lg overflow-hidden relative border border-gray-100 transform hover:scale-105 transition-transform duration-300 ease-in-out">
-                {{-- Tampilkan kategori jika ada, atau teks default --}}
                 @php
                     $status = $app->status_verifikasi;
                     $bgColor = match($status) {
@@ -64,16 +68,32 @@
                         'ditolak' => 'bg-red-500',
                         default => 'bg-gray-400',
                     };
+                    $displayStatus = ucfirst($status); // Ubah huruf pertama menjadi kapital
                 @endphp
+
+                {{-- Kontainer baru untuk kedua badge agar berdampingan --}}
+                <div class="absolute top-3 left-3 flex items-center space-x-2 z-10">
+                    {{-- Badge untuk Status Verifikasi --}}
+                    <span class="{{ $bgColor }} text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
+                        {{ $displayStatus }}
+                    </span>
+
+                    {{-- Badge untuk Status Arsip (hanya tampil jika $app->arsip adalah 1) --}}
+                    @if ($app->arsip == 1)
+                        <span class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
+                            Di Arsip
+                        </span>
+                    @endif
+                </div>
 
                 <span class="absolute top-3 left-3 {{ $bgColor }} text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
                     {{ ucfirst($status) }}
                 </span>
-                {{-- Gambar logo aplikasi --}}
-                <img src="{{ asset('storage/' . $app->logo) }}"
-                     onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Logo+Tidak+Tersedia';"
-                     alt="{{ $app->nama_aplikasi }}"
-                     class="w-full h-44 object-cover object-center">
+                {{-- Foto aplikasi --}}
+                <img src="{{ asset('storage/' . optional($app->fotoAplikasi()->first())->path_foto) }}"
+                    onerror="this.onerror=null;this.src='https://via.placeholder.com/400x200/F3F4F6/6B7280?text=Foto+Tidak+Tersedia';"
+                    alt="{{ $app->nama_aplikasi }}"
+                    class="w-full h-44 object-cover object-center">
                 <div class="p-5">
                     <h3 class="font-bold text-gray-900 text-lg mb-2">
                         <a href="{{ route('tambah_aplikasi.show', $app->id) }}" class="hover:text-blue-600 transition-colors duration-200">
@@ -89,7 +109,7 @@
                     <div class="flex justify-between items-center mt-auto">
                         <div class="flex items-center text-sm text-gray-600">
                             @if($app->rating_konten)
-                                <span>Rating: {{ $app->rating_konten }}</span>
+                                <span>Rating konten: {{ $app->rating_konten }}</span>
                             @endif
                         </div>
                         <div class="flex space-x-3">
@@ -190,6 +210,8 @@
                                     icon: 'success',
                                     title: 'Berhasil!',
                                     text: data.message,
+                                    toast: true,
+                                    position: 'top-end',
                                     showConfirmButton: false,
                                     timer: 1500
                                 }).then(() => {

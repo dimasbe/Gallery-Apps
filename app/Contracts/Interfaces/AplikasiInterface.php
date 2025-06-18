@@ -5,6 +5,7 @@ namespace App\Contracts\Interfaces;
 use App\Contracts\Interfaces\Eloquent\BaseInterface;
 use App\Contracts\Interfaces\Eloquent\FindInterface;
 use App\Contracts\Interfaces\Eloquent\GetByUserIdInterface;
+use App\Contracts\Interfaces\Eloquent\GetCountInterface;
 use App\Contracts\Interfaces\Eloquent\SearchInterface;
 use App\Contracts\Interfaces\Eloquent\AplikasiQueryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator; // Added for pagination
@@ -16,7 +17,8 @@ interface AplikasiInterface extends
     SearchInterface,
     FindInterface,
     GetByUserIdInterface,
-    AplikasiQueryInterface
+    AplikasiQueryInterface,
+    GetCountInterface
 {
     /**
      * Get a number of the most popular applications based on visit count.

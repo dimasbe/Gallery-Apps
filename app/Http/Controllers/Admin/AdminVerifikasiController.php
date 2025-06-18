@@ -33,8 +33,7 @@ class AdminVerifikasiController extends Controller
     $keyword = $request->query('keyword');
 
     // Ambil semua aplikasi yang statusnya pending
-    $aplikasi = $this->aplikasi->getByStatus(StatusTypeEnum::PENDING->value)
-                    ->sortByDesc('created_at');
+    $aplikasi = $this->aplikasi->getByStatus(StatusTypeEnum::PENDING->value);
 
     // Jika ada keyword, lakukan pencarian
     if ($keyword) {

@@ -86,8 +86,9 @@
                 {{-- Tanggal Rilis --}}
                 <div>
                     <label for="tanggal_rilis" class="block text-sm font-medium text-gray-700">Tanggal Rilis</label>
-                    <input id="tanggal_rilis" name="tanggal_rilis" type="date" value="{{ old('tanggal_rilis', $aplikasi->tanggal_rilis) }}" class="block w-full px-3 py-2 border rounded-md focus:ring-red-500 focus:border-red-500">
-                    <div id="error-tanggal_rilis" class="text-red-500 text-xs mt-1 hidden"></div>
+                    <input id="tanggal_rilis" name="tanggal_rilis" type="date" 
+                        value="{{ old('tanggal_rilis', optional($aplikasi->tanggal_rilis)->format('Y-m-d')) }}"
+                        class="block w-full px-3 py-2 border rounded-md focus:ring-red-500 focus:border-red-500">
                 </div>
             </div>
 
@@ -396,8 +397,17 @@
             const data = await response.json();
 
             if (response.ok && data.success) {
-                Swal.fire({ icon: 'success', title: 'Berhasil!', text: data.message, showConfirmButton: false, timer: 1500 }).then(() => {
-                    window.location.href = data.redirect;
+                Swal.fire({ 
+                    icon: 'success', 
+                    title: 'Berhasil!', 
+                    text: data.message, 
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false, 
+                    timer: 3000
+                 }).then(() => 
+                    {
+                        window.location.href = data.redirect;
                 });
             } else {
                 generalErrorText.textContent = data.message || 'Terjadi kesalahan saat menyimpan data.';
