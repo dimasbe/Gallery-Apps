@@ -36,19 +36,17 @@
         </h3>
 
         @php
-            // Pastikan $aplikasiByCategory adalah LengthAwarePaginator sebelum menggunakan method-nya
-            $perPageCategory = $aplikasiByCategory instanceof \Illuminate\Pagination\LengthAwarePaginator ? $aplikasiByCategory->perPage() : 9;
-            $currentPageCategory = $aplikasiByCategory instanceof \Illuminate\Pagination\LengthAwarePaginator ? $aplikasiByCategory->currentPage() : 1;
+            $perPageCategory = $applications->perPage();
+            $currentPageCategory = $applications->currentPage();
             $globalStartingIndexCategory = ($currentPageCategory - 1) * $perPageCategory;
-            // Gunakan count() langsung pada collection/paginator
-            $actualItemsPerVisualColumnCategory = ceil($aplikasiByCategory->count() / 3);
+            $actualItemsPerVisualColumnCategory = ceil($applications->count() / 3);
         @endphp
 
-        @if ($aplikasiByCategory->isEmpty())
+        @if ($applications->isEmpty())
             <p class="text-gray-600 col-span-3">Tidak ada aplikasi dalam kategori ini.</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 mt-8">
-                @foreach ($columnedResultsCategory as $colIndex => $column) {{-- Menggunakan $columnedResultsCategory --}}
+                @foreach ($columnedResults as $colIndex => $column)
                     <div class="space-y-5">
                         @foreach ($column as $rowInColIndex => $aplikasi)
                             <div class="flex items-start space-x-3 font-poppins">
@@ -79,7 +77,7 @@
                 @endforeach
             </div>
             <div class="mt-8">
-                {{ $aplikasiByCategory->links('pagination::tailwind') }} {{-- PERBAIKAN DI SINI --}}
+                {{ $applications->links('pagination::tailwind') }}
             </div>
         @endif
     </div>

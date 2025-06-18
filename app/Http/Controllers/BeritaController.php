@@ -46,33 +46,19 @@ class BeritaController extends Controller
 
      */
 
-    public function index(Request $request)
-
-    {
-
-        $kategoriId = $request->query('kategori');
-
-
-
-        // Menggunakan service untuk mendapatkan berita dengan paginasi dan filter kategori
-
-        // Asumsi getAllPaginated() di service bisa menerima null atau nilai default untuk jumlah item per halaman
-
-        $beritas = $this->beritaService->getAllPaginated(10, $kategoriId); // Menggunakan 10 sebagai default per halaman
-
-
-
-        // Mengambil semua kategori (bisa juga dari service jika ada service Kategori)
-
-        $kategoris = Kategori::all();
-
-
-        $kategoris = Kategori::where('sub_kategori', 'berita')->get();
-
-        return view('berita.index', compact('beritas', 'kategoris'));
-
-    }
-
+     public function index(Request $request)
+     {
+         $kategoriId = $request->query('kategori');
+         $search = $request->query('search');
+         $perPage = $request->query('perPage', 5); // Ambil nilai row per page
+     
+         $beritas = $this->beritaService->getAllPaginated($perPage, $kategoriId, $search);
+     
+         $kategoris = Kategori::where('sub_kategori', 'berita')->get();
+     
+         return view('berita.index', compact('beritas', 'kategoris'));
+     }
+     
 
 
     /**

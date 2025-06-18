@@ -50,16 +50,10 @@ Route::get('/dashboard', function () {
 Route::get('/aplikasi', [AplikasiController::class, 'index'])->name('aplikasi');
 
 Route::get('/aplikasi/detail/{aplikasi}', [AplikasiController::class, 'showAplikasi'])->name('aplikasi.detail');
-// Rute untuk detail aplikasi (penting untuk tautan di hasil pencarian dan halaman aplikasi)
-// PERBAIKAN: Menggunakan {aplikasi:slug} dan memanggil method showAplikasi
-Route::get('/aplikasi/detail/{aplikasi:slug}', [AplikasiController::class, 'showAplikasi'])->name('aplikasi.detail');
 
 Route::get('/aplikasi/populer', [AplikasiController::class, 'showPopuler'])->name('aplikasi.populer');
 
 Route::get('/kategori-aplikasi/{nama_kategori}', [AplikasiController::class, 'showByCategory'])->name('kategori.show');
-// Rute untuk menampilkan aplikasi berdasarkan kategori
-// PERBAIKAN: Menggunakan {kategori:slug} agar cocok dengan Route Model Binding
-Route::get('/kategori-aplikasi/{kategori:slug}', [AplikasiController::class, 'showByCategory'])->name('kategori.show');
 
 Route::get('/login/google', [GoogleController::class, 'redirect'])->name('google.redirect');
 Route::get('/login/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
@@ -86,9 +80,6 @@ Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show
 
 Route::post('/admin/berita/upload-ckeditor-image', [AdminBeritaController::class, 'uploadCkeditorImage'])->name('admin.berita.uploadCkeditorImage');
 
-// Ini rute duplikat, kemungkinan besar tidak sengaja atau sudah tidak dipakai.
-// Jika ingin kategori umum menggunakan slug juga, ganti {nama} dengan {kategori:slug}
-// dan sesuaikan KategoriController::showByNama menjadi KategoriController::show
 Route::get('/kategori/{nama}', [KategoriController::class, 'showByNama'])->name('kategori.show_by_nama');
 
 

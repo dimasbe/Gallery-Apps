@@ -106,30 +106,33 @@ class BeritaService
         return $this->berita->search($request);
     }
 
-    public function getAllPaginated($perPage = null, $kategoriId = null)
-    {
-        $query = Berita::with([
-            'kategori',
-            'fotoBerita' => function ($query) {
-                $query->where('tipe', 'thumbnail');
-            }
-        ])->orderBy('tanggal_dibuat', 'desc');
-    
-        // Filter berdasarkan kategori jika ada
-        if ($kategoriId) {
-            $query->whereHas('kategori', function ($q) use ($kategoriId) {
-                $q->where('kategori_id', $kategoriId);
-            });
+    public function getAllPaginated($perPage = null, $kategoriId = null, $search = null)
+{
+    $query = Berita::with([
+        'kategori',
+        'fotoBerita' => function ($query) {
+            $query->where('tipe', 'thumbnail');
         }
-    
-        // Kembalikan hasil paginate jika perPage diisi
-        if ($perPage) {
-            return $query->paginate($perPage)->withQueryString(); // agar query ?kategori tetap ada saat pagination
-        }
-    
-        // Kalau tidak, ambil semua
-        return $query->get();
-    }     
+    ])->orderBy('tanggal_dibuat', 'desc');
+
+    if ($kategoriId) {
+        $query->where('kategori_id', $kategoriId);
+    }
+
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('judul_berita', 'like', '%' . $search . '%')
+              ->orWhere('isi_berita', 'like', '%' . $search . '%');
+        });
+    }
+
+    if ($perPage) {
+        return $query->paginate($perPage)->withQueryString(); // agar query URL tetap ada saat paging
+    }
+
+    return $query->get();
+}
+
     
     public function findById($id)
     {
