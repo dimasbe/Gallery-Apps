@@ -27,6 +27,8 @@ class UpdateAplikasiRequest extends FormRequest
             'fitur'           => 'required|string',
             'path_foto'       => 'nullable|array|min:1',
             'path_foto.*'     => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'existing_photo_ids'   => 'nullable|array',
+            'existing_photo_ids.*' => 'integer|exists:foto_aplikasi,id',
         ];
     }
 

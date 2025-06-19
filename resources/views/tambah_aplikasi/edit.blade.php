@@ -161,6 +161,7 @@
     const aplikasiId = "{{ $aplikasi->id }}"; // Dapatkan ID Aplikasi
 
     let filesArray = []; // Untuk file baru yang akan diunggah
+    let deletedPhotoIds = [];
     let existingPhotosData = []; // [{id: 1, path: 'path/to/foto1.jpg'}, ...] untuk foto lama
 
     let currentLogoFile = null;
@@ -172,92 +173,47 @@
     let initialExistingLogoPath = "";
 
     const createPreviewElement = (src, isNewFile, dataObject, type = 'app_photo') => {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('relative', 'w-24', 'h-24');
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('relative', 'w-24', 'h-24');
 
-        const img = document.createElement('img');
+    const img = document.createElement('img');
         img.src = src;
         img.classList.add('object-cover', 'w-full', 'h-full', 'rounded');
 
-        const removeBtn = document.createElement('button');
-        removeBtn.innerHTML = '✕';
-        removeBtn.classList.add('absolute', 'top-0', 'right-0', 'bg-red-500', 'text-white', 'rounded-full', 'text-xs', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'shadow');
-        removeBtn.type = 'button';
+        wrapper.appendChild(img);
 
-        removeBtn.onclick = async () => {
-            if (type === 'app_photo') {
+        // HANYA tambahkan tombol hapus untuk foto aplikasi
+        if (type === 'app_photo') {
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '✕';
+            removeBtn.classList.add('absolute', 'top-0', 'right-0', 'bg-red-500', 'text-white', 'rounded-full', 'text-xs', 'w-5', 'h-5', 'flex', 'items-center', 'justify-center', 'shadow');
+            removeBtn.type = 'button';
+
+            removeBtn.onclick = () => {
                 if (isNewFile) {
                     filesArray = filesArray.filter(file => file !== dataObject);
                 } else {
-                    // Ini adalah foto lama, hapus langsung dari DB tanpa konfirmasi
-                    const photoIdToDelete = dataObject.id;
-                    try {
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                        const response = await fetch(`/tambah_aplikasi/${aplikasiId}/foto/${photoIdToDelete}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        const data = await response.json();
-
-                        if (response.ok && data.success) {
-                            existingPhotosData = existingPhotosData.filter(photo => photo.id !== photoIdToDelete);
-                            Swal.fire('Berhasil!', 'Foto berhasil dihapus.', 'success');
-                        } else {
-                            Swal.fire('Gagal!', data.message || 'Gagal menghapus foto.', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Error deleting photo:', error);
-                        Swal.fire('Gagal!', 'Terjadi kesalahan jaringan saat menghapus foto.', 'error');
-                    }
+                    deletedPhotoIds.push(dataObject.id);
                 }
                 renderAppPhotosPreview();
-            } else if (type === 'logo') {
-                if (isNewFile) {
-                    currentLogoFile = null;
-                    logoInput.value = '';
-                } else {
-                    // Ini adalah logo lama, hapus langsung dari DB tanpa konfirmasi
-                    try {
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                        const response = await fetch(`/tambah_aplikasi/${aplikasiId}/logo`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        const data = await response.json();
+                checkForChanges();
+            };
 
-                        if (response.ok && data.success) {
-                            existingLogoPath = null;
-                            isLogoDeleted = true; // Set flag
-                            Swal.fire('Berhasil!', 'Logo berhasil dihapus.', 'success');
-                        } else {
-                            Swal.fire('Gagal!', data.message || 'Gagal menghapus logo.', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Error deleting logo:', error);
-                        Swal.fire('Gagal!', 'Terjadi kesalahan jaringan saat menghapus logo.', 'error');
-                    }
-                }
-                renderLogoPreview();
-            }
-            checkForChanges();
-        };
+            wrapper.appendChild(removeBtn);
+        }
 
-        wrapper.appendChild(img);
-        wrapper.appendChild(removeBtn);
         return wrapper;
     };
 
     const renderAppPhotosPreview = () => {
         previewContainer.innerHTML = '';
+
         existingPhotosData.forEach(photo => {
-            previewContainer.appendChild(createPreviewElement(`${storageBaseUrl}/${photo.path_foto}`, false, photo, 'app_photo'));
+            if (!deletedPhotoIds.includes(photo.id)) {
+                previewContainer.appendChild(createPreviewElement(`${storageBaseUrl}/${photo.path_foto}`, false, photo, 'app_photo'));
+            }
         });
+
         filesArray.forEach(file => {
             const reader = new FileReader();
             reader.onload = e => previewContainer.appendChild(createPreviewElement(e.target.result, true, file, 'app_photo'));
@@ -292,26 +248,21 @@
     const checkForChanges = () => {
         let formChanged = false;
 
-        // Check text/select/textarea inputs
         Array.from(aplikasiForm.elements).forEach(element => {
             if (element.name && !['file', 'submit', '_token', '_method'].includes(element.type) && initialFormState[element.name] !== element.value) {
                 formChanged = true;
             }
         });
 
-        // Check app photos changes (new files added)
         if (filesArray.length > 0) formChanged = true;
 
-        // Check for changes in existing photos (count of retained photos)
         const currentExistingPhotoIds = existingPhotosData.map(photo => photo.id).sort().join(',');
         const initialExistingPhotoIdsStr = initialExistingPhotosIds.sort().join(',');
         if (currentExistingPhotoIds !== initialExistingPhotoIdsStr) {
             formChanged = true;
         }
 
-        // Check logo changes
         if (currentLogoFile !== null) formChanged = true;
-        // Jika logoPath berubah dari ada menjadi null (dihapus langsung), itu adalah perubahan
         else if (isLogoDeleted || (initialExistingLogoPath && !existingLogoPath)) { // Changed: initial exists, now it's null
             formChanged = true;
         }
@@ -365,6 +316,16 @@
         submitButton.textContent = 'Menyimpan...';
 
         const formData = new FormData();
+
+        // Tambahkan ID foto lama yang masih ditampilkan
+        existingPhotosData.forEach(photo => {
+            formData.append('existing_photo_ids[]', photo.id);
+        });
+
+        deletedPhotoIds.forEach(photoId => {
+            formData.append('deleted_photo_ids[]', photoId);
+        });
+
         Array.from(this.elements).forEach(element => {
             if (element.name && !['path_foto[]', 'logo', 'submit'].includes(element.name) && element.type !== 'submit') {
                 if (!(element.type === 'date' && element.value === '')) {
@@ -377,14 +338,6 @@
         if (currentLogoFile) {
             formData.append('logo', currentLogoFile);
         }
-        // Tidak perlu mengirim 'logo_deleted' lagi jika penghapusan logo sudah ditangani di backend
-        // secara instan saat tombol 'X' diklik.
-        // Jika logo_id di Aplikasi di set null oleh penghapusan instan, itu sudah cukup.
-        // ATAU jika Anda ingin mengirim sinyal, tetap bisa:
-        // if (isLogoDeleted && !currentLogoFile) {
-        //     formData.append('logo_deleted_on_submit', '1');
-        // }
-
 
         // Handle App Photos: Hanya kirim file baru
         filesArray.forEach(file => formData.append('path_foto[]', file));

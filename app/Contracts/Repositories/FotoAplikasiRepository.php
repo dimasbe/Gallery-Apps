@@ -52,4 +52,13 @@ class FotoAplikasiRepository extends BaseRepository implements FotoAplikasiInter
     {
         return $this->model->query()->where($column, $value)->get();       
     }
+
+    public function findById(int $id): ?FotoAplikasi {
+        return $this->model->find($id);
+    }
+
+    public function getByAplikasiId(int $idAplikasi): mixed
+    {
+        return $this->model->query()->where('id_aplikasi', $idAplikasi)->get();
+    }
 }

@@ -70,7 +70,7 @@
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_aplikasi'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data->user->name ?? 'Tidak Diketahui' }}</p>
+                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_pemilik'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $data->kategori->nama_kategori ?? 'Tidak Ada Kategori' }}</p>

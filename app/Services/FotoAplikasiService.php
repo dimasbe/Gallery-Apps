@@ -2,70 +2,56 @@
 
 namespace App\Services;
 
-use App\Models\FotoAplikasi;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use App\Contracts\Interfaces\FotoAplikasiInterface;
 
 class FotoAplikasiService
 {
-    /**
-     * Simpan banyak foto ke storage dan database.
-     *
-     * @param UploadedFile[] $files
-     * @param int $idAplikasi
-     * @return void
-     */
+    protected FotoAplikasiInterface $fotoAplikasi;
+
+    public function __construct(FotoAplikasiInterface $fotoAplikasi)
+    {
+        $this->fotoAplikasi = $fotoAplikasi;
+    }
+
     public function storeMultiple(array $files, int $idAplikasi): void
     {
         foreach ($files as $file) {
-            $path = $file->store('foto_aplikasi', 'public'); // Path sudah relatif ke root disk 'public'
+            $path = $file->store('foto_aplikasi', 'public');
 
-            FotoAplikasi::create([
+            $this->fotoAplikasi->store([
                 'id_aplikasi' => $idAplikasi,
-                'path_foto' => $path, // Simpan path ini langsung
+                'path_foto' => $path,
             ]);
         }
     }
 
-    /**
-     * Update foto aplikasi: hapus semua foto lama, lalu simpan foto baru.
-     *
-     * @param UploadedFile[]|null $files
-     * @param int $idAplikasi
-     * @return void
-     */
-    public function updateMultiple(?array $files, int $idAplikasi): void
+    public function updateMultiple(?array $files, int $idAplikasi, array $existingPhotoIds = []): void
     {
-        if (!$files || !is_array($files) || count($files) === 0) return;
+        $fotoLama = $this->fotoAplikasi->where('id_aplikasi', $idAplikasi);
 
-        // Hapus foto lama dari storage dan database
-        $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
         foreach ($fotoLama as $foto) {
-            $this->delete($foto->path_foto); // Panggil metode delete internal
-            $foto->delete(); // Hapus entri dari database
+            if (!in_array($foto->id, $existingPhotoIds)) {
+                $this->delete($foto->path_foto);
+                $this->fotoAplikasi->delete($foto->id);
+            }
         }
 
-        // Simpan foto baru
-        $this->storeMultiple($files, $idAplikasi);
+        if ($files && is_array($files) && count($files) > 0) {
+            $this->storeMultiple($files, $idAplikasi);
+        }
     }
 
     public function deleteMultipleByAplikasiId(int $idAplikasi): void
     {
-        $fotoLama = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
+        $fotoLama = $this->fotoAplikasi->where('id_aplikasi', $idAplikasi);
         foreach ($fotoLama as $foto) {
-            if ($foto->path_foto && Storage::disk('public')->exists($foto->path_foto)) {
-                Storage::disk('public')->delete($foto->path_foto);
-            }
-            $foto->delete();
+            $this->delete($foto->path_foto);
+            $this->fotoAplikasi->delete($foto->id);
         }
     }
 
-    /**
-     * Hapus satu file foto dari storage.
-     *
-     * @param string $path Path file foto relatif dari disk 'public'.
-     * @return bool True jika berhasil dihapus, false jika file tidak ditemukan atau gagal.
-     */
     public function delete(string $path): bool
     {
         if (Storage::disk('public')->exists($path)) {
@@ -74,19 +60,21 @@ class FotoAplikasiService
         return false;
     }
 
-    /**
-     * Hapus semua foto (file dan entri DB) berdasarkan ID Aplikasi.
-     * Metode ini akan dipanggil oleh AplikasiService.
-     *
-     * @param int $idAplikasi
-     * @return void
-     */
     public function deleteAllByAplikasiId(int $idAplikasi): void
     {
-        $fotos = FotoAplikasi::where('id_aplikasi', $idAplikasi)->get();
+        $fotos = $this->fotoAplikasi->where('id_aplikasi', $idAplikasi);
         foreach ($fotos as $foto) {
-            $this->delete($foto->path_foto); // Hapus file
-            $foto->delete(); // Hapus entri database
+            $this->delete($foto->path_foto);
+            $this->fotoAplikasi->delete($foto->id);
+        }
+    }
+
+    public function deleteById(int $id): void
+    {
+        $foto = $this->fotoAplikasi->find($id);
+        if ($foto) {
+            $this->delete($foto->path_foto);
+            $this->fotoAplikasi->delete($id);
         }
     }
 }
