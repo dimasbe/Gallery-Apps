@@ -1,82 +1,47 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers; 
 
 use App\Services\BeritaService;
-use App\Models\Kategori; // Diperlukan untuk metode index()
-use App\Models\Berita; // Mengimpor model Berita karena akan digunakan secara langsung untuk increment
+use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Illuminate\View\View; // Mengimpor View class untuk type hinting
+
 
 class BeritaController extends Controller
 {
-    protected $beritaService;
+    protected BeritaService $beritaService;
 
     public function __construct(BeritaService $beritaService)
     {
         $this->beritaService = $beritaService;
     }
 
-    /**
-     * Metode ini untuk menampilkan daftar berita lengkap dengan paginasi dan filter.
-     * Contoh: /berita?kategori=1
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
-
-     public function index(Request $request)
-     {
-         $kategoriId = $request->query('kategori');
-         $search = $request->query('search');
-         $perPage = $request->query('perPage', 5); // Ambil nilai row per page
-     
-         $beritas = $this->beritaService->getAllPaginated($perPage, $kategoriId, $search);
-     
-         $kategoris = Kategori::where('sub_kategori', 'berita')->get();
-     
-         return view('berita.index', compact('beritas', 'kategoris'));
-     }
-     
-
-
-    /**
-     * Metode ini khusus untuk halaman Utama (homepage) yang menampilkan berita terbaru.
-     * Ini adalah metode yang akan merender welcome.blade.php dan menyediakan variable $beritas.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function homepageLatestNews(): View // Menambahkan type hinting View
+    public function index(Request $request)
     {
-        // Menggunakan service untuk mendapatkan 3 berita terbaru.
-        // Metode getAllPaginated(3) di BeritaService akan mengembalikan objek Paginator
-        // dengan 3 item per halaman (karena sudah diurutkan 'tanggal_dibuat' secara descending).
-        // Kita kemudian mengambil koleksi item dari Paginator tersebut.
-        $paginatedBeritas = $this->beritaService->getAllPaginated(3);
-        $beritas = $paginatedBeritas->items(); // Mengambil koleksi item (Berita) dari paginator
+        $kategoriId = $request->query('kategori');
+        $search = $request->query('search');
+        $perPage = $request->query('perPage', 5); // Ambil nilai row per page
 
-        // View untuk halaman beranda Anda (welcome.blade.php)
-        return view('welcome', compact('beritas'));
-    }
+        // Ubah ini untuk memanggil metode yang ada di BeritaService
+        // Anda harus memutuskan apakah Anda ingin menggunakan getAllWithKategori atau
+        // menambahkan getAllPaginated ke service seperti di Opsi 1.
 
-    /**
-     * Metode ini untuk menampilkan detail satu artikel berita.
-     * Contoh: /berita/123
-     * @param  int  $id ID berita
-     * @return \Illuminate\View\View
-     */
-    public function show(int $id): View // Menambahkan type hinting int untuk $id dan View untuk return
-    {
-        // Mengambil berita dari service
-        $berita = $this->beritaService->findById($id);
+        // Jika Anda menggunakan getAllWithKategori, Anda mungkin perlu mengubahnya di Service
+        // agar bisa menerima kategoriId juga atau mengelola logika filter kategori di Controller.
+        // Untuk kesederhanaan, mari kita asumsikan Anda akan memfilter dengan keyword untuk saat ini,
+        // atau tambahkan parameter kategoriId ke getAllWithKategori di service.
 
-        // --- Logika untuk mengincrement jumlah_kunjungan ---
-        // Memastikan model Berita diimpor untuk menggunakan metode increment()
-        $berita->increment('jumlah_kunjungan');
+        // Contoh jika Anda menganggap 'search' adalah keyword dan ingin menggunakannya:
+        $beritas = $this->beritaService->getAllWithKategori($perPage, $search);
 
-        // Mengaktifkan pemanggilan metode getBeritaTerkait dari service
-        // dan mengirimkan variable $beritaTerkait ke view
-        $beritaTerkait = $this->beritaService->getBeritaTerkait($berita->kategori_id, $berita->id);
+        // Jika Anda ingin memfilter berdasarkan kategori_id juga, Anda harus memodifikasi
+        // metode getAllWithKategori di service atau menambahkan metode baru.
+        // Sebagai contoh, jika Anda menambahkan parameter kategoriId ke getAllWithKategori:
+        // $beritas = $this->beritaService->getAllWithKategori($perPage, $search, $kategoriId);
 
-        return view('berita.show', compact('berita', 'beritaTerkait'));
+
+        $kategoris = Kategori::where('sub_kategori', 'berita')->get();
+
+        return view('berita.index', compact('beritas', 'kategoris'));
     }
 }

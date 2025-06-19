@@ -168,4 +168,19 @@ class BeritaService
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * Mengambil semua berita dengan paginasi, filter kategori, dan pencarian.
+     *
+     * @param int|null $perPage
+     * @param int|null $kategoriId
+     * @param string|null $search
+     * @return LengthAwarePaginator
+     */
+    public function getAllPaginated(?int $perPage = 10, ?int $kategoriId = null, ?string $search = null): LengthAwarePaginator
+    {
+        // Panggil metode dari repository
+        // Asumsi BeritaRepository memiliki metode ini dan bisa menerima search
+        return $this->beritaRepository->getAllPaginated($perPage, $kategoriId, $search);
+    }
 }

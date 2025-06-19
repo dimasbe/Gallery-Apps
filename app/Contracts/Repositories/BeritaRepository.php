@@ -164,7 +164,7 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
             ->paginate($pagination);
     }
 
-    public function getAllPaginated(?int $perPage = 10, ?int $kategoriId = null): LengthAwarePaginator
+    public function getAllPaginated(?int $perPage = 10, ?int $kategoriId = null, ?string $search = null): LengthAwarePaginator
     {
         $query = $this->model->with([
             'kategori',
@@ -179,6 +179,17 @@ class BeritaRepository extends BaseRepository implements BeritaInterface
             });
         }
 
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('judul_berita', 'like', "%{$search}%")
+                  ->orWhere('isi_berita', 'like', "%{$search}%")
+                  ->orWhereHas('kategori', function ($subQ) use ($search) {
+                      $subQ->where('nama_kategori', 'like', "%{$search}%");
+                  });
+            });
+        }
+
         return $query->paginate($perPage ?? 10);
     }
 }
+
