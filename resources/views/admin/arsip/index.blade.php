@@ -125,6 +125,10 @@
                                     class="bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
                                         Lihat
                                     </a>
+                                    <button onclick="showUnarchivePopup({{ $data->id }})"
+                                            class="bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                        Tampilkan
+                                    </button>
                                     {{-- The delete button now calls showDeletePopup with the item ID --}}
                                     <button class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center"
                                             onclick="showDeletePopup({{ $data->id }})">
@@ -239,6 +243,35 @@
                 </div>
             </div>
         </div>
+
+        {{-- Pop-up Batal Arsip --}}
+        <div id="unarchive-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
+                <div class="text-green-600 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 7h16M4 12h16M4 17h16" />
+                    </svg>
+                </div>
+
+                <p id="unarchive-popup-message" class="text-gray-800 text-lg font-semibold mb-6">
+                    Yakin ingin memindahkan aplikasi ini dari arsip?
+                </p>
+
+                <div class="flex justify-center space-x-4">
+                    <button class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 font-medium py-1.5 px-4 rounded-md transition duration-200"
+                            onclick="hideUnarchivePopup()">Batal</button>
+                    <form id="unarchive-form" method="POST" action="">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit"
+                                class="bg-green-700 hover:bg-green-800 text-white font-medium py-1.5 px-4 rounded-md transition duration-200">
+                            Tampilkan
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -279,6 +312,16 @@
         });
 
         window.location.href = url.toString();
+    }
+
+    function showUnarchivePopup(id) {
+        const form = document.getElementById('unarchive-form');
+        form.action = `/admin/arsip/${id}/unarchive`;
+        document.getElementById('unarchive-popup-overlay').classList.remove('hidden');
+    }
+
+    function hideUnarchivePopup() {
+        document.getElementById('unarchive-popup-overlay').classList.add('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
