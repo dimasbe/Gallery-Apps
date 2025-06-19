@@ -90,7 +90,7 @@
             <h3 class="text-left text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4 flex items-center">
                 {{ $category->nama_kategori }}
                 {{-- Make sure the route below uses $category->id if 'nama_kategori' isn't a unique slug for routing --}}
-                <a href="{{ route('kategori.show', $category->id) }}" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
+                <a href="{{ route('kategori.show', $category->nama_kategori) }}" class="ml-3 text-[#AD1500] hover:text-[#8F1000]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

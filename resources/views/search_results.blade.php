@@ -51,48 +51,35 @@
             Tidak ada aplikasi yang ditemukan dengan kata kunci tersebut.
         </div>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10">
-            @foreach ($columnedResults as $colIndex => $column)
-                <div class="space-y-5">
-                    @foreach ($column as $rowInColIndex => $aplikasi)
-                        <div class="flex items-start space-x-3 font-poppins">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-6 mt-8">
+            @foreach ($results as $index => $aplikasi)
+                <div class="flex items-start space-x-3 font-poppins">
+                    <span class="text-sm font-bold text-[#1b1b18] w-5">
+                        {{ $globalStartingIndex + $index + 1 }}
+                    </span>
+
+                    <a href="{{ route('aplikasi.detail', $aplikasi->id) }}" class="block w-full">
+                        <div class="bg-gray-100 border border-[#D9D9D9] rounded-xl overflow-hidden shadow-xl p-6 flex flex-col justify-center min-h-[200px] hover:shadow-2xl transition-shadow duration-300">
                             @php
-                                $itemOriginalIndex = ($colIndex * $actualItemsPerVisualColumn) + $rowInColIndex;
-                                $displayNumber = $globalStartingIndex + $itemOriginalIndex + 1;
+                                $coverImage = $aplikasi->fotoAplikasi->first()
+                                    ? asset('storage/' . $aplikasi->fotoAplikasi->first()->path_foto)
+                                    : 'https://placehold.co/400x200/cccccc/333333?text=Cover+App';
+
+                                $iconImage = $aplikasi->logo
+                                    ? asset('storage/' . $aplikasi->logo)
+                                    : 'https://placehold.co/40x40/cccccc/333333?text=Icon';
                             @endphp
-                            <span class="text-sm font-bold text-[#1b1b18] w-5">{{ $displayNumber }}</span>
 
-                            <a href="{{ route('aplikasi.detail', $aplikasi->id) }}">
-                                @if ($aplikasi->logo)
-                                    <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }}"
-                                        class="w-12 h-12 rounded-lg object-cover">
-                                @else
-                                    <div class="w-12 h-12 bg-gray-200 flex items-center justify-center rounded-lg text-gray-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                            stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                        </svg>
-                                    </div>
-                                @endif
-                            </a>
-
-                            <div class="flex flex-col">
-                                <h3 class="text-sm font-semibold text-[#1b1b18] leading-tight">
-                                    <a href="{{ route('aplikasi.detail', $aplikasi->id) }}" class="hover:text-red-600">{{ $aplikasi->nama_aplikasi }}</a>
-                                </h3>
-
-                                <p class="text-xs text-gray-500">
-                                    {{ $aplikasi->nama_pemilik ?? 'Developer tidak tersedia' }}
-                                </p>
-
-                                {{-- Rating section removed --}}
-                                {{-- <p class="text-xs text-gray-600">
-                                    {{ number_format($aplikasi->rating_konten ?? 0, 1) }} ★
-                                </p> --}}
+                            <img src="{{ $coverImage }}" alt="{{ $aplikasi->nama_aplikasi }} Thumbnail" class="w-full h-32 object-cover">
+                            <div class="pt-4 flex items-start space-x-3">
+                                <img src="{{ $iconImage }}" alt="Logo {{ $aplikasi->nama_pemilik }}" class="w-10 h-10 rounded-md object-cover">
+                                <div>
+                                    <h3 class="font-semibold text-gray-800 text-sm mb-1">{{ $aplikasi->nama_aplikasi }}</h3>
+                                    <p class="text-gray-600 text-xs">{{ $aplikasi->nama_pemilik ?? 'Developer tidak tersedia' }}</p>
+                                </div>
                             </div>
                         </div>
-                    @endforeach
+                    </a>
                 </div>
             @endforeach
         </div>
