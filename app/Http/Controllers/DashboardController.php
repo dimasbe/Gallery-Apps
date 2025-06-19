@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aplikasi;
-use App\Models\Berita;
+use App\Models\Berita; // Baris ini yang diperbaiki
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -29,9 +29,11 @@ class DashboardController extends Controller
         // Ambil 3 berita terbaru berdasarkan tanggal_dibuat
         $beritas = Berita::orderBy('tanggal_dibuat', 'desc')->limit(3)->get();
 
-        // Ambil kategori yang memiliki sub_kategori 'aplikasi'
+        // Ambil 6 kategori terbaru yang memiliki sub_kategori 'aplikasi'
         // Eager load aplikasi pertama dari setiap kategori, dan fotoAplikasi dari aplikasi tersebut
         $kategoriAplikasi = Kategori::where('sub_kategori', 'aplikasi')
+            ->orderBy('tanggal_dibuat', 'desc') // Menggunakan tanggal_dibuat sesuai struktur tabel Anda
+            ->limit(6)
             ->with(['aplikasi' => function ($query) {
                 $query->with('fotoAplikasi')->limit(1);
             }])
@@ -41,5 +43,3 @@ class DashboardController extends Controller
         return view('dashboard', compact('aplikasiPopuler', 'beritas', 'kategoriAplikasi'));
     }
 }
-
-

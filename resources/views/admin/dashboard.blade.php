@@ -30,35 +30,48 @@
         background-color: #2196F3; /* Example blue for other icons */
     }
 
-    /* Custom styles for chart placeholders */
-    .chart-placeholder {
-        height: 250px; /* Adjusted height for bar chart */
+    /* Chart Container improvements */
+    .chart-wrapper {
+        position: relative; /* For absolute positioning of navigation arrows */
+        margin-top: 1rem;
+        padding-top: 10px; /* Space above chart for potential legend or title */
+        padding-bottom: 20px; /* Space for scrollbar */
         background-color: #f5f5f5; /* Light gray background */
         border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #999;
-        font-style: italic;
-        margin-top: 1rem; /* Space below legend */
-        /* Hide placeholder text when chart is present */
-        text-indent: -9999px; /* Hide text */
-        overflow: hidden; /* Ensure text is completely hidden */
+        min-height: 280px; /* Ensure minimum height for chart area including scrollbar */
     }
-    .pie-chart-placeholder {
-        height: 200px; /* Height for doughnut chart */
-        width: 200px; /* Width for doughnut chart */
-        background-color: #f5f5f5;
-        border-radius: 50%; /* Make circular */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #999;
-        font-style: italic;
-        margin: 0 auto; /* Center doughnut chart */
-        /* Hide placeholder text when chart is present */
-        text-indent: -9999px; /* Hide text */
-        overflow: hidden; /* Ensure text is completely hidden */
+
+    .chart-scroll-container {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        padding-bottom: 5px; /* Adjust if scrollbar obscures labels */
+    }
+
+    /* Custom scrollbar styling (Webkit browsers) */
+    .chart-scroll-container::-webkit-scrollbar {
+        height: 8px; /* Height of horizontal scrollbar */
+    }
+    .chart-scroll-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    .chart-scroll-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+    .chart-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    /* Ensure canvas takes appropriate space inside scrollable div */
+    #monthlyRecapChart {
+        height: 250px; /* Fixed height for the chart canvas */
+        /* Width will be set dynamically by JS to allow scrolling */
+    }
+
+    /* Styles for navigation arrows - HIDDEN */
+    .chart-navigation {
+        display: none; /* Hide the navigation arrows */
     }
 
     /* Custom styles for app list items */
@@ -72,8 +85,11 @@
         width: 40px;
         height: 40px;
         border-radius: 8px; /* Slightly rounded corners for app icons */
-        object-fit: cover;
+        object-fit: cover; /* Ensures image fills the area, cropping if necessary */
         background-color: #eee; /* Placeholder background */
+        flex-shrink: 0; /* Prevent shrinking */
+        flex-grow: 0; /* Prevent growing */
+        display: block; /* Ensures it behaves as a block element for consistent sizing */
     }
     .publisher-avatar {
         width: 32px;
@@ -82,29 +98,38 @@
         object-fit: cover;
         background-color: #eee;
     }
+    /* Placeholder for Pie Chart */
+    .pie-chart-placeholder {
+        height: 200px; /* Height for doughnut chart */
+        width: 200px; /* Width for doughnut chart */
+        background-color: #f5f5f5;
+        border-radius: 50%; /* Make circular */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-style: italic;
+        margin: 0 auto; /* Center doughnut chart */
+    }
 </style>
 
 <div class="p-6"> {{-- Main padding for content area --}}
 
-    {{-- WHITE CARD FOR HEADER & BREADCRUMB --}}
-    <div class="bg-white shadow-md rounded-lg p-6 mb-6"> {{-- New white card for header, with shadow and rounded corners --}}
+    {{-- WHITE CARD FOR HEADER & BREADCRUMB + SINGLE MONTH FILTER --}}
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Beranda</h1> {{-- Main page title --}}
-            <nav aria-label="breadcrumb">
-                <!-- <ol class="flex items-center text-sm text-gray-600">
-                    <li class="flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="hover:text-custom-primary-red">Beranda</a>
-                        <span class="mx-2 text-custom-primary-red text-base">&bull;</span>
-                    </li>
-                    <li class="text-custom-primary-red" aria-current="page">Beranda</li> {{-- Breadcrumb for dashboard page --}}
-                </ol> -->
-            </nav>
+            <h1 class="text-3xl font-bold text-red-700">Beranda</h1>
+            <div class="relative inline-block text-gray-700">
+                <input type="month"
+                        id="mainMonthFilter" {{-- ID unik untuk filter utama --}}
+                        class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-custom-primary-red"
+                        value="{{ now()->format('Y-m') }}"> {{-- Default to current month --}}
+            </div>
         </div>
     </div>
 
-
     {{-- TOP SECTION: Title and Large Stats Cards --}}
-    <h1 class="text-2xl font-semibold text-gray-800 mb-6"></h1> {{-- This title can now be empty or removed as it's in the header card --}}
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6"></h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {{-- Card: Number of Users --}}
@@ -114,7 +139,7 @@
             </div>
             <div>
                 <p class="text-gray-500 text-sm">Jumlah Pengguna</p>
-                <h2 class="text-3xl font-bold text-gray-800">{{ $totalUsers }}</h2> {{-- DYNAMIC DATA --}}
+                <h2 class="text-3xl font-bold text-gray-800">{{ $totalUsers }}</h2>
             </div>
         </div>
 
@@ -125,7 +150,7 @@
             </div>
             <div>
                 <p class="text-gray-500 text-sm">Aplikasi Diunggah</p>
-                <h2 class="text-3xl font-bold text-gray-800">{{ $totalAplikasiDiunggah }}</h2> {{-- DYNAMIC DATA --}}
+                <h2 class="text-3xl font-bold text-gray-800">{{ $totalAplikasiDiunggah }}</h2>
             </div>
         </div>
     </div>
@@ -136,57 +161,27 @@
         <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-800">Rekap Bulanan</h2>
-                <div class="relative inline-block text-gray-700">
-                    {{-- Using input type="month" --}}
-                    <input type="month"
-                           id="monthlyRecapFilter" {{-- Adding ID for potential JavaScript --}}
-                           class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-custom-primary-red"
-                           value="{{ now()->format('Y-m') }}"> {{-- Default to current month --}}
+            </div>
+            <p class="text-gray-500 text-sm">Jumlah aplikasi diunggah per kategori</p>
+
+            <div class="chart-wrapper">
+                <div class="chart-scroll-container" id="monthlyRecapChartContainer">
+                    <canvas id="monthlyRecapChart"></canvas>
                 </div>
-            </div>
-            <p class="text-gray-500 text-sm">Data untuk bulan yang dipilih.</p>
-            {{-- Canvas for bar chart --}}
-            <div class="chart-placeholder">
-                <canvas id="monthlyRecapChart"></canvas>
-            </div>
-            {{-- Categories/filters below the chart (remain static for now if no dynamic data) --}}
-            <div class="mt-4 flex flex-wrap gap-2 text-sm justify-center">
-                @forelse ($kategoriAplikasi as $kategori)
-                    <span class="px-3 py-1 bg-gray-200 rounded-full text-gray-700">{{ $kategori->nama_kategori }}</span>
-                @empty
-                    <span class="px-3 py-1 bg-gray-200 rounded-full text-gray-700">Tidak ada kategori</span>
-                @endforelse
+                {{-- Navigation arrows are hidden via CSS --}}
+                <div class="chart-navigation">
+                    <button id="scrollLeftBtn" aria-label="Scroll left"><i class="fas fa-chevron-left"></i></button>
+                    <button id="scrollRightBtn" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+                </div>
             </div>
         </div>
 
         {{-- Right Column: Most Visited Apps --}}
         <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Aplikasi Sering Dikunjungi</h2>
-            <div class="relative inline-block text-gray-700 mb-4">
-                {{-- Using input type="month" --}}
-                <input type="month"
-                       id="mostVisitedAppsFilter" {{-- Adding ID --}}
-                       class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-custom-primary-red"
-                       value="{{ now()->format('Y-m') }}"> {{-- Default to current month --}}
-            </div>
-
-            <ul class="space-y-4">
-                {{-- DYNAMIC DATA: Loop through mostVisitedApps --}}
-                @forelse ($mostVisitedApps as $index => $app)
-                <li class="flex items-center space-x-3">
-                    <span class="text-lg font-bold text-gray-500">{{ $index + 1 }}</span>
-                    {{-- Using app logo from database --}}
-                    <img src="{{ $app->logo ? asset('storage/' . $app->logo) : 'https://placehold.co/40x40/cccccc/333333?text=App+Icon' }}" alt="{{ $app->nama_aplikasi }} avatar" class="app-avatar">
-                    <div class="flex-grow">
-                        <p class="text-gray-800 font-semibold">{{ $app->nama_aplikasi }}</p>
-                        <p class="text-gray-500 text-sm">{{ $app->nama_pemilik }}</p> {{-- Displaying publisher name --}}
-                    </div>
-                    {{-- Rating removed as requested --}}
-                </li>
-                @empty
-                <li class="text-gray-500 text-center">Tidak ada aplikasi sering dikunjungi.</li>
-                @endforelse
-            </ul>
+            <ol class="space-y-4" id="mostVisitedAppsList">
+                {{-- Data akan dimuat di sini oleh JavaScript --}}
+            </ol>
         </div>
     </div>
 
@@ -195,78 +190,30 @@
         {{-- Left Column: Popular Publishers --}}
         <div class="bg-white rounded-xl shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Publisher Terpopuler</h2>
-            <ul class="space-y-3">
-                {{-- DYNAMIC DATA: Loop through popularPublishers --}}
-                @forelse($popularPublishers as $publisher)
-                <li class="flex items-center space-x-3">
-                    {{-- Using publisher logo from retrieved data (publisher_logo) --}}
-                    <img src="{{ $publisher->publisher_logo ? asset('storage/' . $publisher->publisher_logo) : 'https://placehold.co/32x32/cccccc/333333?text=P' }}" alt="{{ $publisher->nama_pemilik }} avatar" class="publisher-avatar">
-                    <div class="flex-grow">
-                        <p class="text-gray-800 font-semibold">{{ $publisher->nama_pemilik }}</p>
-                    </div>
-                    <p class="text-gray-500 text-sm">{{ number_format($publisher->total_unduhan_apps) }} Kunjungan</p> {{-- Using total_unduhan_apps --}}
-                </li>
-                @empty
-                <li class="text-gray-500 text-center">Tidak ada publisher terpopuler.</li>
-                @endforelse
-            </ul>
+            <ol class="space-y-3" id="popularPublishersList">
+                {{-- Data akan dimuat di sini oleh JavaScript --}}
+            </ol>
         </div>
 
         {{-- Middle Column: Most Viewed News (Doughnut Chart) --}}
         <div class="bg-white rounded-xl shadow-sm p-6">
-            {{-- PERUBAHAN DI SINI: Judul dan Filter terpisah --}}
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Berita Sering Dilihat</h2>
-            <div class="relative inline-block text-gray-700 w-full mb-4"> {{-- w-full agar filter mengambil seluruh lebar --}}
-                <input type="month"
-                       id="mostViewedNewsFilter" {{-- Adding ID --}}
-                       class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-custom-primary-red"
-                       value="{{ now()->format('Y-m') }}"> {{-- Default to current month --}}
-            </div>
-            <p class="text-gray-800 text-xl font-bold mb-4">{{ number_format(array_sum($newsChartData)) }} Kunjungan Total</p>
+            <p class="text-gray-800 text-xl font-bold mb-4" id="totalNewsViews"></p>
             <div class="flex flex-col items-center justify-center">
                 <div class="pie-chart-placeholder">
                     <canvas id="newsPieChart"></canvas>
                 </div>
-                {{-- Dynamic legend for doughnut chart --}}
-                <div class="mt-4 text-sm w-full">
-                    @forelse($mostViewedNewsForChart as $index => $news)
-                        <div class="flex items-center mb-1">
-                            @php
-                                $colors = ['#3B82F6', '#EF4444', '#22C55E', '#F59E0B', '#8B6DBF'];
-                                $color = $colors[$index % count($colors)];
-                            @endphp
-                            <span class="block w-3 h-3 rounded-full mr-2" style="background-color: {{ $color }};"></span>
-                            {{-- Ensuring news title is displayed --}}
-                            <span class="text-gray-700">{{ $news->judul_berita }}</span>: <span class="ml-auto font-semibold">{{ number_format($news->jumlah_kunjungan) }}</span>
-                        </div>
-                    @empty
-                        <div class="text-gray-500 text-center">Tidak ada data berita untuk grafik.</div>
-                    @endforelse
+                <div class="mt-4 text-sm w-full" id="newsPieChartLegend">
+                    {{-- Data akan dimuat di sini oleh JavaScript --}}
                 </div>
             </div>
         </div>
 
         {{-- Right Column: Latest News --}}
         <div class="bg-white rounded-xl shadow-sm p-6">
-            {{-- Judul dan Filter terpisah --}}
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Berita Terbaru</h2>
-            <div class="relative inline-block text-gray-700 w-full mb-4"> {{-- w-full agar filter mengambil seluruh lebar --}}
-                <input type="month"
-                       id="latestNewsFilter"
-                       class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-custom-primary-red"
-                       value="{{ now()->format('Y-m') }}">
-            </div>
-            {{-- Konten untuk bagian "Berita" akan ditampilkan di sini, contohnya daftar berita terbaru --}}
-            <ul class="mt-4 space-y-3">
-                {{-- DYNAMIC DATA: Loop through $beritas --}}
-                @forelse($beritas as $beritaItem) {{-- Changed variable name to avoid conflict with $beritas (plural) --}}
-                    <li>
-                        <a href="{{ route('berita.show', $beritaItem->id) }}" class="text-gray-800 font-semibold hover:text-[#AD1500]">{{ $beritaItem->judul_berita }}</a>
-                        <p class="text-gray-500 text-xs">{{ \Carbon\Carbon::parse($beritaItem->tanggal_dibuat)->locale('id')->isoFormat('D MMMMllll') }}</p>
-                    </li>
-                @empty
-                    <li class="text-gray-500">Tidak ada berita terbaru untuk ditampilkan.</li>
-                @endforelse
+            <ul class="mt-4 space-y-3" id="latestNewsList">
+                {{-- Data akan dimuat di sini oleh JavaScript --}}
             </ul>
         </div>
     </div>
@@ -274,26 +221,70 @@
 
 {{-- CDN Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{-- Font Awesome for Icons (ensure this is linked in your main layout or here) --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Data from Laravel for Chart.js (encoded from PHP)
-        const newsChartLabels = @json($newsChartLabels);
-        const newsChartData = @json($newsChartData);
+    // Define colors once for consistency (can be expanded or dynamically generated)
+    const COLORS = ['#AD1500', '#3B82F6', '#EF4444', '#22C55E', '#F59E0B', '#8B6DBF', '#10B981', '#6366F1', '#EC4899', '#F97316'];
 
-        // Monthly Recap Bar Chart
-        var monthlyRecapCtx = document.getElementById('monthlyRecapChart').getContext('2d');
-        var monthlyRecapChart = new Chart(monthlyRecapCtx, {
-            type: 'bar',
+    // Global variables to hold chart instances
+    let monthlyRecapChart;
+    let newsPieChart;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const initialData = @json($initialData);
+
+        renderMonthlyRecapChart(initialData.monthlyRecap.labels, initialData.monthlyRecap.datasets);
+        renderNewsPieChart(initialData.newsChart.labels, initialData.newsChart.data);
+        updateMostVisitedAppsList(initialData.mostVisitedApps);
+        updatePopularPublishersList(initialData.popularPublishers);
+        updateLatestNewsList(initialData.latestNews);
+
+        document.getElementById('mainMonthFilter').addEventListener('change', function() {
+            const [year, month] = this.value.split('-');
+            fetchDashboardData(month, year);
+        });
+    });
+
+    /**
+     * Renders or updates the Monthly Recap Bar Chart, showing total apps per category.
+     * @param {Array<string>} originalLabels - Original labels for the X-axis (days).
+     * @param {Array<Object>} originalDatasets - Array of dataset objects, each with label (category) and daily data.
+     */
+    function renderMonthlyRecapChart(originalLabels, originalDatasets) {
+        const ctx = document.getElementById('monthlyRecapChart').getContext('2d');
+        if (monthlyRecapChart) monthlyRecapChart.destroy(); // Destroy previous chart instance
+
+        // Aggregate data by category for the entire month
+        const categoryLabels = [];
+        const categoryData = []; // Store raw counts for bar heights and tooltip
+        const categoryColors = [];
+
+        originalDatasets.forEach((dataset, index) => {
+            categoryLabels.push(dataset.label); // Category name
+            const totalForCategory = dataset.data.reduce((sum, value) => sum + value, 0);
+            categoryData.push(totalForCategory); // Sum of apps for the month for this category
+            categoryColors.push(COLORS[index % COLORS.length]); // Assign color
+        });
+
+        // Determine a suitable suggestedMax for the Y-axis based on actual data
+        const maxDataValue = Math.max(...categoryData);
+        // If max is 0 or low, set a default suggestedMax, otherwise calculate a slightly higher max
+        const suggestedYMax = maxDataValue > 0 ? Math.ceil(maxDataValue * 1.2) : 10; // Ensure at least 10 if no data or very little
+
+
+        monthlyRecapChart = new Chart(ctx, {
+            type: 'bar', // Type remains 'bar'
             data: {
-                labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], // This is still static, can be made dynamic if data available
+                labels: categoryLabels, // Now category names
                 datasets: [{
-                    label: 'Jumlah Interaksi',
-                    data: [1200, 1900, 1500, 2000, 2200, 1800, 2500], // This is still static, can be made dynamic if data available
-                    backgroundColor: '#AD1500', // Primary Red
-                    borderColor: '#AD1500',
-                    borderWidth: 1,
-                    borderRadius: 5, // Rounded corners for bars
+                    label: 'Jumlah Aplikasi', // Label for tooltip
+                    data: categoryData, // Data is now raw counts
+                    backgroundColor: categoryColors, // Use distinct colors for each bar
+                    hoverBackgroundColor: categoryColors.map(color => color + '80'),
+                    barPercentage: 0.8,
+                    categoryPercentage: 0.8
                 }]
             },
             options: {
@@ -301,40 +292,95 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false // Hide legend
+                        display: false, // No need for legend
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                // Tooltip now directly uses the raw count
+                                return context.label + ': ' + context.parsed.y + ' Aplikasi';
+                            }
+                        }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            display: false // Hide y-axis grid lines
-                        }
-                    },
                     x: {
+                        stacked: false,
+                        title: {
+                            display: true,
+                            text: 'Kategori' // Updated title for X-axis
+                        },
                         grid: {
-                            display: false // Hide x-axis grid lines
-                        }
+                            display: false
+                        },
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 45, // Rotate labels by 45 degrees
+                            minRotation: 45, // Ensure they stay at 45 degrees
+                            font: {
+                                size: 12
+                            }
+                        },
+                    },
+                    y: {
+                        stacked: false,
+                        beginAtZero: true,
+                        title: {
+                            display: true, // Display Y-axis title
+                            text: 'Jumlah Aplikasi' // Reverted Y-axis title
+                        },
+                        grid: {
+                            display: false // Still hide grid lines for a cleaner look
+                        },
+                        ticks: {
+                            display: false, // Hide Y-axis tick labels (numbers)
+                            min: 0,
+                            callback: function(value) {
+                                // This callback is still here but display: false overrides it for visual ticks
+                                if (Number.isInteger(value)) {
+                                    return value;
+                                }
+                            }
+                        },
+                        suggestedMax: suggestedYMax // Use the dynamically determined max
                     }
                 }
             }
         });
 
-        // News Doughnut Chart
-        var newsPieCtx = document.getElementById('newsPieChart').getContext('2d');
-        var newsPieChart = new Chart(newsPieCtx, {
-            type: 'doughnut', // Changed to doughnut for ring effect
+        // ====================================================================================
+        // Logic to set canvas width to ensure all labels are visible and scrollable
+        // ====================================================================================
+        const chartCanvas = document.getElementById('monthlyRecapChart');
+        const chartScrollContainer = document.getElementById('monthlyRecapChartContainer');
+        const numLabels = categoryLabels.length;
+
+        // Adjusted for category names and rotation. Increased minimum width per bar.
+        const minimumBarDisplayWidth = 100;
+        const calculatedCanvasWidth = numLabels * minimumBarDisplayWidth;
+
+        // Ensure canvas width is at least container width to avoid shrinking on small data sets
+        chartCanvas.style.width = `${Math.max(chartScrollContainer.clientWidth, calculatedCanvasWidth)}px`;
+    }
+
+    /**
+     * Renders or updates the News Doughnut Chart.
+     * @param {Array<string>} labels
+     * @param {Array<number>} data
+     */
+    function renderNewsPieChart(labels, data) {
+        const ctx = document.getElementById('newsPieChart').getContext('2d');
+        if (newsPieChart) newsPieChart.destroy();
+
+        newsPieChart = new Chart(ctx, {
+            type: 'doughnut',
             data: {
-                labels: newsChartLabels, // DYNAMIC DATA
+                labels: labels,
                 datasets: [{
-                    data: newsChartData, // DYNAMIC DATA
-                    backgroundColor: [
-                        '#3B82F6', // Blue-500 (Tailwind CSS)
-                        '#EF4444', // Red-500 (Tailwind CSS)
-                        '#22C55E', // Green-500 (Tailwind CSS)
-                        '#F59E0B', // Yellow-500 (Tailwind CSS)
-                        '#8B6DBF'  // Purple from your custom style
-                    ],
+                    data: data,
+                    backgroundColor: COLORS,
                     hoverOffset: 4
                 }]
             },
@@ -343,62 +389,156 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false // We will create a custom legend below the chart
+                        display: false
                     }
                 }
             }
         });
 
-        // Hide chart placeholder text after rendering
-        // Ensure canvas element exists before trying to access parentNode
-        const monthlyRecapChartParent = document.getElementById('monthlyRecapChart')?.parentNode;
-        if (monthlyRecapChartParent) {
-            monthlyRecapChartParent.style.textIndent = '0';
-            monthlyRecapChartParent.style.overflow = 'visible'; // Visible to see the chart
-            monthlyRecapChartParent.style.backgroundColor = 'transparent'; // Remove placeholder background
-        }
+        const legendContainer = document.getElementById('newsPieChartLegend');
+        const totalNewsViewsElement = document.getElementById('totalNewsViews');
+        const totalViews = data.reduce((sum, val) => sum + val, 0);
+        totalNewsViewsElement.textContent = `${totalViews.toLocaleString('id-ID')} Kunjungan Total`;
 
-        const newsPieChartParent = document.getElementById('newsPieChart')?.parentNode;
-        if (newsPieChartParent) {
-            newsPieChartParent.style.textIndent = '0';
-            newsPieChartParent.style.overflow = 'visible'; // Visible to see the chart
-            newsPieChartParent.style.backgroundColor = 'transparent'; // Remove placeholder background
-            newsPieChartParent.style.borderRadius = '0'; // Remove circular background if not needed for chart itself
-        }
-    });
-
-    const ctx = document.getElementById('monthlyRecapChart').getContext('2d');
-    let chart;
-
-    function fetchChart(month, year) {
-        fetch(`/dashboard/chart-data?month=${month}&year=${year}`)
-            .then(response => response.json())
-            .then(res => {
-                if (chart) chart.destroy();
-                chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: res.labels,
-                        datasets: [{
-                            label: 'Jumlah Aplikasi',
-                            data: res.data,
-                            backgroundColor: '#AD1500'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
+        if (labels.length > 0) {
+            legendContainer.innerHTML = '';
+            labels.forEach((label, index) => {
+                const color = COLORS[index % COLORS.length];
+                const value = data[index];
+                legendContainer.innerHTML += `
+                    <div class="flex items-center mb-1">
+                        <span class="block w-3 h-3 rounded-full mr-2" style="background-color: ${color};"></span>
+                        <span class="text-gray-700">${label}</span>: <span class="ml-auto font-semibold">${value.toLocaleString('id-ID')}</span>
+                    </div>
+                `;
             });
+        } else {
+            legendContainer.innerHTML = '<div class="text-gray-500 text-center">Tidak ada data berita untuk grafik.</div>';
+        }
     }
 
-    // Ambil default bulan & tahun
-    const date = new Date();
-    fetchChart(date.getMonth() + 1, date.getFullYear());
+    /**
+     * Updates the Most Visited Apps list.
+     * @param {Array<Object>} apps - Array of app objects.
+     */
+    function updateMostVisitedAppsList(apps) {
+        const listContainer = document.getElementById('mostVisitedAppsList');
+        listContainer.innerHTML = '';
+
+        // Limit to 10 apps
+        const limitedApps = apps.slice(0, 10);
+
+        if (limitedApps.length > 0) {
+            limitedApps.forEach((app, index) => { // Added index for numbering
+                // MENGGUNAKAN 'thumbnail_aplikasi' UNTUK GAMBAR
+                const appThumbnail = app.thumbnail_aplikasi || 'https://placehold.co/40x40/cccccc/333333?text=App';
+                // Handle cases where total_kunjungan might be null, undefined, or not a valid number
+                const kunjunganCount = (app.total_kunjungan == null || isNaN(app.total_kunjungan))
+                    ? 'N/A'
+                    : app.total_kunjungan.toLocaleString('id-ID'); // Format number for readability
+
+                listContainer.innerHTML += `
+                    <li class="flex items-center space-x-3">
+                        <span class="font-bold text-gray-700 w-6 text-right">${index + 1}.</span> <!-- Numbering -->
+                        <img src="${appThumbnail}" alt="${app.nama_aplikasi} thumbnail" class="app-avatar">
+                        <div class="flex-grow flex flex-col justify-center">
+                            <p class="text-gray-800 font-semibold">${app.nama_aplikasi}</p>
+                            <p class="text-gray-500 text-sm">${app.nama_pemilik}</p>
+                        </div>
+                        <div class="flex items-center ml-auto">
+                            <span class="font-semibold text-gray-700 text-base">${kunjunganCount}</span>
+                        </div>
+                    </li>
+                `;
+            });
+        } else {
+            listContainer.innerHTML = '<li class="text-gray-500 text-center">Tidak ada aplikasi sering dikunjungi.</li>';
+        }
+    }
+
+    /**
+     * Updates the Popular Publishers list.
+     * @param {Array<Object>} publishers - Array of publisher objects.
+     */
+    function updatePopularPublishersList(publishers) {
+        const listContainer = document.getElementById('popularPublishersList');
+        listContainer.innerHTML = '';
+
+        if (publishers.length > 0) {
+            publishers.forEach((publisher, index) => { // Added index for numbering
+                const publisherLogo = publisher.publisher_logo || 'https://placehold.co/32x32/cccccc/333333?text=P';
+                listContainer.innerHTML += `
+                    <li class="flex items-center space-x-3">
+                        <span class="font-bold text-gray-700 w-6 text-right">${index + 1}.</span> <!-- Numbering -->
+                        <img src="${publisherLogo}" alt="${publisher.nama_pemilik} avatar" class="publisher-avatar">
+                        <div class="flex-grow">
+                            <p class="text-gray-800 font-semibold">${publisher.nama_pemilik}</p>
+                        </div>
+                        <p class="text-gray-500 text-sm">${publisher.total_unduhan_apps.toLocaleString('id-ID')} Kunjungan</p>
+                    </li>
+                `;
+            });
+        } else {
+            listContainer.innerHTML = '<li class="text-gray-500 text-center">Tidak ada publisher terpopuler.</li>';
+        }
+    }
+
+    /**
+     * Updates the Latest News list.
+     * @param {Array<Object>} news - Array of news article objects.
+     */
+    function updateLatestNewsList(news) {
+        const listContainer = document.getElementById('latestNewsList');
+        listContainer.innerHTML = '';
+
+        if (news.length > 0) {
+            news.forEach(beritaItem => {
+                listContainer.innerHTML += `
+                    <li>
+                        <a href="{{ url('/admin/berita') }}/${beritaItem.id}" class="text-gray-800 font-semibold hover:text-[#AD1500]">${beritaItem.judul_berita}</a>
+                        <p class="text-gray-500 text-xs">${beritaItem.tanggal_dibuat}</p>
+                    </li>
+                `;
+            });
+        } else {
+            listContainer.innerHTML = '<li class="text-gray-500">Tidak ada berita terbaru untuk ditampilkan.</li>';
+        }
+    }
+
+    /**
+     * Fetches filtered dashboard data from the server via AJAX.
+     * @param {string} month - The month (e.g., '01' for January).
+     * @param {string} year - The year (e.g., '2024').
+     */
+    function fetchDashboardData(month, year) {
+        fetch(`{{ route('admin.dashboard.data') }}?month=${month}&year=${year}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update total users and uploaded apps counts
+                // Using specific IDs or a more robust way to target these elements
+                document.querySelector('h2.text-3xl.font-bold.text-gray-800:first-of-type').textContent = data.totalUsers;
+                document.querySelector('h2.text-3xl.font-bold.text-gray-800:last-of-type').textContent = data.totalAplikasiDiunggah;
+
+                renderMonthlyRecapChart(data.monthlyRecap.labels, data.monthlyRecap.datasets);
+                renderNewsPieChart(data.newsChart.labels, data.newsChart.data);
+                updateMostVisitedAppsList(data.mostVisitedApps);
+                updatePopularPublishersList(data.popularPublishers);
+                updateLatestNewsList(data.latestNews);
+            })
+            .catch(error => {
+                console.error('Error fetching dashboard data:', error);
+                // Instead of alert, you might want to show a more user-friendly message in the UI
+                const errorMessageElement = document.createElement('div');
+                errorMessageElement.className = 'text-red-500 bg-red-100 border border-red-400 rounded p-3 mt-4';
+                errorMessageElement.textContent = 'Gagal memuat data dashboard. Silakan coba lagi.';
+                document.querySelector('.p-6').prepend(errorMessageElement); // Add to top of content area
+                setTimeout(() => errorMessageElement.remove(), 5000); // Remove after 5 seconds
+            });
+    }
 </script>
 @endsection

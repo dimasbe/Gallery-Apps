@@ -20,20 +20,23 @@ class HomeController extends Controller
         // Pastikan kolom 'jumlah_kunjungan' ada di tabel 'aplikasi' Anda.
         // Eager load relasi 'fotoAplikasi' untuk mengambil gambar cover dan logo.
         $aplikasiPopuler = Aplikasi::orderBy('jumlah_kunjungan', 'desc')
-                                    ->limit(6) // Hanya ambil 6 aplikasi terpopuler
-                                    ->with('fotoAplikasi') // Load relasi fotoAplikasi untuk gambar cover
-                                    ->get();
+                                   ->limit(6) // Hanya ambil 6 aplikasi terpopuler
+                                   ->with('fotoAplikasi') // Load relasi fotoAplikasi untuk gambar cover
+                                   ->get();
 
         // Ambil 3 berita terbaru berdasarkan tanggal_dibuat
         $beritas = Berita::orderBy('tanggal_dibuat', 'desc')->limit(3)->get();
 
-        // Ambil kategori yang memiliki sub_kategori 'aplikasi'
+        // Ambil 6 kategori terbaru yang memiliki sub_kategori 'aplikasi'
+        // Diurutkan berdasarkan 'tanggal_dibuat' dan dibatasi 6.
         // Eager load aplikasi pertama dari setiap kategori, dan fotoAplikasi dari aplikasi tersebut
         $kategoriAplikasi = Kategori::where('sub_kategori', 'aplikasi')
-                                    ->with(['aplikasi' => function($query) {
-                                        $query->with('fotoAplikasi')->limit(1); // Load hanya 1 aplikasi per kategori
-                                    }])
-                                    ->get();
+                                   ->orderBy('tanggal_dibuat', 'desc') // Mengurutkan berdasarkan tanggal_dibuat
+                                   ->limit(6) // Hanya ambil 6 kategori terbaru
+                                   ->with(['aplikasi' => function($query) {
+                                       $query->with('fotoAplikasi')->limit(1); // Load hanya 1 aplikasi per kategori
+                                   }])
+                                   ->get();
 
         // Teruskan aplikasi populer, berita terbaru, DAN kategori ke view beranda Anda
         return view('welcome', compact('aplikasiPopuler', 'beritas', 'kategoriAplikasi'));

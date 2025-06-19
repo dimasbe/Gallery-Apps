@@ -1,16 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController; // Ini sudah ada, tidak perlu alias jika ini yang dipakai
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AdminRegisterController;
 use App\Http\Controllers\Admin\AdminVerifikasiController;
 use App\Http\Controllers\Admin\AdminRiwayatController;
-//use App\Http\Controllers\Admin\RiwayatController;
 use App\Http\Controllers\Admin\AdminBeritaController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\ArsipController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController; // PASTIKAN INI DIIMPOR DENGAN ALIAS
+// use App\Http\Controllers\Admin\DashboardController as AdminDashboardController; // Hapus atau biarkan jika Anda punya dua DashboardController
 
 /*
 |--------------------------------------------------------------------------
@@ -35,14 +34,20 @@ Route::post('/register', [AdminRegisterController::class, 'register'])->name('re
 Route::middleware(['auth', 'admin'])->group(function () {
 
     // 📊 Dashboard Admin
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    // Pastikan Anda menggunakan DashboardController yang sama di sini
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Ini adalah endpoint AJAX baru untuk mengambil data dashboard yang difilter
+    // PENTING: Gunakan Controller yang sama dengan yang menangani 'index' dashboard Anda.
+    Route::get('/dashboard-data', [DashboardController::class, 'getDashboardData'])->name('dashboard.data');
+
 
     // Logout Admin
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // Rute Verifikasi
     Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi');
-    
+
     Route::post('/aplikasi/{id}/terima', [AdminVerifikasiController::class, 'terima'])->name('aplikasi.terima');
     Route::post('/aplikasi/{id}/tolak', [AdminVerifikasiController::class, 'tolak'])->name('aplikasi.tolak');
 
@@ -55,7 +60,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Resource Controller Berita
     Route::resource('berita', AdminBeritaController::class, [
         'parameters' => [
-            'berita' => 'berita' 
+            'berita' => 'berita'
         ]
     ]);
 
@@ -64,20 +69,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Resource Controller Arsip
     Route::resource('arsip', ArsipController::class);
-
-    // Tambah rute admin lainnya di sini...
-    
-
-     // Rute Resource untuk Riwayat (index, show, destroy)
-     //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy']);
-     //Route::resource('riwayat', RiwayatController::class)->only(['index', 'show', 'destroy'])->names([
-        //'index' => 'riwayat.index',   // Akan terdaftar sebagai: 'admin.riwayat.index'
-        //'show' => 'riwayat.show',     // Akan terdaftar sebagai: 'admin.riwayat.show'
-        //'destroy' => 'riwayat.destroy', // Akan terdaftar sebagai: 'admin.riwayat.destroy'
-    //]);
-    // Tambahkan rute khusus untuk fungsi 'archive'
-    // Pastikan ini ada di dalam group 'admin.' agar namanya menjadi 'admin.riwayat.archive'
-    //Route::post('riwayat/{id}/archive', [RiwayatController::class, 'archive'])->name('riwayat.archive');
 
     // Riwayat (History)
     Route::get('/riwayat', [AdminRiwayatController::class, 'index'])->name('riwayat.index');
@@ -91,5 +82,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/arsip/{id}/unarchive', [ArsipController::class, 'unarchive'])->name('arsip.unarchive'); // New route for unarchiving
     Route::delete('/arsip/{id}/delete', [ArsipController::class, 'deleteFromArchive'])->name('arsip.delete_from_archive'); // New route for deleting from archive
 
-    Route::get('admin/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('admin.dashboard.chart-data');
+    // Ini adalah rute yang Anda miliki sebelumnya untuk chart-data,
+    // Kita akan menggantinya dengan '/dashboard-data' yang lebih umum
+    // Route::get('admin/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('admin.dashboard.chart-data');
 });
