@@ -1,0 +1,17 @@
+{
+  "build": {
+    "installCommand": "composer install --ignore-platform-reqs && npm ci",
+    "buildCommand": "npm run build"
+  },
+  "deploy": {
+    "startCommand": "php-fpm -D && nginx -g 'daemon off;'"
+  },
+  "plugins": [
+    "nginx",
+    "php",
+    "nodejs"
+  ],
+  "env": {
+    "NGINX_ROOT": "/app/public"
+  }
+}
