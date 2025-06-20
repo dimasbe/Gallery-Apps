@@ -1,26 +1,48 @@
-FROM php:8.2-fpm-alpine
+# ... (bagian sebelumnya dari Dockerfile)
 
-# Install Nginx dan ekstensi PHP yang dibutuhkan
-RUN apk add --no-cache nginx mysql-client nodejs npm \
-    php82-dom php82-pdo_mysql php82-mbstring php82-xml php82-zip php82-gd \
-    php82-curl php82-opcache php82-json php82-fileinfo php82-tokenizer \
-    php82-session php82-bcmath php82-ctype php82-exif php82-iconv php82-intl \
-    php82-openssl php82-phar php82-pdo_sqlite php82-pecl-redis
+# Install dependensi sistem yang dibutuhkan untuk Nginx, Node.js, dan ekstensi PHP
+RUN apk add --no-cache \
+    nginx \
+    mysql-client \
+    nodejs \
+    npm \
+    # Dependensi untuk ekstensi PHP
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    freetype-dev \
+    # Untuk intl
+    icu-dev \
+    # Untuk bcmath
+    php82-bcmath \
+    # Untuk gd
+    php82-gd \
+    # Untuk curl
+    php82-curl \
+    # Untuk intl
+    php82-intl \
+    # Untuk zip
+    php82-zip \
+    # Untuk opcache (penting untuk performa)
+    php82-opcache \
+    # Untuk fileinfo
+    php82-fileinfo \
+    # Untuk tokenizer
+    php82-tokenizer \
+    # Untuk session
+    php82-session \
+    # Untuk openssl
+    php82-openssl
 
-WORKDIR /app
+# Instal ekstensi PHP menggunakan script helper bawaan Docker
+RUN docker-php-ext-install pdo pdo_mysql mbstring xml dom json \
+    # Tambahan jika menggunakan Redis
+    && pecl install redis \
+    && docker-php-ext-enable redis
 
-COPY . /app
+# Opsional: Jika Anda menggunakan versi PHP yang berbeda atau ada masalah,
+# pastikan versi di FROM match dengan phpXX- di atas
+# Misalnya, jika FROM php:8.3-fpm-alpine, ganti semua php82- menjadi php83-
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
-
-RUN npm ci && npm run build
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
-RUN chmod -R 775 /app/storage /app/bootstrap/cache
-
-EXPOSE 80
-
-CMD php-fpm -F && nginx -g 'daemon off;'
+# ... (bagian selanjutnya dari Dockerfile)
