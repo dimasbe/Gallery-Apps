@@ -1,10 +1,34 @@
 FROM php:8.2-fpm-alpine
 
-# Install dependensi sistem dan ekstensi PHP
-RUN apk add --no-cache nginx mysql-client nodejs npm libzip-dev libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev icu-dev oniguruma-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_mysql mbstring xml dom json \
-    && pecl install redis \
-    && docker-php-ext-enable redis
+# Install dependensi sistem, Nginx, Node.js, dan ekstensi PHP
+RUN apk add --no-cache \
+    nginx \
+    mysql-client \
+    nodejs \
+    npm \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    freetype-dev \
+    icu-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    # Kembali menggunakan paket php-pecl-redis karena lebih stabil di Alpine
+    php82-pecl-redis \
+    # Dan tambahkan ekstensi PHP yang dibutuhkan Laravel dan sudah dikompilasi sebelumnya
+    php82-bcmath \
+    php82-gd \
+    php82-curl \
+    php82-intl \
+    php82-zip \
+    php82-opcache \
+    php82-fileinfo \
+    php82-tokenizer \
+    php82-session \
+    php82-openssl && \
+    # Gunakan docker-php-ext-install HANYA untuk ekstensi yang tidak tersedia sebagai paket phpXX-
+    docker-php-ext-install pdo pdo_mysql mbstring xml dom json
 
 WORKDIR /app
 
