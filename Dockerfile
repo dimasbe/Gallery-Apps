@@ -1,7 +1,7 @@
 FROM php:8.2-fpm-alpine
 
 # Install dependensi sistem dan ekstensi PHP
-RUN apk add --no-cache nginx mysql-client nodejs npm libzip-dev libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev icu-dev \
+RUN apk add --no-cache nginx mysql-client nodejs npm libzip-dev libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev icu-dev oniguruma-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring xml dom json \
     && pecl install redis \
     && docker-php-ext-enable redis
