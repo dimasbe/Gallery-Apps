@@ -5,9 +5,8 @@ RUN apk add --no-cache nginx \
     mysql-client \
     nodejs \
     npm \
-    # Ekstensi PHP untuk Laravel:
     php82-dom \
-    php82-pdo_mysql \ # PASTIKAN INI ADA
+    php82-pdo_mysql \
     php82-mbstring \
     php82-xml \
     php82-zip \
@@ -25,12 +24,7 @@ RUN apk add --no-cache nginx \
     php82-intl \
     php82-openssl \
     php82-phar \
-    # php82-pecl-redis # Hapus atau komen ini jika Anda tidak menggunakan Redis
-
-    # Tambahan penting untuk memastikan PDO MySQL driver tersedia:
-    php82-pdo_sqlite # Seringkali pdo_sqlite juga dibutuhkan untuk testing/cache
-    # Jika Anda menggunakan PostgreSQL, Anda butuh:
-    # php82-pdo_pgsql \
-    # postgresql-client
+    php82-pdo_sqlite \
+    php82-pecl-redis # Hapus atau komen baris ini jika Anda tidak menggunakan Redis
 
 # ... (bagian selanjutnya dari Dockerfile)
