@@ -4,7 +4,7 @@
     "buildCommand": "npm run build"
   },
   "deploy": {
-    "startCommand": "php artisan migrate --force && node /assets/scripts/prestart.mjs /app/nginx.template.conf /nginx.conf && (php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)"
+    "startCommand": "php artisan migrate --force && (php-fpm -F & nginx -g 'daemon off;')"
   },
   "plugins": [
     "nginx",
