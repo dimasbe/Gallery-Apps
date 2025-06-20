@@ -4,7 +4,7 @@
     "buildCommand": "npm run build"
   },
   "deploy": {
-    "startCommand": "php-fpm -F --pid /tmp/php-fpm.pid --fpm-config /etc/php-fpm.conf && nginx -g 'daemon off;'"
+    "startCommand": "nginx -g 'daemon off;'"
   },
   "plugins": [
     "nginx",
