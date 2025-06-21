@@ -14,9 +14,6 @@ RUN apk add --no-cache \
     icu-dev \
     oniguruma-dev \
     libxml2-dev \
-    # Kembali menggunakan paket php-pecl-redis karena lebih stabil di Alpine
-    php82-pecl-redis \
-    # Dan tambahkan ekstensi PHP yang dibutuhkan Laravel dan sudah dikompilasi sebelumnya
     php82-bcmath \
     php82-gd \
     php82-curl \
@@ -27,7 +24,6 @@ RUN apk add --no-cache \
     php82-tokenizer \
     php82-session \
     php82-openssl && \
-    # Gunakan docker-php-ext-install HANYA untuk ekstensi yang tidak tersedia sebagai paket phpXX-
     docker-php-ext-install pdo pdo_mysql mbstring xml dom json
 
 WORKDIR /app
