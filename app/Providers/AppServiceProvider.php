@@ -29,6 +29,7 @@ use App\Contracts\Repositories\FotoBeritaRepository;
 use App\Contracts\Repositories\KategoriRepository;
 use App\Contracts\Repositories\VerifikasiAplikasiRepository;
 use App\Contracts\Repositories\NotifikasiRepository;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -66,5 +67,10 @@ class AppServiceProvider extends ServiceProvider
         });
         
         Paginator::useTailwind();
+        
+        // 
+        // if (env('APP_ENV') === 'production' || str_contains(env('APP_URL'), 'ngrok-free.app')) {
+            URL::forceScheme('https');
+        // }
     }
 }
