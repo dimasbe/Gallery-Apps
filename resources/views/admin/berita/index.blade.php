@@ -42,22 +42,22 @@
             <table class="min-w-full bg-white rounded-lg overflow-hidden" id="beritaTable">
                 <thead>
                     <tr>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider rounded-tl-lg">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider rounded-tl-lg">
                             No.
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Thumbnail
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Judul Berita
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Tanggal Rilis
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Tanggal Update
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 uppercase tracking-wider rounded-tr-lg">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider rounded-tr-lg">
                             Aksi
                         </th>
                     </tr>
@@ -81,15 +81,15 @@
                             <td class="text-center py-4 px-4 text-sm text-gray-700">
                                 <div class="flex space-x-2 justify-center">
                                     <a href="{{ route('admin.berita.show', $item->id) }}"
-                                       class="bg-blue-600 border border-blue-700 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm">
+                                       class="bg-blue-600 border border-blue-700 text-white text-xs font-bold py-2 px-4 rounded-md shadow-sm">
                                         Detail
                                     </a>
                                     <a href="{{ route('admin.berita.edit', $item->id) }}"
-                                       class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-1 px-3 rounded shadow">
+                                       class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold py-2 px-4 rounded shadow">
                                         Edit
                                     </a>
                                     <button type="button"
-                                            class="bg-red-700 border border-red-800 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm"
+                                            class="bg-red-700 border border-red-800 text-white text-xs font-bold py-2 px-4 rounded-md shadow-sm"
                                             onclick="deleteBerita('{{ $item->id }}', '{{ route('admin.berita.destroy', $item->id) }}')">
                                         Hapus
                                     </button>

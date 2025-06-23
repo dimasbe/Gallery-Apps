@@ -102,7 +102,7 @@
                                                 break;
                                             case 'diterima': // Changed 'verified' to 'diterima' based on Riwayat page enum
                                                 $statusText = 'Diterima';
-                                                $statusClass = 'bg-green-200 text-green-900';
+                                                $statusClass = 'bg-yellow-200 text-yellow-900';
                                                 break;
                                             case 'ditolak': // Changed 'rejected' to 'ditolak' based on Riwayat page enum
                                                 $statusText = 'Ditolak';
@@ -122,11 +122,11 @@
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                 <div class="flex space-x-2 justify-center">
                                     <a href="{{ route('admin.arsip.show', $data->id) }}"
-                                    class="bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
-                                        Lihat
+                                    class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                        Detail
                                     </a>
                                     <button onclick="showUnarchivePopup({{ $data->id }})"
-                                            class="bg-green-700 hover:bg-green-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                            class="bg-purple-600 hover:bg-purple-600 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
                                         Tampilkan
                                     </button>
                                     {{-- The delete button now calls showDeletePopup with the item ID --}}
@@ -178,7 +178,7 @@
             </div>
 
             {{-- Custom Pagination Navigation with individual buttons as in ff1.PNG --}}
-            <div class="flex space-x-2"> {{-- Space between buttons --}}
+            <div class="flex space-x-2"> 
                 {{-- Previous Button --}}
                 <a href="{{ $arsip->previousPageUrl(array_merge(request()->query(), ['per_page' => $arsip->perPage()])) }}"
                 class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-300 transition duration-200
@@ -247,7 +247,7 @@
         {{-- Pop-up Batal Arsip --}}
         <div id="unarchive-popup-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
             <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto text-center">
-                <div class="text-green-600 mb-4">
+                <div class="text-purple-600 mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 7h16M4 12h16M4 17h16" />
@@ -265,7 +265,7 @@
                         @csrf
                         @method('PUT')
                         <button type="submit"
-                                class="bg-green-700 hover:bg-green-800 text-white font-medium py-1.5 px-4 rounded-md transition duration-200">
+                                class="bg-purple-600 hover:bg-purple-600 text-white font-medium py-1.5 px-4 rounded-md transition duration-200">
                             Tampilkan
                         </button>
                     </form>

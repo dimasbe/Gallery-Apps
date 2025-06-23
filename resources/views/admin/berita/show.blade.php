@@ -1,8 +1,28 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="bg-white shadow-md rounded-lg p-6 mb-6 space-y-6">
-
+<div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
+    {{-- Header dan Breadcrumbs --}}
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-red-700">Detail Berita</h1> 
+            <nav aria-label="breadcrumb">
+                <ol class="flex items-center text-sm text-gray-600">
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.dashboard') }}" class="hover:text-red-700">Beranda</a>
+                        <span class="mx-2 text-red-700 text-base">&bull;</span>
+                    </li>
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.berita.index') }}" class="hover:text-red-700">Berita</a>
+                        <span class="mx-2 text-red-700 text-base">&bull;</span>
+                    </li>
+                    <li class="text-red-700" aria-current="page">Detail</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6 space-y-6">
     {{-- Informasi Utama --}}
     <div class="border border-gray-300 rounded-md p-4">
         <h2 class="text-xl font-bold text-red-800 mb-4 font-poppins">Informasi Utama</h2>
@@ -47,7 +67,7 @@
     <div class="border border-gray-300 rounded-md p-4">
         <h2 class="text-xl font-bold text-red-800 mb-4 font-poppins">Isi Berita</h2>
         <textarea readonly 
-            class="w-full h-64 resize-none border border-gray-300 rounded-md p-4 text-gray-800 leading-relaxed font-poppins focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50 overflow-auto"
+            class="w-full h-64 resize-none border border-gray-300 rounded-md p-4 text-gray-800 leading-relaxed font-poppins focus:outline-none focus:ring-2 focus:ring-red-500 bg-white overflow-auto"
         >{{ $berita->isi_berita }}</textarea>
     </div>
 

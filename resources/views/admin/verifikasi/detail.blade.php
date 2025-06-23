@@ -7,7 +7,7 @@
     {{-- Konten halaman riwayat Anda di sini --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Detail</h1>
+            <h1 class="text-3xl font-bold text-red-700">Detail Verifikasi</h1>
             <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
@@ -29,7 +29,7 @@
         {{-- Header: Kembali Button --}}
         {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
-        <a href="{{ route('admin.verifikasi') }}" class="flex items-center text-gray-600 hover:text-red-600 font-poppins text-sm">
+        <a href="{{ route('admin.verifikasi') }}" class="flex items-center text-gray-600 hover:text-red-700 font-poppins text-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>

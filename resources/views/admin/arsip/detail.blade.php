@@ -7,7 +7,7 @@
     {{-- Konten halaman riwayat Anda di sini --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Detail</h1>
+            <h1 class="text-3xl font-bold text-red-700">Detail Arsip</h1>
             <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">
@@ -100,7 +100,7 @@
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
             <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
                 {{-- Display the description --}}
-                <p>{!! nl2br(e($aplikasi->deskripsi)) !!}</p> {{-- nl2br to convert newlines to <br>, e() for escaping --}}
+                <p>{!! nl2br(e($aplikasi->deskripsi)) !!}</p>
                 @if($aplikasi->fitur)
                     <p class="mt-4">Fitur Utama:</p>
                     <ul class="list-disc list-inside mt-2">
@@ -124,7 +124,7 @@
             </div>
             <div>
                 <p class="font-semibold">Diupdate Pada</p>
-                <p>{{ $aplikasi->updated_at->format('d F Y') }}</p> {{-- Using updated_at for "Diupdate Pada" --}}
+                <p>{{ $aplikasi->updated_at->format('d F Y') }}</p> 
             </div>
             <div>
                 <p class="font-semibold">Versi</p>
@@ -137,7 +137,7 @@
         </div>
 
         {{-- Rating and Reviews Section --}}
-        <div class="rating-reviews-section px-6"> {{-- Added px-6 --}}
+        <div class="rating-reviews-section px-6">
             <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Ulasan</h2>
 
             {{-- List of Reviews --}}

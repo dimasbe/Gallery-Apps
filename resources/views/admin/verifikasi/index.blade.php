@@ -37,19 +37,19 @@
             <table class="min-w-full leading-normal">
                 <thead>
                     <tr>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             No.
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Nama Aplikasi
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Pemilik
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Kategori
                         </th>
-                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                             Tanggal
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
@@ -64,34 +64,34 @@
                         <tr>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 {{-- Gunakan $aplikasi->firstItem() untuk nomor urut yang benar --}}
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $loop->iteration + ($aplikasi->currentPage() - 1) * $aplikasi->perPage() }}</p>
+                                <p class="text-center text-gray-900 whitespace-no-wrap">{{ $loop->iteration + ($aplikasi->currentPage() - 1) * $aplikasi->perPage() }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_aplikasi'] }}</p>
+                                <p class="text-center text-gray-900 whitespace-no-wrap">{{ $data['nama_aplikasi'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['nama_pemilik'] }}</p>
+                                <p class="text-center text-gray-900 whitespace-no-wrap">{{ $data['nama_pemilik'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data->kategori->nama_kategori ?? 'Tidak Ada Kategori' }}</p>
+                                <p class="text-center text-gray-900 whitespace-no-wrap">{{ $data->kategori->nama_kategori ?? 'Tidak Ada Kategori' }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{ $data['tanggal_ditambahkan'] }}</p>
+                                <p class="text-center text-gray-900 whitespace-no-wrap">{{ $data['tanggal_ditambahkan'] }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                 <div class="flex space-x-2 justify-center">
-                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
+                                    <a href="{{ route('admin.verifikasi.detail', ['id' => $data['id']]) }}"
+                                       class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                        Detail
+                                    </a>
+                                    <button class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200"
                                             data-id="{{ $data['id'] }}"
                                             data-url="{{ route('admin.aplikasi.terima', ['id' => $data['id']]) }}"
                                             onclick="showAcceptPopup(this)">Terima</button>
-                                    <button class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200"
+                                    <button class="bg-red-700 hover:bg-red-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200"
                                             data-id="{{ $data['id'] }}"
                                             data-url="{{ route('admin.aplikasi.tolak', ['id' => $data['id']]) }}"
                                             onclick="showRejectPopup(this)">Tolak</button>
-                                    <a href="{{ route('admin.verifikasi.detail', ['id' => $data['id']]) }}"
-                                       class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-1 px-2 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
-                                        Lihat
-                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -215,7 +215,7 @@
             showCancelButton: true,
             confirmButtonText: 'Ya, Tolak!',
             cancelButtonText: 'Batal',
-            confirmButtonColor: '#d33', // Warna merah untuk konfirmasi tolak
+            confirmButtonColor: '#991000', // Warna merah untuk konfirmasi tolak
             cancelButtonColor: '#3085d6', // Warna biru untuk batal
             showLoaderOnConfirm: true,
             preConfirm: (reason) => {

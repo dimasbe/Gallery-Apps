@@ -10,7 +10,7 @@
         <div class="bg-white shadow-md rounded-lg p-6 mb-6">
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <h1 class="text-3xl font-bold text-red-700">Riwayat</h1>
-                {{-- Form Pencarian Tunggal --}}
+                {{-- Form Pencarian --}}
                 <form action="{{ route('admin.riwayat.index') }}" method="GET" class="w-full md:w-auto flex justify-end">
                     {{-- Hidden inputs to preserve current status and per_page when searching --}}
                     <input type="hidden" name="status" value="{{ request('status', 'semua') }}">
@@ -73,25 +73,25 @@
                 <table class="min-w-full leading-normal">
                     <thead>
                         <tr>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center rounded-tl-lg">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider rounded-tl-lg">
                                 No.
                             </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Nama Aplikasi
                             </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Pemilik
                             </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Kategori
                             </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider text-center">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Tanggal
                             </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider text-center">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Status
                             </th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider text-center rounded-tr-lg">
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider rounded-tr-lg">
                                 Aksi
                             </th>
                         </tr>
@@ -135,6 +135,10 @@
                                     </td>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                         <div class="flex space-x-2 justify-center">
+                                            <a href="{{ route('admin.riwayat.detail', ['id' => $data['id']]) }}"
+                                                class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
+                                                    Detail
+                                            </a>
                                             @if($data['status_verifikasi'] === \App\Enums\StatusTypeEnum::DITOLAK->value)
                                                 {{-- Delete Button (for 'Ditolak' status) --}}
                                                 <form action="{{ route('admin.riwayat.delete', ['id' => $data['id']]) }}" method="POST" class="delete-form">
@@ -155,11 +159,6 @@
                                                     </button>
                                                 </form>
                                             @endif
-
-                                            <a href="{{ route('admin.riwayat.detail', ['id' => $data['id']]) }}"
-                                            class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm transition duration-200 flex items-center justify-center">
-                                                Lihat
-                                            </a>
                                         </div>
                                     </td>
                                 </tr>

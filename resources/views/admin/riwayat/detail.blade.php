@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Riwayat Aplikasi') {{-- Judul halaman tetap relevan dengan riwayat --}}
+@section('title', 'Detail Riwayat Aplikasi') 
 
 @section('content')
 <div class="main-content-wrapper p-6 bg-gray-1000 min-h-screen">
     {{-- Header dan Breadcrumbs --}}
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-red-700">Detail Aplikasi</h1> {{-- Ubah dari "Detail" saja --}}
+            <h1 class="text-3xl font-bold text-red-700">Detail Riwayat</h1> 
             <nav aria-label="breadcrumb">
                 <ol class="flex items-center text-sm text-gray-600">
                     <li class="flex items-center">

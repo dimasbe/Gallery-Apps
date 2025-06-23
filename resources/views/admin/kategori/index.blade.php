@@ -199,27 +199,27 @@
                     <thead>
                         <tr>
                             <th
-                                class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 No.
                             </th>
                             <th
-                                class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Nama Kategori
                             </th>
                             <th
-                                class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Sub Kategori
                             </th>
                             <th
-                                class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Rilis
                             </th>
                             <th
-                                class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-bold text-gray-800 tracking-wider">
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Update
                             </th>
                             <th
-                                class="text-center px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
+                                class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-bold text-gray-800 tracking-wider">
                                 Aksi
                             </th>
                         </tr>
@@ -240,13 +240,13 @@
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm text-center">
                                     <div class="flex space-x-2 justify-center">
                                         <button
-                                            class="btnDetail bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm"
+                                            class="btnDetail bg-blue-600 text-white text-xs font-bold py-2 px-4 rounded-md shadow-sm"
                                             data-id="{{ $category->id }}">Detail</button>
                                         <button
-                                            class="btnEdit bg-green-600 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm"
+                                            class="btnEdit bg-green-600 text-white text-xs font-bold py-2 px-4 rounded-md shadow-sm"
                                             data-id="{{ $category->id }}">Edit</button>
                                         <button
-                                            class="btnHapus bg-red-700 text-white text-xs font-bold py-1 px-2 rounded-md shadow-sm"
+                                            class="btnHapus bg-red-700 text-white text-xs font-bold py-2 px-4 rounded-md shadow-sm"
                                             data-id="{{ $category->id }}">Hapus</button>
                                     </div>
                                 </td>
