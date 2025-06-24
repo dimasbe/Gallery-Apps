@@ -28,4 +28,23 @@ class BeritaController extends Controller
     
         return view('berita.index', compact('beritas', 'kategoris'));
     }
+    
+    public function show(int $id)
+    {
+        // Mengambil berita dari service
+        $berita = $this->beritaService->findById($id);
+
+        // Increment jumlah kunjungan
+        $berita->increment('jumlah_kunjungan');
+
+        // Mengambil berita terkait berdasarkan kategori_id
+        $beritaTerkait = $this->beritaService->getBeritaTerkait($berita->kategori_id, $berita->id);
+
+        // Mengambil semua kategori dengan sub_kategori 'berita'
+        $kategoris = Kategori::where('sub_kategori', 'berita')->get();
+
+        // Menampilkan view berita/show dengan data yang dibutuhkan
+        return view('berita.show', compact('berita', 'beritaTerkait', 'kategoris'));
+    }
 }    
+

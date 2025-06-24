@@ -175,43 +175,49 @@
             </div>
 
             {{-- Bagian Pagination --}}
-            <div class="flex justify-between items-center mt-6">
+            <div class="flex justify-between items-center mt-4">
+                {{-- Rows per page dropdown --}}
                 <div class="text-sm text-gray-600">
                     Rows per page:
-                    <select id="rows-per-page" class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red" onchange="changePerPage(this.value)">
-                        <option value="5" {{ request('per_page', 5) == 5 ? 'selected' : '' }}>5</option>
-                        <option value="10" {{ request('per_page', 5) == 10 ? 'selected' : '' }}>10</option>
-                        <option value="20" {{ request('per_page', 5) == 20 ? 'selected' : '' }}>20</option>
-                        <option value="30" {{ request('per_page', 5) == 30 ? 'selected' : '' }}>30</option>
-                        <option value="40" {{ request('per_page', 5) == 40 ? 'selected' : '' }}>40</option>
-                        <option value="50" {{ request('per_page', 5) == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ request('per_page', 5) == 100 ? 'selected' : '' }}>100</option>
-                        <option value="500" {{ request('per_page', 5) == 500 ? 'selected' : '' }}>500</option>
-                        <option value="1000" {{ request('per_page', 5) == 1000 ? 'selected' : '' }}>1000</option>
+                    <select id="rows-per-page"
+                        class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red" onchange="changePerPage(this.value)">
+                        @foreach ([5, 10, 20, 30, 40, 50, 100, 500, 1000] as $perPageOption) {{-- Added 1000 to match verifikasi --}}
+                            <option value="{{ $perPageOption }}" {{ (request('per_page', 5) == $perPageOption) ? 'selected' : '' }}>
+                                {{ $perPageOption }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
+
+                {{-- Pagination Info (e.g., 1 - 1 of 1) --}}
                 <div id="pagination-info" class="text-sm text-gray-600">
                     {{ $aplikasi->firstItem() }} - {{ $aplikasi->lastItem() }} of {{ $aplikasi->total() }}
                 </div>
+
+                {{-- Custom Pagination Navigation (Previous, Page Number, and Next buttons) --}}
                 <div class="flex space-x-2">
-                    {{-- Tombol Previous --}}
-                    <a href="{{ $aplikasi->previousPageUrl() }}" class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $aplikasi->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                    {{-- Previous Button --}}
+                    <a href="{{ $aplikasi->previousPageUrl() ? $aplikasi->previousPageUrl() . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') : '#' }}"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $aplikasi->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-left"></i>
                     </a>
 
-                    {{-- Tampilkan Link Halaman --}}
+                    {{-- Page Numbers --}}
                     @foreach ($aplikasi->getUrlRange(1, $aplikasi->lastPage()) as $page => $url)
-                        <a href="{{ $url . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') . (request('status') ? '&status=' . request('status') : '') }}" class="px-3 py-1 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition duration-200 {{ $page == $aplikasi->currentPage() ? 'bg-custom-primary-red text-white' : '' }}">
+                        <a href="{{ $url . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') }}"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition duration-200 {{ $page == $aplikasi->currentPage() ? 'bg-custom-primary-red text-white' : '' }}">
                             {{ $page }}
                         </a>
                     @endforeach
 
-                    {{-- Tombol Next --}}
-                    <a href="{{ $aplikasi->nextPageUrl() }}" class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ !$aplikasi->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                    {{-- Next Button --}}
+                    <a href="{{ $aplikasi->nextPageUrl() ? $aplikasi->nextPageUrl() . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') : '#' }}"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ !$aplikasi->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
+           
         </div>
     </div>
 @endsection
@@ -220,19 +226,18 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Existing changeRowsPerPage function, updated to preserve 'keyword' and 'status'
-    function changeRowsPerPage(value) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('per_page', value);
-        url.searchParams.delete('page'); // Reset to first page when changing per_page
-
-        // Preserve existing search parameters
-        const keyword = url.searchParams.get('keyword');
-        const status = url.searchParams.get('status');
-
-        if (keyword) url.searchParams.set('keyword', keyword);
-        if (status) url.searchParams.set('status', status);
-
-        window.location.href = url.toString();
+    function changePerPage(value) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('per_page', value);
+        // Ensure keyword parameter is also carried over
+        const keyword = document.getElementById('search-input') ? document.getElementById('search-input').value : ''; // Assuming search input has 'search-input' ID
+        if (keyword) {
+            currentUrl.searchParams.set('keyword', keyword);
+        } else {
+            currentUrl.searchParams.delete('keyword');
+        }
+        currentUrl.searchParams.delete('page'); // Reset to page 1 when changing per_page
+        window.location.href = currentUrl.toString();
     }
 
     document.addEventListener('DOMContentLoaded', function () {
