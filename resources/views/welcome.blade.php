@@ -6,7 +6,8 @@
         <div class="max-w-7xl w-full px-3 py-2 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             {{-- Text Kiri --}}
             <div>
-                <h2 class="text-4xl md:text-4xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4">
+                {{-- Menyesuaikan ukuran teks untuk mobile (sm:text-4xl) --}}
+                <h2 class="text-3xl sm:text-4xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4">
                     Selamat Datang di <br>
                     <span class="text-[#AD1500]">GalleryApps</span>
                 </h2>
@@ -16,27 +17,28 @@
                     Semua cepat, spesifik, dan terpercaya di satu platform.
                 </p>
 
-                    {{-- Form Pencarian --}}
-        <form action="{{ route('search') }}" method="GET" class="relative max-w-md">
-            <input
-            type="text"
-            name="q"
-            placeholder="Cari di sini..."
-            value="{{ request('q') }}"
-            class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins"
-            autocomplete="off"
-            >
-            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]" aria-label="Cari">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16 10a6 6 0 11-12 0 6 6 0 0112 0z" />
-            </svg>
-            </button>
-        </form>
-        </div>
+                {{-- Form Pencarian --}}
+                <form action="{{ route('search') }}" method="GET" class="relative max-w-md w-full"> {{-- Menambahkan w-full --}}
+                    <input
+                    type="text"
+                    name="q"
+                    placeholder="Cari di sini..."
+                    value="{{ request('q') }}"
+                    class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-[#E0E6EA] text-sm text-gray-800 font-poppins"
+                    autocomplete="off"
+                    >
+                    <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#AD1500] text-white p-2 rounded-full hover:bg-[#8F1000]" aria-label="Cari">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M16 10a6 6 0 11-12 0 6 6 0 0112 0z" />
+                    </svg>
+                    </button>
+                </form>
+            </div>
 
             {{-- Gambar Laptop Kanan --}}
-            <div class="flex justify-center">
-                <img src="{{ asset('images/laptop.png') }}">
+            {{-- Menambahkan flex justify-center untuk gambar agar responsif di mobile --}}
+            <div class="flex justify-center md:justify-start">
+                <img src="{{ asset('images/laptop.png') }}" class="w-full max-w-xs md:max-w-none"> {{-- Menambahkan max-w-xs untuk mobile --}}
             </div>
 
         </div>
@@ -45,17 +47,21 @@
     {{-- Section Kategori --}}
     <section class="">
         <div class="max-w-7xl mx-auto px-2 mt-10">
-            <h2 class="text-2xl md:text-2xl font-semibold text-center text-[#1b1b18] font-poppins mb-2">
+            {{-- Menyesuaikan ukuran teks untuk mobile (sm:text-2xl) --}}
+            <h2 class="text-xl sm:text-2xl font-semibold text-center text-[#1b1b18] font-poppins mb-2">
                 KATEGORI
             </h2>
             <p class="text-center text-gray-500 font-poppins mb-7">
                 Temukan Aplikasi yang Anda Inginkan
             </p>
-            <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
+            {{-- Alas yang lebih estetik dengan gradien --}}
+            <div class="mx-auto h-1 w-24 bg-gradient-to-r from-[#AD1500] to-[#E0E6EA] rounded-full mb-6"></div>
             {{-- Mengulang Kategori secara Dinamis --}}
-            <div class="mx-auto w-fit grid grid-cols-2 md:grid-cols-3 gap-x-20 gap-y-6">
+            {{-- Menyesuaikan gap untuk mobile (gap-4 sm:gap-x-20) --}}
+            <div class="mx-auto w-fit grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-x-20 gap-y-6">
                 @forelse ($kategoriAplikasi as $kategori)
-                <a href="{{ route('kategori.show', ['kategori' => $kategori->nama_kategori]) }}" class="w-[300px] mx-auto relative rounded-xl overflow-hidden shadow-md group">
+                {{-- Mengubah w-[300px] menjadi w-full agar responsif di mobile, dan menambahkan max-w-sm --}}
+                <a href="{{ route('kategori.show', ['kategori' => $kategori->nama_kategori]) }}" class="w-full max-w-sm mx-auto relative rounded-xl overflow-hidden shadow-md group">
                     @php
                         // Ambil foto thumbnail dari aplikasi pertama di kategori ini
                         $thumbnailApp = $kategori->aplikasi->first();
@@ -68,8 +74,9 @@
                     @endphp
                     <img src="{{ $categoryImage }}" class="w-full h-[200px] object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white">
-                        {{-- PERUBAHAN DI SINI: Gaya untuk teks kategori agar konsisten dan jelas --}}
-                        <p class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-white/90 to-white text-[#1b1b18] w-64 py-2 rounded-full text-base font-bold font-poppins shadow-lg transition-all duration-300 group-hover:from-gray-100 group-hover:to-white group-hover:scale-105 whitespace-nowrap overflow-hidden text-ellipsis text-center">
+                        {{-- PERUBAHAN DI SINI: Lebar alas diatur hampir sepanjang kartu --}}
+                        {{-- Mengganti w-full dengan w-11/12 agar ada sedikit margin --}}
+                        <p class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-white/90 to-white text-[#1b1b18]  px-4 py-2 rounded-full text-base font-bold font-poppins shadow-lg transition-all duration-300 group-hover:from-gray-100 group-hover:to-white group-hover:scale-105 whitespace-nowrap overflow-hidden text-ellipsis text-center" style="width: 90% !important">
                             {{ $kategori->nama_kategori }}
                         </p>
                     </div>
@@ -90,7 +97,7 @@
         </div>
     </section>
 
-        {{-- Section Aplikasi Terpopuler --}}
+    {{-- Section Aplikasi Terpopuler --}}
     <section class="mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -98,16 +105,17 @@
                 <div
                     class="col-span-1 bg-gray-100 border border-[#D9D9D9] rounded-xl p-6 flex flex-col justify-center h-full min-h-[300px] shadow-xl">
                     <div class="text-center">
-                        <h2 class="text-2xl md:text-3xl font-semibold text-[#1b1b18] font-poppins mb-4">
+                        {{-- Menyesuaikan ukuran teks untuk mobile (text-xl sm:text-2xl) --}}
+                        <h2 class="text-xl sm:text-2xl font-semibold text-[#1b1b18] font-poppins mb-4">
                             Aplikasi Terpopuler
                         </h2>
-                        <p class="text-gray-500 font-poppins">
+                        <p class="text-gray-500 font-poppins text-sm sm:text-base"> {{-- Menyesuaikan ukuran teks paragraf --}}
                             Jelajahi berbagai aplikasi terpopuler yang paling sering dicari dan digunakan oleh pengguna
                             lainnya di sini!
                         </p>
                         {{-- Pastikan rute 'aplikasi.populer' sudah terdefinisi di web.php --}}
                         <a href="{{ route('aplikasi.populer') }}"
-                            class="mt-3 inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-3 py-2 rounded-full font-poppins shadow-md transition text-ms">
+                            class="mt-3 inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-3 py-2 rounded-full font-poppins shadow-md transition text-sm sm:text-ms"> {{-- Menyesuaikan ukuran teks tombol --}}
                             Lihat semua aplikasi
                         </a>
                     </div>
@@ -157,69 +165,71 @@
         </div>
     </section>
 
- {{-- Section Berita Terbaru --}}
- <section class="mt-20">
-    <div class="max-w-7xl mx-auto px-2">
-        <h2 class="text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-4">
-            BERITA
-        </h2>
-        <p class="text-center text-gray-500 font-poppins mb-4">
-            Lihat Berita Terbaru Kami
-        </p>
-        <div class="mx-auto border-b-2 border-gray-300 w-400 mb-6"></div>
-        <div class="relative">
-            {{-- Flex container untuk berita, ditambahkan justify-center agar item terpusat --}}
-            {{-- Gunakan kelas 'gap-4' untuk spasi antar item, lebih modern dari 'space-x-4' --}}
-            <div class="flex flex-wrap justify-center gap-4">
-                {{-- Loop melalui koleksi $beritas yang dikirim dari controller --}}
-                @forelse($beritas as $berita)
-                    {{-- Berita Item --}}
-                    <div class="bg-white rounded-xl shadow-md w-80 sm:w-96 flex-shrink-0">
-                        {{-- Menggunakan accessor thumbnail_url dari model Berita --}}
-                        {{-- Tambahkan fallback image dengan 'onerror' jika gambar tidak ditemukan --}}
-                        <img src="{{ $berita->thumbnail_url }}"
-                            alt="{{ $berita->judul_berita }}"
-                            class="w-full h-40 object-cover rounded-t-xl"
-                            onerror="this.onerror=null;this.src='https://via.placeholder.com/600x400?text=No+Image';">
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ $berita->judul_berita }}</h3>
-                            {{-- Memformat tanggal menggunakan Carbon dengan lokal Indonesia --}}
-                            <p class="text-gray-600 text-sm mb-2">
-                                {{ \Carbon\Carbon::parse($berita->tanggal_dibuat)->locale('id')->isoFormat('D MMMM YYYY') }}
-                            </p>
-                            {{-- Menggunakan accessor ringkasan dari model Berita --}}
-                            {{-- **PERBAIKAN DI SINI: Tambahkan style="word-wrap: break-word;"** --}}
-                            <p class="text-gray-700 text-sm mb-3" style="word-wrap: break-word;">
-                                {{ $berita->ringkasan }}
-                            </p>
-                            {{-- Link ke detail berita menggunakan rute bernama 'berita.show' --}}
-                            <a href="{{ route('berita.show', $berita->id) }}" class="text-blue-600 hover:underline">
-                                Baca Selengkapnya
-                            </a>
+    {{-- Section Berita Terbaru --}}
+    <section class="mt-20">
+        <div class="max-w-7xl mx-auto px-2">
+            {{-- Menyesuaikan ukuran teks untuk mobile (sm:text-3xl) --}}
+            <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-center text-[#1b1b18] font-poppins mb-4">
+                BERITA
+            </h2>
+            <p class="text-center text-gray-500 font-poppins mb-4">
+                Lihat Berita Terbaru Kami
+            </p>
+            {{-- Alas yang lebih estetik dengan gradien --}}
+            <div class="mx-auto h-1 w-24 bg-gradient-to-r from-[#AD1500] to-[#E0E6EA] rounded-full mb-6"></div>
+            <div class="relative">
+                {{-- Flex container untuk berita, ditambahkan justify-center agar item terpusat --}}
+                {{-- Gunakan kelas 'gap-4' untuk spasi antar item, lebih modern dari 'space-x-4' --}}
+                <div class="flex flex-wrap justify-center gap-4">
+                    @forelse($beritas as $berita)
+                        {{-- Berita Item --}}
+                        {{-- Mengubah w-80 sm:w-96 menjadi w-full max-w-sm untuk responsifitas lebih baik --}}
+                        <div class="bg-white rounded-xl shadow-md w-full max-w-sm flex-shrink-0">
+                            {{-- Menggunakan accessor thumbnail_url dari model Berita --}}
+                            {{-- Tambahkan fallback image dengan 'onerror' jika gambar tidak ditemukan --}}
+                            <img src="{{ $berita->thumbnail_url }}"
+                                alt="{{ $berita->judul_berita }}"
+                                class="w-full h-40 object-cover rounded-t-xl"
+                                onerror="this.onerror=null;this.src='https://via.placeholder.com/600x400?text=No+Image';">
+                            <div class="p-4">
+                                <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ $berita->judul_berita }}</h3>
+                                {{-- Memformat tanggal menggunakan Carbon dengan lokal Indonesia --}}
+                                <p class="text-gray-600 text-sm mb-2">
+                                    {{ \Carbon\Carbon::parse($berita->tanggal_dibuat)->locale('id')->isoFormat('D MMMMEEEE') }}
+                                </p>
+                                {{-- Menggunakan accessor ringkasan dari model Berita --}}
+                                {{-- **PERBAIKAN DI SINI: Tambahkan style="word-wrap: break-word;"** --}}
+                                <p class="text-gray-700 text-sm mb-3" style="word-wrap: break-word;">
+                                    {{ $berita->ringkasan }}
+                                </p>
+                                {{-- Link ke detail berita menggunakan rute bernama 'berita.show' --}}
+                                <a href="{{ route('berita.show', $berita->id) }}" class="text-blue-600 hover:underline">
+                                    Baca Selengkapnya
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    {{-- Pesan jika tidak ada berita yang ditemukan --}}
-                    <p class="text-center text-gray-500">Belum ada berita terbaru untuk ditampilkan.</p>
-                @endforelse
+                    @empty
+                        {{-- Pesan jika tidak ada berita yang ditemukan --}}
+                        <p class="text-center text-gray-500">Belum ada berita terbaru untuk ditampilkan.</p>
+                    @endforelse
+                </div>
+
+                {{-- Panah navigasi dihilangkan sesuai permintaan --}}
+                {{-- <div class="absolute top-1/2 -left-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
+                {{-- <div class="absolute top-1/2 -right-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
             </div>
 
-            {{-- Panah navigasi dihilangkan sesuai permintaan --}}
-            {{-- <div class="absolute top-1/2 -left-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
-            {{-- <div class="absolute top-1/2 -right-14 transform -translate-y-1/2 cursor-pointer"> ... </div> --}}
-        </div>
+            {{-- Titik-titik paginasi/indikator dihilangkan karena Anda hanya menampilkan 3 item dan tanpa panah navigasi --}}
+            {{-- <div class="flex justify-center mt-4"> ... </div> --}}
 
-        {{-- Titik-titik paginasi/indikator dihilangkan karena Anda hanya menampilkan 3 item dan tanpa panah navigasi --}}
-        {{-- <div class="flex justify-center mt-4"> ... </div> --}}
-
-        {{-- Tombol "Lihat semua berita" --}}
-        <div class="flex justify-center mt-8">
-            <a href="{{ route('berita.index') }}"
-                class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-6 py-3 rounded-full font-poppins shadow-md transition text-base">
-                Lihat Semua Berita
-            </a>
+            {{-- Tombol "Lihat semua berita" --}}
+            <div class="flex justify-center mt-8">
+                <a href="{{ route('berita.index') }}"
+                    class="inline-block bg-[#AD1500] hover:bg-[#8F1000] text-white px-6 py-3 rounded-full font-poppins shadow-md transition text-base">
+                    Lihat Semua Berita
+                </a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
 @endsection

@@ -3,13 +3,14 @@
 @section('content')
 <section class="max-w-7xl mx-auto p-6">
     <div class="flex justify-between mb-2 items-center">
-        {{-- Tombol Kembali --}}
-        <a href="{{ route('kategori.index_umum') }}" class="flex items-center text-gray-500 hover:text-gray-700 p-2 rounded-full">
+        {{-- Tombol Kembali 
+        <a href="{{ request()->query('from') == 'dashboard' ? route('dashboard') : route('kategori.index_umum') }}" class="flex items-center text-gray-500 hover:text-gray-700 p-2 rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             <span class="text-sm font-poppins">Kembali</span>
         </a>
+        --}}
 
         {{-- Form Pencarian --}}
         <form action="{{ route('search') }}" method="GET" class="ml-auto">

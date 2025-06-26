@@ -11,6 +11,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        @media (width >= 64rem) {
+                    .hidden-burger{
+                        display: none !important
+                    }
+                }
         /* Gaya tambahan untuk scrollbar notifikasi */
         #notificationDropdown .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -42,6 +47,16 @@
         .dark #notificationDropdown .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #777; /* Even darker thumb on hover */
         }
+
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            transition: transform 0.3s ease-out;
+            transform: translateX(100%);
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
     </style>
 </head>
 
@@ -57,7 +72,7 @@
                 </a>
             </div>
 
-            {{-- MENU --}}
+            {{-- MENU (Hidden on small screens, shown on large screens) --}}
             <div class="hidden lg:flex items-center space-x-10 text-[15px] font-medium">
                 <a href="/"
                 class="{{ request()->is('/') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
@@ -72,15 +87,15 @@
                 <a href="/kategori"
                 class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Kategori
-                </a>          
-                
+                </a>
+
                 <a href="/berita"
                 class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Berita
                 </a>
             </div>
 
-            {{-- USER MENU --}}
+            {{-- USER MENU & Hamburger Button --}}
             <div class="flex items-center space-x-3 relative">
                 @auth
                     {{-- DROPDOWN NOTIFIKASI (sesuai gambar) --}}
@@ -98,68 +113,21 @@
                             <p class="text-sm font-semibold text-gray-900 dark:text-white">Notifikasi</p>
                         </div>
                         <div class="py-1 max-h-60 overflow-y-auto custom-scrollbar">
-                            {{-- Contoh item notifikasi - GANTI DENGAN DATA DARI DATABASE ANDA --}}
-                            {{-- Notifikasi 1: Upload Aplikasi Berhasil--}}
-                            {{-- <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
-                                <div class="flex-grow overflow-hidden">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Upload Aplikasi Berhasil</p>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Aplikasi "Kalkulator Pintar" sudah berhasil diunggah.</p>
-                                </div>
-                                <div class="ml-3 flex-shrink-0 text-right">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="7.14 AM">7.14 AM</p>
-                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
-                                </div>
-                            </div> --}}
-                            {{-- Notifikasi 2: Fitur Baru Telah Hadir--}}
-                            {{-- <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
-                                <div class="flex-grow overflow-hidden">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Fitur Baru Telah Hadir</p>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Sekarang kamu bisa menambahkan changelog aplikasi.</p>
-                                </div>
-                                <div class="ml-3 flex-shrink-0 text-right">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="Kemarin">Kemarin</p>
-                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
-                                </div>
-                            </div> --}}
-                            {{-- Notifikasi 3: Selamat Datang di Galery Apps!--}}
-                            {{-- <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer unread-notification">
-                                <div class="flex-grow overflow-hidden">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Selamat Datang di Galery Apps!</p>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Yuk mulai unggah aplikasi pertamamu.</p>
-                                </div>
-                                <div class="ml-3 flex-shrink-0 text-right">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="Sabtu">Sabtu</p>
-                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
-                                </div>
-                            </div> --}}
-                            
-                            {{-- Notifikasi 5: Sistem Dalam Pemeliharaan--}}
-                            {{--
-                            <div class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer">
-                                <div class="flex-grow overflow-hidden">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Sistem Dalam Pemeliharaan</p>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Galery Apps akan offline sementara malam ini.</p>
-                                </div>
-                                <div class="ml-3 flex-shrink-0 text-right">
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="05/01/2025">05/01/2025</p>
-                                </div>
-                            </div> 
-                            --}}
                             
                             @if ($notifications->count() > 0)
                             @foreach($notifications as $notification)
-                                    <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
-                                        <div class="flex-grow overflow-hidden">
-                                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
-                                            <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
+                                        <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
+                                            <div class="flex-grow overflow-hidden">
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
+                                                <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
+                                            </div>
+                                            <div class="ml-3 flex-shrink-0 text-right">
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
+                                                @if(!$notification->dibaca)
+                                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                                @endif
+                                            </div>
                                         </div>
-                                        <div class="ml-3 flex-shrink-0 text-right">
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="{{  $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
-                                            @if(!$notification->dibaca)
-                                                <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
-                                            @endif
-                                        </div>
-                                    </div>
                                 @endforeach
                             @else
                                 <div class="flex-grow overflow-hidden px-4 py-3">
@@ -169,8 +137,6 @@
                                 </div>
                             @endif 
                         </div>
-                        {{-- <a href="/semua-notifikasi" class="block text-center text-sm px-4 py-2 text-[#AD1500] dark:text-[#F39C12] hover:bg-gray-100 dark:hover:bg-[#2a2a27] border-t border-gray-200 dark:border-gray-700">Lihat Semua</a> --}}
-                        {{-- Baris di atas dihilangkan untuk menghapus tombol "Lihat Semua" --}}
                     </div>
 
                     @php
@@ -205,7 +171,7 @@
                     @endphp
 
                     {{-- TOMBOL PROFILE INI --}}
-                    <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none">
+                    <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none hidden lg:flex"> {{-- Hidden on mobile --}}
                         @if ($avatarUrl)
                             <img
                                 src="{{ $avatarUrl }}"
@@ -238,20 +204,75 @@
                         </form>
                     </div>
                 @else
-                   @if (Route::has('login'))
+                    @if (Route::has('login'))
                         {{-- Tautan Login di header yang akan membuka modal --}}
-                         <button onclick="openModal()" class="px-4 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] text-[#1b1b18] dark:text-[#EDEDEC] hover:border-black dark:hover:border-white rounded-md text-sm">
+                        <button onclick="openModal()" class="px-4 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] text-[#1b1b18] dark:text-[#EDEDEC] hover:border-black dark:hover:border-white rounded-md text-sm hidden lg:block"> {{-- Hidden on mobile --}}
                             Login
-                         </button>
+                        </button>
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="px-4 py-2 bg-[#AD1500] text-white rounded-md text-sm hover:bg-[#8F1000]">
+                            <a href="{{ route('register') }}" class="px-4 py-2 bg-[#AD1500] text-white rounded-md text-sm hover:bg-[#8F1000] hidden lg:block"> {{-- Hidden on mobile --}}
                                 Register
                             </a>
                         @endif
                     @endif
                 @endauth
+
+                {{-- Hamburger Menu Button (Shown only on small screens) --}}
+                <div class="hidden-burger">
+                    <button id="hamburgerButton" class="text-gray-700 dark:text-gray-300 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </nav>
+
+        {{-- Mobile Menu (Hidden by default, shown when hamburger is clicked) --}}
+        <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white dark:bg-[#1b1b18] shadow-lg z-40 lg:hidden">
+            <div class="flex justify-end p-4">
+                <button id="closeMobileMenuButton" class="text-gray-700 dark:text-gray-300 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex flex-col space-y-4 px-4 py-2 text-[15px] font-medium">
+                <a href="/"
+                   class="{{ request()->is('/') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                    Beranda
+                </a>
+                <a href="/aplikasi"
+                   class="{{ request()->is('aplikasi*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                    Aplikasi
+                </a>
+                <a href="/kategori"
+                   class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                    Kategori
+                </a>
+                <a href="/berita"
+                   class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                    Berita
+                </a>
+                @auth
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Edit Profil</a>
+                    <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Tambah Aplikasi</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <button onclick="openModal(); closeMobileMenu()" class="px-4 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] text-[#1b1b18] dark:text-[#EDEDEC] hover:border-black dark:hover:border-white rounded-md text-sm w-full text-center">
+                        Login
+                    </button>
+                    <a href="{{ route('register') }}" class="px-4 py-2 bg-[#AD1500] text-white rounded-md text-sm hover:bg-[#8F1000] text-center">
+                        Register
+                    </a>
+                @endauth
+            </div>
+        </div>
     </header>
 
     {{-- FLASH NOTIFICATION --}}
@@ -269,9 +290,9 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="w-full bg-white mt-20 px-4 py-8">
+    <footer class="w-full bg-white mt-20 px-2 py-4 border-t border-gray-150">
         <div class="max-w-7xl mx-auto px-2 py-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {{-- Bagian Tentang Aplikasi --}}
                 <div class="text-left">
                     <div class="flex items-center mb-4">
@@ -305,13 +326,13 @@
                 <div class="text-left">
                     <h3 class="font-semibold text-lg text-gray-800 mb-4">Sosial Media</h3>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Facebook">
+                        <a href="https://www.facebook.com/hummatech" class="text-[#AD1500] hover:opacity-80" aria-label="Facebook">
                             <img src="/images/icon_facebook.png" alt="Facebook" class="w-6 h-6" />
                         </a>
-                        <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Twitter">
+                        <a href="https://x.com/hummatech" class="text-[#AD1500] hover:opacity-80" aria-label="Twitter">
                             <img src="/images/icon_twitter.png" alt="Twitter" class="w-6 h-6" />
                         </a>
-                        <a href="#" class="text-[#AD1500] hover:opacity-80" aria-label="Instagram">
+                        <a href="https://www.instagram.com/hummatech/" class="text-[#AD1500] hover:opacity-80" aria-label="Instagram">
                             <img src="/images/icon_instagram.png" alt="Instagram" class="w-6 h-6" />
                         </a>
                     </div>
@@ -321,7 +342,7 @@
 
         {{-- Border garis full width + copyright yang lebih pendek --}}
         <div class="border-t border-gray-200 w-full">
-            <div class="max-w-7xl mx-auto px-2 py-2 text-gray-500 text-xs flex justify-between">
+            <div class="max-w-7xl mx-auto px-2 py-2 text-gray-500 text-xs flex flex-col sm:flex-row justify-center sm:justify-between items-center text-center">
                 <div>2025 Hummatech All Rights Reserved</div>
                 <div>Copyright By GalerryApp</div>
             </div>
@@ -355,12 +376,12 @@
     
     {{-- MODAL LOGIN (Disamakan dengan tampilan Register) --}}
 <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="w-[460px] bg-white rounded-xl shadow p-8 relative">
+    <div class="w-[460px] bg-white rounded-xl shadow p-8 relative dark:bg-[#1b1b18] dark:text-white">
         <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 text-2xl font-semibold">
             &times;
         </button>
-        <h2 class="text-[24px] font-bold text-black text-center mb-1">Login</h2>
-        <p class="text-center text-[13px] text-black mb-6">Selamat Datang Kembali di GalleryApps</p>
+        <h2 class="text-[24px] font-bold text-black dark:text-white text-center mb-1">Login</h2>
+        <p class="text-center text-[13px] text-black dark:text-gray-300 mb-6">Selamat Datang Kembali di GalleryApps</p>
 
         {{-- Notifikasi Error Umum untuk Modal Login (jika ada error yang tidak terkait langsung dengan input) --}}
         @if (session('error') && !($errors->has('email') || $errors->has('password')))
@@ -373,9 +394,9 @@
             @csrf
 
             <div>
-                <label for="login_email" class="block text-sm font-medium text-black mb-1">Email</label>
+                <label for="login_email" class="block text-sm font-medium text-black dark:text-white mb-1">Email</label>
                 <input id="login_email" name="email" type="email" required autofocus
-                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black @error('email') border-red-500 @enderror"
+                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black dark:bg-[#2a2a27] dark:border-gray-600 dark:text-white @error('email') border-red-500 @enderror"
                     placeholder="Masukkan email anda" autocomplete="email" value="{{ old('email') }}">
                 <p class="text-red-500 text-xs italic mt-1 hidden" id="error-login_email">Email wajib diisi.</p>
                 @error('email')
@@ -384,20 +405,20 @@
             </div>
 
             <div>
-                <label for="login_password" class="block text-sm font-medium text-black mb-1">Password</label>
+                <label for="login_password" class="block text-sm font-medium text-black dark:text-white mb-1">Password</label>
                 <div class="relative">
                     <input id="login_password" name="password" type="password" required autocomplete="current-password"
-                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black @error('password') border-red-500 @enderror"
+                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black dark:bg-[#2a2a27] dark:border-gray-600 dark:text-white @error('password') border-red-500 @enderror"
                         placeholder="Masukkan password anda">
                     <button type="button" onclick="togglePassword(this, 'login_password')" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 dark:text-gray-300 block" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path d="M2.458 12C3.732 7.943 7.523 5 12 5
                                 s8.268 2.943 9.542 7-3.732 7-9.542 7
                                 -8.268-2.943-9.542-7z" />
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 dark:text-gray-300 hidden" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M13.875 18.825A10.05 10.05 0 0112 19
                                 c-4.478 0-8.269-2.944-9.543-7
@@ -417,10 +438,10 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <input id="login_remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                    <label for="login_remember_me" class="ml-2 block text-sm text-black">Ingat saya</label>
+                    <label for="login_remember_me" class="ml-2 block text-sm text-black dark:text-gray-300">Ingat saya</label>
                 </div>
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:text-gray-200" href="{{ route('password.request') }}">
                         Lupa kata sandi Anda?
                     </a>
                 @endif
@@ -432,20 +453,20 @@
         </form>
 
         <div class="flex items-center my-6">
-            <hr class="flex-grow border-gray-300">
-            <span class="mx-3 text-gray-500 text-sm">Atau</span>
-            <hr class="flex-grow border-gray-300">
+            <hr class="flex-grow border-gray-300 dark:border-gray-600">
+            <span class="mx-3 text-gray-500 dark:text-gray-300 text-sm">Atau</span>
+            <hr class="flex-grow border-gray-300 dark:border-gray-600">
         </div>
 
         <div class="flex justify-center">
             <a href="{{ route('google.redirect', ['from' => 'login']) }}"
-                class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition">
+                class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition dark:border-gray-600 dark:text-white dark:hover:bg-[#2a2a27]">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
                 <span>Login dengan Google</span>
             </a>
         </div>
 
-        <div class="mt-6 text-center text-sm text-black">
+        <div class="mt-6 text-center text-sm text-black dark:text-gray-300">
             Belum punya akun?
             <a href="{{ route('register') }}" class="text-[#0500FF] hover:underline font-medium">Register</a>
         </div>
@@ -453,346 +474,259 @@
 </div>
 
 <script>
-    // Make sure this function is globally accessible if your openModal() is elsewhere
-    function closeLoginModal() {
-        document.getElementById('loginModal').classList.add('hidden');
-        clearLoginErrorMessages(); // Clear any previous error messages when closing the modal
+    // Navbar Dropdown (User Profile)
+    function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('hidden');
     }
 
+    // Notification Dropdown
+    function toggleNotificationDropdown() {
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        notificationDropdown.classList.toggle('hidden');
+        
+        // Mark all unread notifications as read when the dropdown is opened
+        const unreadNotifications = document.querySelectorAll('.notification-item'); // Select all notification items
+        let unreadCountAfterOpen = 0; // Track unread after opening
+
+        unreadNotifications.forEach(item => {
+            if (item.classList.contains('unread-notification')) {
+                const notificationId = item.dataset.notificationId;
+                // Make an AJAX request to mark as read in the database
+                fetch(`/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Only remove classes if the server successfully marked as read
+                        item.classList.remove('unread-notification');
+                        const unreadDot = item.querySelector('.unread-dot');
+                        if (unreadDot) {
+                            unreadDot.classList.add('hidden');
+                        }
+                    } else {
+                        console.error('Failed to mark notification as read:', response.statusText);
+                        // If marking as read fails, keep it as unread
+                        unreadCountAfterOpen++;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                    // If error occurs, keep it as unread
+                    unreadCountAfterOpen++;
+                })
+                .finally(() => {
+                    // Update global dot after all async operations
+                    updateGlobalNotificationDot();
+                });
+            }
+        });
+        updateGlobalNotificationDot(); // Initial update just in case (will be re-updated by finally blocks)
+    }
+
+
+    // Close dropdowns when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('button') && !event.target.closest('#dropdownMenu') && !event.target.closest('.relative.cursor-pointer') && !event.target.closest('#hamburgerButton') && !event.target.closest('#mobileMenu')) {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            if (!dropdownMenu.classList.contains('hidden')) {
+                dropdownMenu.classList.add('hidden');
+            }
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            if (!notificationDropdown.classList.contains('hidden')) {
+                notificationDropdown.classList.add('hidden');
+            }
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu && mobileMenu.classList.contains('open')) {
+                mobileMenu.classList.remove('open');
+            }
+        }
+    };
+
+    // Toggle Password Visibility in Login Modal
     function togglePassword(button, inputId) {
         const input = document.getElementById(inputId);
         const eyeIcon = button.querySelector('.eye-icon');
         const eyeOffIcon = button.querySelector('.eye-off-icon');
 
-        if (input.type === 'password') {
-            input.type = 'text';
+        if (input.type === "password") {
+            input.type = "text";
             eyeIcon.classList.add('hidden');
             eyeOffIcon.classList.remove('hidden');
         } else {
-            input.type = 'password';
+            input.type = "password";
             eyeIcon.classList.remove('hidden');
             eyeOffIcon.classList.add('hidden');
         }
     }
 
-    // Function to clear all inline error messages for the login form
-    function clearLoginErrorMessages() {
-        document.querySelectorAll('#loginForm .text-red-500.italic').forEach(el => {
-            el.classList.add('hidden');
-        });
-        document.querySelectorAll('#loginForm input').forEach(input => {
-            input.classList.remove('border-red-500');
-        });
+    // Login Modal
+    const loginModal = document.getElementById('loginModal');
+    const loginForm = document.getElementById('loginForm');
+    const loginEmailInput = document.getElementById('login_email');
+    const loginPasswordInput = document.getElementById('login_password');
+    const errorLoginEmail = document.getElementById('error-login_email');
+    const errorLoginPassword = document.getElementById('error-login_password');
+
+    function openModal() {
+        loginModal.classList.remove('hidden');
     }
 
-    // Client-side validation for the login form
-    function validateLoginForm() {
+    function closeLoginModal() {
+        loginModal.classList.add('hidden');
+        // Clear previous error messages when closing the modal
+        errorLoginEmail.classList.add('hidden');
+        errorLoginPassword.classList.add('hidden');
+        loginEmailInput.classList.remove('border-red-500');
+        loginPasswordInput.classList.remove('border-red-500');
+    }
+
+    // Validate login form
+    loginForm.addEventListener('submit', function(event) {
         let isValid = true;
-        clearLoginErrorMessages(); // Clear existing errors before validating
 
-        const emailInput = document.getElementById('login_email');
-        const passwordInput = document.getElementById('login_password');
-
-        // Validate Email
-        if (!emailInput.value.trim()) {
-            emailInput.classList.add('border-red-500');
-            document.getElementById('error-login_email').classList.remove('hidden');
+        if (loginEmailInput.value.trim() === '') {
+            errorLoginEmail.classList.remove('hidden');
+            loginEmailInput.classList.add('border-red-500');
             isValid = false;
         } else {
-            emailInput.classList.remove('border-red-500');
-            document.getElementById('error-login_email').classList.add('hidden');
+            errorLoginEmail.classList.add('hidden');
+            loginEmailInput.classList.remove('border-red-500');
         }
 
-        // Validate Password
-        if (!passwordInput.value.trim()) {
-            passwordInput.classList.add('border-red-500');
-            document.getElementById('error-login_password').classList.remove('hidden');
+        if (loginPasswordInput.value.trim() === '') {
+            errorLoginPassword.classList.remove('hidden');
+            loginPasswordInput.classList.add('border-red-500');
             isValid = false;
         } else {
-            passwordInput.classList.remove('border-red-500');
-            document.getElementById('error-login_password').classList.add('hidden');
+            errorLoginPassword.classList.add('hidden');
+            loginPasswordInput.classList.remove('border-red-500');
         }
 
-        return isValid;
-    }
-
-    // Event listener for form submission
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        // Prevent default form submission if client-side validation fails
-        if (!validateLoginForm()) {
-            e.preventDefault();
+        if (!isValid) {
+            event.preventDefault();
         }
     });
 
-    // Handle Laravel backend validation errors (if any)
-    @if ($errors->any() || session('error'))
+    // Check for errors on page load and open the modal if present
+    @if ($errors->has('email') || $errors->has('password') || session('error'))
         document.addEventListener('DOMContentLoaded', function() {
-            // Show the login modal if there are any validation errors or a session error
-            document.getElementById('loginModal').classList.remove('hidden');
-
-            // Keep the old input value in the email field if available
-            const loginEmailInput = document.getElementById('login_email');
-            if ("{{ old('email') }}") {
-                loginEmailInput.value = "{{ old('email') }}";
-            }
+            openModal();
         });
     @endif
-</script>
 
-    {{-- Script for Dropdown and Notification --}}
-    <script>
-        // Fungsi untuk dropdown profil
-        function toggleDropdown() {
-            const dropdown = document.getElementById('dropdownMenu');
-            dropdown.classList.toggle('hidden');
-            // Jika dropdown notifikasi terbuka, tutup
-            const notificationDropdown = document.getElementById('notificationDropdown');
-            if (notificationDropdown && !notificationDropdown.classList.contains('hidden')) {
-                notificationDropdown.classList.add('hidden');
+    // Notification Popup
+    const notificationPopupOverlay = document.getElementById('notificationPopupOverlay');
+    const popupNotificationTitle = document.getElementById('popupNotificationTitle');
+    const popupNotificationTime = document.getElementById('popupNotificationTime');
+    const popupNotificationContent = document.getElementById('popupNotificationContent');
+
+    document.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const title = this.querySelector('p:nth-child(1)').textContent;
+            const content = this.querySelector('p:nth-child(2)').textContent;
+            const originalTime = this.querySelector('[data-original-time]').dataset.originalTime;
+
+            popupNotificationTitle.textContent = title;
+            popupNotificationContent.textContent = content;
+            popupNotificationTime.textContent = formatNotificationTime(originalTime);
+
+            notificationPopupOverlay.classList.remove('hidden');
+
+            // Mark this specific notification as read (client-side only for now)
+            this.classList.remove('unread-notification');
+            const unreadDot = this.querySelector('.unread-dot');
+            if (unreadDot) {
+                unreadDot.classList.add('hidden');
             }
-            // Tutup pop-up juga jika terbuka
-            closeNotificationPopup();
-        }
+            updateGlobalNotificationDot();
 
-        // Fungsi untuk menampilkan/menyembunyikan dropdown notifikasi
-        function toggleNotificationDropdown() {
-            const dropdown = document.getElementById('notificationDropdown');
-            dropdown.classList.toggle('hidden');
-            // Jika dropdown profil terbuka, tutup
-            const profileDropdown = document.getElementById('dropdownMenu');
-            if (profileDropdown && !profileDropdown.classList.contains('hidden')) {
-                profileDropdown.classList.add('hidden');
-            }
-            // Tutup pop-up juga jika terbuka
-            closeNotificationPopup();
-        }
-
-        // Fungsi untuk menampilkan pop-up notifikasi
-        function showNotificationPopup(title, time, content) {
-            document.getElementById('popupNotificationTitle').innerText = title;
-            document.getElementById('popupNotificationTime').innerText = time;
-            document.getElementById('popupNotificationContent').innerText = content;
-            document.getElementById('notificationPopupOverlay').classList.remove('hidden');
-            // Sembunyikan dropdown notifikasi jika terbuka
-            document.getElementById('notificationDropdown').classList.add('hidden');
-        }
-
-        // Fungsi untuk menutup pop-up notifikasi
-        function closeNotificationPopup() {
-            document.getElementById('notificationPopupOverlay').classList.add('hidden');
-        }
-
-        // Menutup dropdown/pop-up jika user mengklik di luar area
-        document.addEventListener('click', function (event) {
-            // Logic untuk dropdown profil
-            const profileTrigger = event.target.closest('button[onclick="toggleDropdown()"]');
-            const profileDropdown = document.getElementById('dropdownMenu');
-            const insideProfileDropdown = event.target.closest('#dropdownMenu');
-            if (profileDropdown && !profileTrigger && !insideProfileDropdown && !profileDropdown.classList.contains('hidden')) {
-                profileDropdown.classList.add('hidden');
-            }
-
-            // Logic untuk dropdown notifikasi
-            const notificationIconTrigger = event.target.closest('div.relative.cursor-pointer'); // Ini adalah div pembungkus ikon lonceng
-            const notificationDropdown = document.getElementById('notificationDropdown');
-            const insideNotificationDropdown = event.target.closest('#notificationDropdown');
-
-            if (notificationDropdown && !notificationIconTrigger && !insideNotificationDropdown && !notificationDropdown.classList.contains('hidden')) {
-                notificationDropdown.classList.add('hidden');
-            }
-
-            // Logic untuk pop-up notifikasi (tutup jika klik di luar pop-up tapi bukan di dalam notifikasi dropdown/ikon)
-            const notificationPopupOverlay = document.getElementById('notificationPopupOverlay');
-            const notificationPopup = document.getElementById('notificationPopup');
-            // Pastikan klik tidak berasal dari dalam pop-up, tidak dari dalam dropdown notifikasi, dan tidak dari ikon notifikasi
-            if (notificationPopupOverlay && !notificationPopup.contains(event.target) && !insideNotificationDropdown && !notificationIconTrigger) {
-                if (!notificationPopupOverlay.classList.contains('hidden')) {
-                    closeNotificationPopup();
-                }
-            }
-        });
-
-        // --- Logika untuk notifikasi belum dibaca ---
-
-        // Fungsi untuk memperbarui dot merah pada ikon lonceng utama
-        function updateGlobalUnreadNotificationDot() {
-            const unreadCount = document.querySelectorAll('#notificationDropdown .unread-notification').length;
-            const globalNotificationDot = document.getElementById('globalNotificationDot');
-
-            if (globalNotificationDot) {
-                if (unreadCount > 0) {
-                    globalNotificationDot.classList.remove('hidden');
-                } else {
-                    globalNotificationDot.classList.add('hidden');
-                }
-            }
-        }
-
-        // Fungsi untuk menandai notifikasi individual sebagai sudah dibaca
-        function markNotificationAsRead(notificationElement) {
-            if (notificationElement && notificationElement.classList.contains('unread-notification')) {
-                notificationElement.classList.remove('unread-notification');
-                const unreadDot = notificationElement.querySelector('.unread-dot');
-                if (unreadDot) {
-                    unreadDot.classList.add('hidden'); // Sembunyikan dot biru
-                }
-                updateGlobalUnreadNotificationDot(); // Perbarui jumlah notifikasi belum dibaca
-
-                // Kirim permintaan AJAX ke server untuk menandai notifikasi sebagai dibaca di database
-                const notificationId = notificationElement.getAttribute('data-notification-id');
-                if (notificationId) {
-                    fetch(`/notifications/${notificationId}/read`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ read: true })
-                    }).then(response => {
-                        if (!response.ok) {
-                            console.error('Gagal menandai notifikasi sebagai dibaca');
-                        }
-                    }).catch(error => {
-                        console.error('Error saat menandai notifikasi sebagai dibaca:', error);
-                    });
-                }
-            }
-        }
-
-        // Fungsi untuk memformat waktu sesuai gambar (Hari ini, Kemarin, Sabtu, atau MM/DD/YYYY) menjadi "Hari, DD Bln, HH.MM AM/PM"
-        function formatTimeForPopup(originalTime) {
-            const now = new Date();
-            const dayOfWeek = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-            let displayDate = "";
-            let displayTime = "";
-            let dateObj;
-
-            if (originalTime.toLowerCase() === "hari ini") {
-                dateObj = now;
-                displayTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-            } else if (originalTime.toLowerCase() === "kemarin") {
-                dateObj = new Date(now);
-                dateObj.setDate(now.getDate() - 1);
-                displayTime = "09.00 AM"; // Placeholder, idealnya dari data notifikasi asli
-            } else if (originalTime.toLowerCase() === "sabtu") {
-                // Ini perlu logika yang lebih cerdas untuk menentukan Sabtu yang tepat.
-                // Untuk sementara, kita asumsikan Sabtu yang paling dekat di masa lalu jika hari ini bukan Sabtu.
-                dateObj = new Date(now);
-                dateObj.setDate(now.getDate() - (now.getDay() + 7 - 6) % 7); // 6 adalah indeks hari Sabtu
-                displayTime = "08.00 PM"; // Placeholder
-            } else if (originalTime.match(/^\d{1,2}\.\d{2}\s(AM|PM)$/i)) { // Contoh: "7.14 AM"
-                dateObj = now; // Asumsi hari ini jika hanya waktu
-                displayTime = originalTime;
-            } else if (originalTime.match(/^\d{2}\/\d{2}\/\d{4}$/)) { // Contoh: "05/01/2025"
-                const parts = originalTime.split('/');
-                dateObj = new Date(parts[2], parts[0] - 1, parts[1]); // Month is 0-indexed
-                displayTime = "09.00 AM"; // Placeholder
-            } else {
-                // Fallback untuk format yang tidak dikenal
-                return originalTime;
-            }
-
-            if (dateObj) {
-                displayDate = dayOfWeek[dateObj.getDay()] + ", " + dateObj.getDate() + " " + monthNames[dateObj.getMonth()];
-                return displayDate + ", " + displayTime;
-            }
-            return originalTime;
-        }
-
-
-        // Event listener saat DOM sudah siap
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tambahkan event listener ke setiap item notifikasi untuk menampilkan pop-up
-            const notificationDropdownContainer = document.getElementById('notificationDropdown');
-            if (notificationDropdownContainer) {
-                 notificationDropdownContainer.addEventListener('click', function(event) {
-                    const notificationItem = event.target.closest('.notification-item');
-                    if (notificationItem) {
-                        // Ambil data dari elemen notifikasi
-                        const title = notificationItem.querySelector('p.text-sm.font-medium.text-gray-900').innerText;
-                        // Mengambil waktu dari data-original-time jika ada, jika tidak, dari innerText
-                        const originalTime = notificationItem.querySelector('.text-xs.text-gray-500').getAttribute('data-original-time') || notificationItem.querySelector('.text-xs.text-gray-500').innerText;
-                        const content = notificationItem.querySelector('p.text-xs.text-gray-600').innerText;
-
-                        // Periksa apakah notifikasi memiliki dot biru (yaitu unread-dot)
-                        const unreadDotElement = notificationItem.querySelector('.unread-dot');
-                        if (unreadDotElement && !unreadDotElement.classList.contains('hidden')) {
-                             markNotificationAsRead(notificationItem); // Tandai sebagai sudah dibaca
-                        }
-                        
-                        const formattedTime = formatTimeForPopup(originalTime);
-                        showNotificationPopup(title, formattedTime, content); // Tampilkan pop-up
+            // Optionally, send an AJAX request to mark as read on the server
+            const notificationId = this.dataset.notificationId;
+            if (notificationId) {
+                fetch(`/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('Failed to mark notification as read:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
                 });
             }
-           
-            // Panggil saat halaman dimuat untuk inisialisasi dot merah
-            updateGlobalUnreadNotificationDot();
         });
+    });
 
-                // Fungsi untuk modal login
-        function openModal() {
-            const modal = document.getElementById('loginModal');
-            modal.classList.remove('hidden');
+    function closeNotificationPopup() {
+        notificationPopupOverlay.classList.add('hidden');
+    }
+
+    function formatNotificationTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffMinutes = Math.ceil(diffTime / (1000 * 60));
+        const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffMinutes < 60) {
+            return `${diffMinutes} menit yang lalu`;
+        } else if (diffHours < 24) {
+            return `${diffHours} jam yang lalu`;
+        } else if (diffDays < 7) {
+            return `${diffDays} hari yang lalu`;
+        } else {
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
         }
+    }
 
-        function closeModal() {
-            const modal = document.getElementById('loginModal');
-            modal.classList.add('hidden');
+    // Global Notification Dot Logic
+    function updateGlobalNotificationDot() {
+        const globalDot = document.getElementById('globalNotificationDot');
+        const unreadCount = document.querySelectorAll('.notification-item.unread-notification').length;
+        if (unreadCount > 0) {
+            globalDot.classList.remove('hidden');
+        } else {
+            globalDot.classList.add('hidden');
         }
+    }
 
-        // Tutup modal saat mengklik di luar area modal (jika modal terbuka)
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('loginModal');
-            // Pastikan modal ada dan tidak tersembunyi
-            if (modal && !modal.classList.contains('hidden')) {
-                const modalContent = modal.querySelector('.w-[460px]');
-                // Jika klik dilakukan di luar konten modal tetapi di dalam area modal overlay
-                if (!modalContent.contains(event.target) && event.target === modal) {
-                    closeModal();
-                }
-            }
-        });
+    // Initial check for unread notifications on page load
+    document.addEventListener('DOMContentLoaded', updateGlobalNotificationDot);
 
-        // Tutup modal dengan tombol Escape
-        document.addEventListener('keydown', function(event) {
-            const modal = document.getElementById('loginModal');
-            if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
-                closeModal();
-            }
-        });
+    // Mobile Menu Logic
+    const hamburgerButton = document.getElementById('hamburgerButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMobileMenuButton = document.getElementById('closeMobileMenuButton');
 
-        // Fungsi untuk toggle password visibility (dibuat global agar bisa diakses dari manapun)
-        window.togglePassword = function(button) {
-            const input = button.previousElementSibling;
-            const eye = button.querySelector('.eye-icon');
-            const eyeOff = button.querySelector('.eye-off-icon');
+    hamburgerButton.addEventListener('click', () => {
+        mobileMenu.classList.add('open');
+    });
 
-            const isPassword = input.type === 'password';
-            input.type = isPassword ? 'text' : 'password';
-            eye.classList.toggle('hidden', !isPassword);
-            eyeOff.classList.toggle('hidden', isPassword);
-        };
+    closeMobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+    });
 
-        // Membuka modal secara otomatis jika ada error login atau session 'error'
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginLinkHeader = document.getElementById('loginLinkHeader');
-            if (loginLinkHeader) {
-                loginLinkHeader.addEventListener('click', function(event) {
-                    event.preventDefault(); // Mencegah navigasi default
-                    openModal(); // Membuka modal login
-                });
-            }
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('open');
+    }
 
-            // Ini akan memastikan modal login terbuka jika ada error validasi dari controller
-            @if ($errors->has('email') || $errors->has('password') || session('error'))
-                openModal();
-            @endif
-        });
-    </script>
-
-    @stack('scripts')
-    
+</script>
 </body>
 </html>

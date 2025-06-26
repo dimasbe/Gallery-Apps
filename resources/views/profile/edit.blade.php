@@ -53,7 +53,7 @@
         @method('PATCH')
 
         {{-- Avatar & Info User --}}
-        <div class="mb-6 flex items-start space-x-4">
+        <div class="mb-6 flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 space-y-4 sm:space-y-0">
             <div class="relative">
                 <template x-if="photoPreview">
                     <img
@@ -76,7 +76,7 @@
                     @else
                         <div
                             @click="showMenu = true"
-                            class="w-36 h-36 rounded-full border border-gray-300 bg-[#AD1500] text-white flex items-center justify-center text-6xl font-bold cursor-pointer select-none"
+                             class="w-20 h-20 sm:w-36 sm:h-36 rounded-full border border-gray-300 bg-[#AD1500] text-white flex items-center justify-center text-4xl font-bold cursor-pointer select-none"
                             style="font-family: 'Poppins', sans-serif;"
                         >
                             {{ $initials ?: '?' }}
@@ -85,7 +85,7 @@
                 </template>
             </div>
 
-            <div>
+            <div class="ml-4 mt-2 sm:mt-0">
                 <p class="text-lg font-semibold">{{ $user->name }}</p>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                     Bergabung sejak {{ $user->created_at->locale('id')->isoFormat('D MMMM YYYY') }}
@@ -209,12 +209,20 @@
                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
         </div>
 
-        <div class="mt-6 flex justify-center">
+        <div class="mt-6 flex justify-start space-x-4 w-[300px] max-w-md">
+            {{-- Tombol Batal --}}
+            <button type="button"
+                onclick="window.location.href='{{ route('dashboard') }}'"
+                class="flex-1 bg-gray-300 text-gray-800 text-sm px-4 py-2 rounded hover:bg-gray-400">
+                Batal
+            </button>
+        
+            {{-- Tombol Simpan --}}
             <button type="submit"
-                    class="w-full bg-[#b30000] text-white px-4 py-2 rounded hover:bg-[#990000]">
+                class="flex-1 bg-[#b30000] text-white text-sm px-4 py-2 rounded hover:bg-[#990000]">
                 Simpan
             </button>
-        </div>
+        </div>        
     </form>
 </div>
 @endsection
