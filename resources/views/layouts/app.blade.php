@@ -12,10 +12,10 @@
 
     <style>
         @media (width >= 64rem) {
-                    .hidden-burger{
-                        display: none !important
-                    }
-                }
+            .hidden-burger{
+                display: none !important
+            }
+        }
         /* Gaya tambahan untuk scrollbar notifikasi */
         #notificationDropdown .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -99,7 +99,7 @@
             <div class="flex items-center space-x-3 relative">
                 @auth
                     {{-- DROPDOWN NOTIFIKASI (sesuai gambar) --}}
-                    <div class="relative cursor-pointer" onclick="toggleNotificationDropdown()">
+                    <div class="relative cursor-pointer" onclick="toggleNotificationDropdown(event)"> {{-- Tambahkan event di sini --}}
                         <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
                         </svg>
@@ -116,18 +116,18 @@
                             
                             @if ($notifications->count() > 0)
                             @foreach($notifications as $notification)
-                                        <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
-                                            <div class="flex-grow overflow-hidden">
-                                                <p class="text-sm font-medium text-gray-900">{{ $notification->judul }}</p>
-                                                <p class="text-xs text-gray-600">{{ $notification->pesan }}</p>
+                                            <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
+                                                <div class="flex-grow overflow-hidden">
+                                                    <p class="text-sm font-medium text-gray-900">{{ $notification->judul }}</p>
+                                                    <p class="text-xs text-gray-600">{{ $notification->pesan }}</p>
+                                                </div>
+                                                <div class="ml-3 flex-shrink-0 text-right">
+                                                    <p class="text-xs text-gray-500 mt-1" data-original-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
+                                                    @if(!$notification->dibaca)
+                                                        <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
+                                                    @endif
+                                                </div>
                                             </div>
-                                            <div class="ml-3 flex-shrink-0 text-right">
-                                                <p class="text-xs text-gray-500 mt-1" data-original-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
-                                                @if(!$notification->dibaca)
-                                                    <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
-                                                @endif
-                                            </div>
-                                        </div>
                                 @endforeach
                             @else
                                 <div class="flex-grow overflow-hidden px-4 py-3">
@@ -171,38 +171,45 @@
                     @endphp
 
                     {{-- TOMBOL PROFILE INI --}}
-                    <button onclick="toggleDropdown()" class="flex items-center space-x-2 focus:outline-none hidden lg:flex"> {{-- Hidden on mobile --}}
-                        @if ($avatarUrl)
-                            <img
-                                src="{{ $avatarUrl }}"
-                                onerror="this.onerror=null;this.src='{{ $defaultAvatar }}';"
-                                alt="Avatar"
-                                class="w-10 h-10 rounded-full object-cover"
-                            >
-                        @else
-                            <div class="w-10 h-10 rounded-full bg-[#AD1500] text-white flex items-center justify-center font-semibold text-lg select-none">
-                                {{ $initials ?: '?' }}
-                            </div>
-                        @endif
+                    <button onclick="toggleDropdown(event)" {{-- **PENTING: tambahkan (event) di sini** --}}
+                        class="flex items-center space-x-2 focus:outline-none hidden lg:flex px-3 py-2 rounded-full hover:bg-gray-100 cursor-pointer">
+                    {{-- Hidden on mobile --}}
+                    {{-- Tambahkan padding horizontal dan vertikal ke button langsung --}}
+                    {{-- Dan tambahkan efek hover background untuk visual feedback --}}
+                    {{-- Tambahkan cursor-pointer agar jelas bisa diklik --}}
 
-                        <span class="ml-2 text-[#1b1b18] font-medium hidden sm:inline select-none">
-                            {{ $name }}
-                        </span>
-                        <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.184l3.71-3.954a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
+                    @if ($avatarUrl)
+                        <img
+                            src="{{ $avatarUrl }}"
+                            onerror="this.onerror=null;this.src='{{ $defaultAvatar }}';"
+                            alt="Avatar"
+                            class="w-10 h-10 rounded-full object-cover pointer-events-none" {{-- pointer-events-none dipertahankan --}}
+                        >
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-[#AD1500] text-white flex items-center justify-center font-semibold text-lg select-none pointer-events-none"> {{-- pointer-events-none dipertahankan --}}
+                            {{ $initials ?: '?' }}
+                        </div>
+                    @endif
 
-                    <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-44 bg-white rounded-md shadow-lg z-50">
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Edit Profil</a>
-                        <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Tambah Aplikasi</a>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">
-                                Logout
-                            </button>
-                        </form>
-                    </div>
+                    <span class="ml-2 text-[#1b1b18] font-medium hidden sm:inline select-none pointer-events-none"> {{-- pointer-events-none dipertahankan --}}
+                        {{ $name }}
+                    </span>
+                    <svg class="w-4 h-4 text-gray-500 pointer-events-none" fill="currentColor" viewBox="0 0 20 20"> {{-- pointer-events-none dipertahankan --}}
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.184l3.71-3.954a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-44 bg-white rounded-md shadow-lg z-50">
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Edit Profil</a>
+                    <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Tambah Aplikasi</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+
                 @else
                     @if (Route::has('login'))
                         {{-- Tautan Login di header yang akan membuka modal --}}
@@ -475,24 +482,37 @@
 
 <script>
     // Navbar Dropdown (User Profile)
-    function toggleDropdown() {
+    function toggleDropdown(event) { // Terima event
+        event.stopPropagation(); // Hentikan event agar tidak naik ke window.onclick
         const dropdownMenu = document.getElementById('dropdownMenu');
         dropdownMenu.classList.toggle('hidden');
+        
+        // Pastikan dropdown notifikasi tertutup saat dropdown profil dibuka
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        if (!notificationDropdown.classList.contains('hidden')) {
+            notificationDropdown.classList.add('hidden');
+        }
     }
 
     // Notification Dropdown
-    function toggleNotificationDropdown() {
+    function toggleNotificationDropdown(event) { // Terima event
+        event.stopPropagation(); // Hentikan event agar tidak naik ke window.onclick
         const notificationDropdown = document.getElementById('notificationDropdown');
         notificationDropdown.classList.toggle('hidden');
         
+        // Pastikan dropdown profil tertutup saat dropdown notifikasi dibuka
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        if (!dropdownMenu.classList.contains('hidden')) {
+            dropdownMenu.classList.add('hidden');
+        }
+        
         // Mark all unread notifications as read when the dropdown is opened
-        const unreadNotifications = document.querySelectorAll('.notification-item'); // Select all notification items
-        let unreadCountAfterOpen = 0; // Track unread after opening
+        const unreadNotifications = document.querySelectorAll('.notification-item'); 
+        let unreadCountAfterOpen = 0; 
 
         unreadNotifications.forEach(item => {
             if (item.classList.contains('unread-notification')) {
                 const notificationId = item.dataset.notificationId;
-                // Make an AJAX request to mark as read in the database
                 fetch(`/notifications/${notificationId}/mark-as-read`, {
                     method: 'POST',
                     headers: {
@@ -503,7 +523,6 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        // Only remove classes if the server successfully marked as read
                         item.classList.remove('unread-notification');
                         const unreadDot = item.querySelector('.unread-dot');
                         if (unreadDot) {
@@ -511,36 +530,48 @@
                         }
                     } else {
                         console.error('Failed to mark notification as read:', response.statusText);
-                        // If marking as read fails, keep it as unread
                         unreadCountAfterOpen++;
                     }
                 })
                 .catch(error => {
                     console.error('Error marking notification as read:', error);
-                    // If error occurs, keep it as unread
                     unreadCountAfterOpen++;
                 })
                 .finally(() => {
-                    // Update global dot after all async operations
                     updateGlobalNotificationDot();
                 });
             }
         });
-        updateGlobalNotificationDot(); // Initial update just in case (will be re-updated by finally blocks)
+        updateGlobalNotificationDot(); 
     }
-
 
     // Close dropdowns when clicking outside
     window.onclick = function(event) {
-        if (!event.target.matches('button') && !event.target.closest('#dropdownMenu') && !event.target.closest('.relative.cursor-pointer') && !event.target.closest('#hamburgerButton') && !event.target.closest('#mobileMenu')) {
+        // Cek apakah klik berasal dari dalam tombol profil atau dropdown-nya
+        const isClickInsideProfileButtonOrDropdown = event.target.closest('button[onclick="toggleDropdown(event)"]') || event.target.closest('#dropdownMenu');
+        
+        // Cek apakah klik berasal dari dalam tombol notifikasi atau dropdown-nya
+        const isClickInsideNotificationButtonOrDropdown = event.target.closest('[onclick="toggleNotificationDropdown(event)"]') || event.target.closest('#notificationDropdown');
+
+        // Cek apakah klik berasal dari dalam tombol hamburger atau mobile menu
+        const isClickInsideHamburgerOrMobileMenu = event.target.closest('#hamburgerButton') || event.target.closest('#mobileMenu');
+
+
+        if (!isClickInsideProfileButtonOrDropdown) {
             const dropdownMenu = document.getElementById('dropdownMenu');
             if (!dropdownMenu.classList.contains('hidden')) {
                 dropdownMenu.classList.add('hidden');
             }
-            const notificationDropdown = document.getElementById('notificationDropdown');
+        }
+
+        if (!isClickInsideNotificationButtonOrDropdown) {
+             const notificationDropdown = document.getElementById('notificationDropdown');
             if (!notificationDropdown.classList.contains('hidden')) {
                 notificationDropdown.classList.add('hidden');
             }
+        }
+
+        if (!isClickInsideHamburgerOrMobileMenu) {
             const mobileMenu = document.getElementById('mobileMenu');
             if (mobileMenu && mobileMenu.classList.contains('open')) {
                 mobileMenu.classList.remove('open');
@@ -726,7 +757,6 @@
     function closeMobileMenu() {
         mobileMenu.classList.remove('open');
     }
-
 </script>
 </body>
 </html>

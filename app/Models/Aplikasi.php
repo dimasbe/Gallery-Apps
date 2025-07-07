@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str; // Import Str helper untuk membuat slug
+use Illuminate\Support\Str;
 
 class Aplikasi extends Model
 {
@@ -32,7 +32,7 @@ class Aplikasi extends Model
         'tanggal_verifikasi',
         'alasan_penolakan',
         'tanggal_diarsipkan',
-        'slug', // <<< TAMBAHKAN INI: Kolom slug
+        'slug',
     ];
 
     protected $dates = [
@@ -48,7 +48,7 @@ class Aplikasi extends Model
         'rating_konten' => 'float',
         'jumlah_kunjungan' => 'integer',
         'tanggal_diarsipkan' => 'datetime',
-        'arsip' => 'boolean', // Cast 'arsip' to a boolean for easier use (0/1 will be true/false)
+        'arsip' => 'boolean',
     ];
 
     public function kategori()
@@ -76,4 +76,9 @@ class Aplikasi extends Model
         return $this->hasOne(FotoAplikasi::class, 'id_aplikasi')->latestOfMany();
     }
 
+    // ✅ Tambahkan relasi kunjungan untuk fix error
+    public function kunjungan()
+    {
+        return $this->hasMany(KunjunganAplikasi::class, 'aplikasi_id');
+    }
 }

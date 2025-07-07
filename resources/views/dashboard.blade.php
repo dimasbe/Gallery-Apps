@@ -195,7 +195,7 @@
                                 <h3 class="font-semibold text-gray-800 text-lg mb-1">{{ $berita->judul_berita }}</h3>
                                 {{-- Memformat tanggal menggunakan Carbon dengan lokal Indonesia --}}
                                 <p class="text-gray-600 text-sm mb-2">
-                                    {{ \Carbon\Carbon::parse($berita->tanggal_dibuat)->locale('id')->isoFormat('D MMMMEEEE') }}
+                                   {{ \Carbon\Carbon::parse($berita->tanggal_dibuat)->locale('id')->isoFormat('D MMMM YYYY') }}
                                 </p>
                                 {{-- Menggunakan accessor ringkasan dari model Berita --}}
                                 {{-- **PERBAIKAN DI SINI: Tambahkan style="word-wrap: break-word;"** --}}
