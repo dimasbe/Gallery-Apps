@@ -15,11 +15,15 @@
                         <input type="text" name="search" placeholder="Cari di sini..."
                             class="flex-grow px-4 py-2 rounded-l-md border border-[#f5f5f5] bg-[#f5f5f5] text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#f5f5f5]"
                             value="{{ request('search') }}" />
+
                         <button type="submit"
                             class="px-4 py-2 border border-l-0 border-[#f5f5f5] bg-[#f5f5f5] rounded-r-md hover:bg-[#f5f5f5] focus:outline-none">
                             <i class="fas fa-search text-custom-primary-red"></i>
                         </button>
-                        <input type="hidden" name="filter" value="{{ $filter }}">
+
+                        {{-- Pertahankan filter dan per_page --}}
+                        <input type="hidden" name="filter" value="{{ request('filter') }}">
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 5) }}">
                     </form>
                 </div>
             </div>
@@ -268,64 +272,81 @@
                 <div class="text-sm text-gray-600">
                     Rows per page:
                     <select id="rows-per-page"
-                        class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red" onchange="changePerPage(this.value)">
-                        @foreach ([5, 10, 20, 30, 40, 50, 100, 500, 1000] as $perPageOption) {{-- Added 1000 to match verifikasi --}}
-                            <option value="{{ $perPageOption }}" {{ (request('per_page', 5) == $perPageOption) ? 'selected' : '' }}>
+                        class="ml-2 border border-gray-300 rounded-md py-1 px-2 text-gray-700 focus:outline-none focus:border-custom-primary-red"
+                        onchange="changePerPage(this.value)">
+                        @foreach ([5, 10, 20, 30, 40, 50, 100, 500, 1000] as $perPageOption)
+                            <option value="{{ $perPageOption }}" {{ request('per_page', 5) == $perPageOption ? 'selected' : '' }}>
                                 {{ $perPageOption }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
-                {{-- Pagination Info (e.g., 1 - 1 of 1) --}}
+                {{-- Pagination Info --}}
                 <div id="pagination-info" class="text-sm text-gray-600">
                     {{ $kategoris->firstItem() }} - {{ $kategoris->lastItem() }} of {{ $kategoris->total() }}
                 </div>
+                
+                @php
+                    $queryString = request()->except('page');
+                @endphp
 
-                {{-- Custom Pagination Navigation (Previous, Page Number, and Next buttons) --}}
+                {{-- Custom Pagination --}}
                 <div class="flex space-x-2">
                     {{-- Previous Button --}}
-                    <a href="{{ $kategoris->previousPageUrl() ? $kategoris->previousPageUrl() . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') : '#' }}"
-                    class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $kategoris->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                    <a href="{{ $kategoris->previousPageUrl() ? $kategoris->previousPageUrl() . '&' . http_build_query($queryString) : '#' }}"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ $kategoris->onFirstPage() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-left"></i>
                     </a>
 
                     {{-- Page Numbers --}}
                     @foreach ($kategoris->getUrlRange(1, $kategoris->lastPage()) as $page => $url)
-                        <a href="{{ $url . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') }}"
-                        class="px-3 py-1 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition duration-200 {{ $page == $kategoris->currentPage() ? 'bg-custom-primary-red text-white' : '' }}">
+                        <a href="{{ $url . '&' . http_build_query($queryString) }}"
+                            class="px-3 py-1 border border-gray-300 rounded-md text-black hover:bg-gray-100 transition duration-200 {{ $page == $kategoris->currentPage() ? 'bg-custom-primary-red text-white' : '' }}">
                             {{ $page }}
                         </a>
                     @endforeach
 
                     {{-- Next Button --}}
-                    <a href="{{ $kategoris->nextPageUrl() ? $kategoris->nextPageUrl() . '&per_page=' . request('per_page', 5) . (request('keyword') ? '&keyword=' . request('keyword') : '') : '#' }}"
-                    class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ !$kategoris->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
+                    <a href="{{ $kategoris->nextPageUrl() ? $kategoris->nextPageUrl() . '&' . http_build_query($queryString) : '#' }}"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 transition duration-200 {{ !$kategoris->hasMorePages() ? 'opacity-50 cursor-not-allowed' : '' }}">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
 
-{{-- SweetAlert2 CDN --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- SweetAlert2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    // Fungsi untuk mengubah jumlah baris per halaman
-    function changePerPage(value) {
+    <script>
+        // Fungsi untuk mengubah jumlah baris per halaman
+        function changePerPage(value) {
         const currentUrl = new URL(window.location.href);
+        
+        // Set jumlah per halaman
         currentUrl.searchParams.set('per_page', value);
-        // Ensure keyword parameter is also carried over
-        const keyword = document.getElementById('search-input') ? document.getElementById('search-input').value : ''; // Assuming search input has 'search-input' ID
-        if (keyword) {
-            currentUrl.searchParams.set('keyword', keyword);
+
+        // Ambil nilai search dari input (pastikan ID-nya 'search-input')
+        const search = document.getElementById('search-input')?.value;
+        if (search) {
+            currentUrl.searchParams.set('search', search);
         } else {
-            currentUrl.searchParams.delete('keyword');
+            currentUrl.searchParams.delete('search');
         }
-        currentUrl.searchParams.delete('page'); // Reset to page 1 when changing per_page
+
+        // Ambil filter jika ada (misalnya dropdown dengan id 'filter-select')
+        const filter = document.getElementById('filter-select')?.value;
+        if (filter) {
+            currentUrl.searchParams.set('filter', filter);
+        }
+
+        // Reset ke halaman 1
+        currentUrl.searchParams.delete('page');
+
+        // Redirect ke URL yang sudah disusun ulang
         window.location.href = currentUrl.toString();
     }
+
 
     // Function to close modal
     function tutupModal(id) {
