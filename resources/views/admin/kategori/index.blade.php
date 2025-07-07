@@ -228,7 +228,7 @@
                         @forelse($kategoris as $category)
                             <tr>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                                    {{ $loop->iteration }}</td>
+                                    {{ $kategoris->firstItem() + $loop->index }}</td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm kategori-nama">
                                     {{ $category->nama_kategori }}</td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-center text-sm capitalize">
@@ -594,11 +594,15 @@
                                     errorMessage = errorData.message;
                                 }
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Gagal!',
-                                    text: errorMessage,
-                                    confirmButtonColor: '#dc3545'
-                                });
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: errorMessage,
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
                                 return;
                             }
 

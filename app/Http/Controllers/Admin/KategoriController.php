@@ -97,9 +97,31 @@ class KategoriController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+   public function destroy(string $id): JsonResponse
     {
+        $kategori = $this->kategori->show($id);
+
+        // Cek apakah kategori sedang digunakan oleh Aplikasi
+        if ($kategori->sub_kategori === 'aplikasi' && $kategori->aplikasi()->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kategori ini masih digunakan oleh Aplikasi. Tidak dapat dihapus.'
+            ], 422);
+        }
+
+        // Cek apakah kategori sedang digunakan oleh Berita
+        if ($kategori->sub_kategori === 'berita' && $kategori->beritas()->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kategori ini masih digunakan oleh Berita. Tidak dapat dihapus.'
+            ], 422);
+        }
+
+        // Lanjut hapus jika tidak dipakai
         $this->kategori->delete($id);
-        return response()->json(['message' => 'Kategori berhasil dihapus!']);
+
+        return response()->json([
+            'message' => 'Kategori berhasil dihapus!'
+        ]);
     }
 }
