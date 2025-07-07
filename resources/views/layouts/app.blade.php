@@ -62,8 +62,8 @@
 
 @stack('head')
 
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] min-h-screen font-[Poppins]">
-    <header class="fixed top-0 left-0 w-full z-50 shadow-sm bg-white dark:bg-[#1b1b18]">
+<body class="bg-[#FDFDFC] text-[#1b1b18] min-h-screen font-[Poppins]">
+    <header class="fixed top-0 left-0 w-full z-50 shadow-sm bg-white">
         <nav class="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
             {{-- LOGO --}}
             <div class="flex items-center space-x-4">
@@ -75,22 +75,22 @@
             {{-- MENU (Hidden on small screens, shown on large screens) --}}
             <div class="hidden lg:flex items-center space-x-10 text-[15px] font-medium">
                 <a href="/"
-                class="{{ request()->is('/') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                class="{{ request()->is('/') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Beranda
                 </a>
 
                 <a href="/aplikasi"
-                class="{{ request()->is('aplikasi*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                class="{{ request()->is('aplikasi*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Aplikasi
                 </a>
 
                 <a href="/kategori"
-                class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Kategori
                 </a>
 
                 <a href="/berita"
-                class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                 Berita
                 </a>
             </div>
@@ -100,7 +100,7 @@
                 @auth
                     {{-- DROPDOWN NOTIFIKASI (sesuai gambar) --}}
                     <div class="relative cursor-pointer" onclick="toggleNotificationDropdown()">
-                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
                         </svg>
                         {{-- Dot notifikasi belum dibaca (sesuai gambar) --}}
@@ -108,21 +108,21 @@
                     </div>
 
                     {{-- Dropdown notifikasi (sesuai gambar) --}}
-                    <div id="notificationDropdown" class="hidden absolute right-0 top-12 w-80 bg-white dark:bg-[#1b1b18] rounded-md shadow-lg z-50 overflow-hidden">
-                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Notifikasi</p>
+                    <div id="notificationDropdown" class="hidden absolute right-0 top-12 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-200">
+                            <p class="text-sm font-semibold text-gray-900">Notifikasi</p>
                         </div>
                         <div class="py-1 max-h-60 overflow-y-auto custom-scrollbar">
                             
                             @if ($notifications->count() > 0)
                             @foreach($notifications as $notification)
-                                        <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 dark:hover:bg-[#2a2a27] cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
+                                        <div data-notification-id="{{ $notification->id }}" class="notification-item flex items-start px-4 py-3 hover:bg-gray-100 cursor-pointer @if(!$notification->dibaca) unread-notification @endif">
                                             <div class="flex-grow overflow-hidden">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->judul }}</p>
-                                                <p class="text-xs text-gray-600 dark:text-gray-400">{{ $notification->pesan }}</p>
+                                                <p class="text-sm font-medium text-gray-900">{{ $notification->judul }}</p>
+                                                <p class="text-xs text-gray-600">{{ $notification->pesan }}</p>
                                             </div>
                                             <div class="ml-3 flex-shrink-0 text-right">
-                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-original-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
+                                                <p class="text-xs text-gray-500 mt-1" data-original-time="{{ $notification->created_at }}">{{ $notification->created_at->diffForHumans() }}</p>
                                                 @if(!$notification->dibaca)
                                                     <span class="unread-dot block h-2 w-2 rounded-full bg-blue-500 ml-auto mt-1"></span>
                                                 @endif
@@ -185,20 +185,20 @@
                             </div>
                         @endif
 
-                        <span class="ml-2 text-[#1b1b18] dark:text-[#EDEDEC] font-medium hidden sm:inline select-none">
+                        <span class="ml-2 text-[#1b1b18] font-medium hidden sm:inline select-none">
                             {{ $name }}
                         </span>
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.184l3.71-3.954a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                         </svg>
                     </button>
 
-                    <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-44 bg-white dark:bg-[#1b1b18] rounded-md shadow-lg z-50">
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Edit Profil</a>
-                        <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Tambah Aplikasi</a>
+                    <div id="dropdownMenu" class="hidden absolute right-0 top-12 w-44 bg-white rounded-md shadow-lg z-50">
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Edit Profil</a>
+                        <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Tambah Aplikasi</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">
+                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">
                                 Logout
                             </button>
                         </form>
@@ -206,7 +206,7 @@
                 @else
                     @if (Route::has('login'))
                         {{-- Tautan Login di header yang akan membuka modal --}}
-                        <button onclick="openModal()" class="px-4 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] text-[#1b1b18] dark:text-[#EDEDEC] hover:border-black dark:hover:border-white rounded-md text-sm hidden lg:block"> {{-- Hidden on mobile --}}
+                        <button onclick="openModal()" class="px-4 py-2 border border-[#e3e3e0] text-[#1b1b18] hover:border-black rounded-md text-sm hidden lg:block"> {{-- Hidden on mobile --}}
                             Login
                         </button>
                         @if (Route::has('register'))
@@ -219,7 +219,7 @@
 
                 {{-- Hamburger Menu Button (Shown only on small screens) --}}
                 <div class="hidden-burger">
-                    <button id="hamburgerButton" class="text-gray-700 dark:text-gray-300 focus:outline-none">
+                    <button id="hamburgerButton" class="text-gray-700 focus:outline-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -229,9 +229,9 @@
         </nav>
 
         {{-- Mobile Menu (Hidden by default, shown when hamburger is clicked) --}}
-        <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white dark:bg-[#1b1b18] shadow-lg z-40 lg:hidden">
+        <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-40 lg:hidden">
             <div class="flex justify-end p-4">
-                <button id="closeMobileMenuButton" class="text-gray-700 dark:text-gray-300 focus:outline-none">
+                <button id="closeMobileMenuButton" class="text-gray-700 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -239,32 +239,32 @@
             </div>
             <div class="flex flex-col space-y-4 px-4 py-2 text-[15px] font-medium">
                 <a href="/"
-                   class="{{ request()->is('/') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                   class="{{ request()->is('/') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                     Beranda
                 </a>
                 <a href="/aplikasi"
-                   class="{{ request()->is('aplikasi*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                   class="{{ request()->is('aplikasi*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                     Aplikasi
                 </a>
                 <a href="/kategori"
-                   class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                   class="{{ request()->is('kategori*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                     Kategori
                 </a>
                 <a href="/berita"
-                   class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] dark:text-[#EDEDEC] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
+                   class="{{ request()->is('berita*') ? 'underline underline-offset-4 decoration-[#AD1500] decoration-2' : '' }} text-[#1b1b18] hover:underline underline-offset-4 decoration-[#AD1500] decoration-2">
                     Berita
                 </a>
                 @auth
-                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Edit Profil</a>
-                    <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">Tambah Aplikasi</a>
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Edit Profil</a>
+                    <a href="{{ route('tambah_aplikasi.index') }}" class="block px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">Tambah Aplikasi</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:bg-gray-100 dark:hover:bg-[#2a2a27]">
+                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-[#1b1b18] hover:bg-gray-100">
                             Logout
                         </button>
                     </form>
                 @else
-                    <button onclick="openModal(); closeMobileMenu()" class="px-4 py-2 border border-[#e3e3e0] dark:border-[#3E3E3A] text-[#1b1b18] dark:text-[#EDEDEC] hover:border-black dark:hover:border-white rounded-md text-sm w-full text-center">
+                    <button onclick="openModal(); closeMobileMenu()" class="px-4 py-2 border border-[#e3e3e0] text-[#1b1b18] hover:border-black rounded-md text-sm w-full text-center">
                         Login
                     </button>
                     <a href="{{ route('register') }}" class="px-4 py-2 bg-[#AD1500] text-white rounded-md text-sm hover:bg-[#8F1000] text-center">
@@ -351,22 +351,22 @@
 
     {{-- Pop-up Notifikasi (Ditempatkan langsung di app.blade.php) --}}
     <div id="notificationPopupOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] hidden">
-        <div id="notificationPopup" class="bg-white dark:bg-[#1b1b18] rounded-lg shadow-xl max-w-md w-full p-6 relative m-4 flex flex-col items-center">
+        <div id="notificationPopup" class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative m-4 flex flex-col items-center">
             {{-- Tombol Tutup di Pojok Kanan Atas --}}
-            <button onclick="closeNotificationPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
+            <button onclick="closeNotificationPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
 
             {{-- Judul Notifikasi (di tengah) --}}
-            <h3 id="popupNotificationTitle" class="text-lg font-bold text-gray-900 dark:text-white mb-1 text-center"></h3>
+            <h3 id="popupNotificationTitle" class="text-lg font-bold text-gray-900 mb-1 text-center"></h3>
             {{-- Waktu Notifikasi (di tengah) --}}
-            <p id="popupNotificationTime" class="text-xs text-gray-500 dark:text-gray-400 mb-4 text-center"></p>
+            <p id="popupNotificationTime" class="text-xs text-gray-500 mb-4 text-center"></p>
 
             {{-- Card untuk Konten Notifikasi (di tengah) --}}
-            <div class="bg-[#F7F7F7] dark:bg-[#2a2a27] rounded-md p-4 mb-6 w-full">
-                <p id="popupNotificationContent" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed text-center"></p>
+            <div class="bg-[#F7F7F7] rounded-md p-4 mb-6 w-full">
+                <p id="popupNotificationContent" class="text-sm text-gray-700 leading-relaxed text-center"></p>
             </div>
             
             {{-- Tombol Tutup (di tengah) --}}
@@ -376,12 +376,12 @@
     
     {{-- MODAL LOGIN (Disamakan dengan tampilan Register) --}}
 <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="w-[460px] bg-white rounded-xl shadow p-8 relative dark:bg-[#1b1b18] dark:text-white">
-        <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 text-2xl font-semibold">
+    <div class="w-[460px] bg-white rounded-xl shadow p-8 relative">
+        <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-semibold">
             &times;
         </button>
-        <h2 class="text-[24px] font-bold text-black dark:text-white text-center mb-1">Login</h2>
-        <p class="text-center text-[13px] text-black dark:text-gray-300 mb-6">Selamat Datang Kembali di GalleryApps</p>
+        <h2 class="text-[24px] font-bold text-black text-center mb-1">Login</h2>
+        <p class="text-center text-[13px] text-black mb-6">Selamat Datang Kembali di GalleryApps</p>
 
         {{-- Notifikasi Error Umum untuk Modal Login (jika ada error yang tidak terkait langsung dengan input) --}}
         @if (session('error') && !($errors->has('email') || $errors->has('password')))
@@ -394,9 +394,9 @@
             @csrf
 
             <div>
-                <label for="login_email" class="block text-sm font-medium text-black dark:text-white mb-1">Email</label>
+                <label for="login_email" class="block text-sm font-medium text-black mb-1">Email</label>
                 <input id="login_email" name="email" type="email" required autofocus
-                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black dark:bg-[#2a2a27] dark:border-gray-600 dark:text-white @error('email') border-red-500 @enderror"
+                    class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black @error('email') border-red-500 @enderror"
                     placeholder="Masukkan email anda" autocomplete="email" value="{{ old('email') }}">
                 <p class="text-red-500 text-xs italic mt-1 hidden" id="error-login_email">Email wajib diisi.</p>
                 @error('email')
@@ -405,20 +405,20 @@
             </div>
 
             <div>
-                <label for="login_password" class="block text-sm font-medium text-black dark:text-white mb-1">Password</label>
+                <label for="login_password" class="block text-sm font-medium text-black mb-1">Password</label>
                 <div class="relative">
                     <input id="login_password" name="password" type="password" required autocomplete="current-password"
-                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black dark:bg-[#2a2a27] dark:border-gray-600 dark:text-white @error('password') border-red-500 @enderror"
+                        class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black @error('password') border-red-500 @enderror"
                         placeholder="Masukkan password anda">
                     <button type="button" onclick="togglePassword(this, 'login_password')" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 dark:text-gray-300 block" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path d="M2.458 12C3.732 7.943 7.523 5 12 5
                                 s8.268 2.943 9.542 7-3.732 7-9.542 7
                                 -8.268-2.943-9.542-7z" />
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 dark:text-gray-300 hidden" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M13.875 18.825A10.05 10.05 0 0112 19
                                 c-4.478 0-8.269-2.944-9.543-7
@@ -438,10 +438,10 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <input id="login_remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                    <label for="login_remember_me" class="ml-2 block text-sm text-black dark:text-gray-300">Ingat saya</label>
+                    <label for="login_remember_me" class="ml-2 block text-sm text-black">Ingat saya</label>
                 </div>
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:text-gray-400 dark:hover:text-gray-200" href="{{ route('password.request') }}">
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
                         Lupa kata sandi Anda?
                     </a>
                 @endif
@@ -453,20 +453,20 @@
         </form>
 
         <div class="flex items-center my-6">
-            <hr class="flex-grow border-gray-300 dark:border-gray-600">
-            <span class="mx-3 text-gray-500 dark:text-gray-300 text-sm">Atau</span>
-            <hr class="flex-grow border-gray-300 dark:border-gray-600">
+            <hr class="flex-grow border-gray-300">
+            <span class="mx-3 text-gray-500 text-sm">Atau</span>
+            <hr class="flex-grow border-gray-300">
         </div>
 
         <div class="flex justify-center">
             <a href="{{ route('google.redirect', ['from' => 'login']) }}"
-                class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition dark:border-gray-600 dark:text-white dark:hover:bg-[#2a2a27]">
+                class="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 transition">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
                 <span>Login dengan Google</span>
             </a>
         </div>
 
-        <div class="mt-6 text-center text-sm text-black dark:text-gray-300">
+        <div class="mt-6 text-center text-sm text-black">
             Belum punya akun?
             <a href="{{ route('register') }}" class="text-[#0500FF] hover:underline font-medium">Register</a>
         </div>

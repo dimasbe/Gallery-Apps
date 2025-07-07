@@ -7,7 +7,7 @@
 
         {{-- Header: Judul + Form Pencarian --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <h2 class="text-2xl md:text-3xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4 sm:mb-0">
+            <h2 class="text-2xl md:text-3xl font-bold font-poppins text-[#1b1b18] mb-4 sm:mb-0">
                 Hasil Pencarian
             </h2>
 

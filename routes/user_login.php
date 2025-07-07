@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TambahAplikasiController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\UserMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,8 +13,7 @@ use Illuminate\Support\Facades\Route;
 | specific routes. These routes are typically authenticated.
 |
 */
-
-Route::prefix('user-login/aplikasi')->name('tambah_aplikasi.')->group(function () {
+Route::middleware(['auth', 'verified', UserMiddleware::class])->prefix('user-login/aplikasi')->name('tambah_aplikasi.')->group(function () {
     Route::get('/', [TambahAplikasiController::class, 'index'])->name('index'); 
     Route::get('/create', [TambahAplikasiController::class, 'create'])->name('create'); 
     Route::post('/', [TambahAplikasiController::class, 'store'])->name('store'); 

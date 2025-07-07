@@ -132,7 +132,7 @@
             </div>
             <div>
                 <p class="font-semibold">Rating Konten</p>
-                <p>Rating {{ $aplikasi->rating_konten }}+ :{{ $aplikasi->rating_konten_deskripsi ?? 'Kekerasan tingkat menengah' }} </p> {{-- Assuming you might have a rating_konten_deskripsi field or default it --}}
+                <p>Rating {{ $aplikasi->rating_konten }}+ : {{ $aplikasi->rating_konten_deskripsi ?? 'Kekerasan tingkat menengah' }} </p> {{-- Assuming you might have a rating_konten_deskripsi field or default it --}}
             </div>
         </div>
 

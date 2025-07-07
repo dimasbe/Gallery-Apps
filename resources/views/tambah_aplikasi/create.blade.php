@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+<div class="min-h-screen bg-gray-1000 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
     <div class="max-w-4xl w-full bg-white p-8 rounded-lg shadow-xl space-y-6">
 
         <div class="mb-6">
@@ -94,15 +94,16 @@
                 <div>
                     <label for="versi" class="block text-sm font-medium text-gray-700">Versi</label>
                     <div class="mt-1">
-                        <input id="versi" name="versi" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                        <input id="versi" name="versi" type="number" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
                     </div>
                     <div id="error-versi" class="text-red-500 text-xs mt-1"></div>
                 </div>
                 <div>
                     <label for="rating_konten" class="block text-sm font-medium text-gray-700">Rating Konten</label>
                     <div class="mt-1">
-                        <input id="rating_konten" name="rating_konten" type="text" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
-                    </div>
+                        <input id="rating_konten" name="rating_konten" type="text" 
+                               class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '');" onblur="if(this.value && !this.value.endsWith('+')) this.value = this.value + '+'"> </div>
                     <div id="error-rating_konten" class="text-red-500 text-xs mt-1"></div>
                 </div>
             </div>
@@ -204,6 +205,18 @@
 
         clearErrors(); // Clear previous errors
 
+        const versiInput = document.getElementById('versi');
+        const versiValue = parseInt(versiInput.value, 10);
+        const errorVersiDiv = document.getElementById('error-versi');
+
+        // Client-side check for 'versi'
+        if (isNaN(versiValue) || versiValue <= 0) {
+            errorVersiDiv.textContent = 'Versi aplikasi tidak boleh 0. Harap masukkan nilai lebih dari 0.';
+            errorVersiDiv.classList.remove('hidden');
+            // Prevent form submission if this client-side validation fails
+            return; 
+        }
+
         const submitButton = document.getElementById('submitButton');
         submitButton.disabled = true;
         submitButton.textContent = 'Menyimpan...'; // Show loading text
@@ -245,9 +258,6 @@
                         window.location.href = data.redirect; // Redirect
                     });
                 } else {
-                    // This case ideally shouldn't be reached if response.ok is true
-                    // unless your server sends `success: false` with a 200 status.
-                    // If it does, treat it as a general error.
                     generalErrorText.textContent = data.message || 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.';
                     generalErrorMessageContainer.classList.remove('hidden');
                 }
@@ -256,8 +266,6 @@
                 if (data.errors) {
                     // Display inline errors for specific fields
                     for (const key in data.errors) {
-                        // Laravel validation sometimes returns 'path_foto.0', 'path_foto.1', etc.
-                        // Map these to 'path_foto' for the general error div for multiple images.
                         const errorKey = key.includes('path_foto') ? 'path_foto' : key;
 
                         const errorDiv = document.getElementById(`error-${errorKey}`);
@@ -265,7 +273,6 @@
                             errorDiv.textContent = data.errors[key].join(', ');
                             errorDiv.classList.remove('hidden'); // Show the error div
                         } else {
-                            // If no specific div, add to general error details list
                             const listItem = document.createElement('li');
                             listItem.textContent = `${key}: ${data.errors[key].join(', ')}`;
                             generalErrorDetailsList.appendChild(listItem);
@@ -284,5 +291,27 @@
         }
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingKontenInput = document.getElementById('rating_konten');
+
+        ratingKontenInput.addEventListener('input', function() {
+            // Hapus semua karakter kecuali angka
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        ratingKontenInput.addEventListener('blur', function() {
+            // Jika input tidak kosong dan belum diakhiri dengan '+', tambahkan '+'
+            if (this.value && !this.value.endsWith('+')) {
+                this.value = this.value + '+';
+            }
+        });
+
+        // Optional: Jika ingin menghapus '+' saat user kembali fokus ke input untuk mengedit
+        ratingKontenInput.addEventListener('focus', function() {
+            if (this.value.endsWith('+')) {
+                this.value = this.value.slice(0, -1);
+            }
+        });
+    });
 </script>
 @endsection

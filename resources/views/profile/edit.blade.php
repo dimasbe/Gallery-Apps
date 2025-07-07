@@ -31,8 +31,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-2xl mx-auto p-4 relative text-[#1b1b18] dark:text-[#EDEDEC] font-[Poppins]">
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 mb-4">
+<div class="max-w-2xl mx-auto p-4 relative text-[#1b1b18] font-[Poppins]">
+    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4">
         <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
@@ -87,7 +87,7 @@
 
             <div class="ml-4 mt-2 sm:mt-0">
                 <p class="text-lg font-semibold">{{ $user->name }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-gray-500">
                     Bergabung sejak {{ $user->created_at->locale('id')->isoFormat('D MMMM YYYY') }}
                 </p>
             </div>
@@ -98,15 +98,15 @@
             x-show="showMenu"
             @click.away="showMenu = false"
             style="display: none;"
-            class="absolute bg-white dark:bg-[#1b1b18] shadow-md border rounded w-48 z-50"
+            class="absolute bg-white shadow-md border rounded w-48 z-50"
         >
-            <button type="button" @click="showMenu = false; showModal = true" class="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#2a2a27]">
+            <button type="button" @click="showMenu = false; showModal = true" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
                 Lihat Gambar
             </button>
-            <button type="button" @click="$refs.photoInput.click(); showMenu = false" class="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#2a2a27]">
+            <button type="button" @click="$refs.photoInput.click(); showMenu = false" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
                 Update Gambar
             </button>
-            <button type="submit" name="delete_avatar" value="1" class="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#2a2a27] text-red-600">
+            <button type="submit" name="delete_avatar" value="1" class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
                 Hapus Gambar
             </button>
         </div>
@@ -119,7 +119,7 @@
             @click="showModal = false"
         >
             <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true"></div>
-            <div @click.stop class="z-50 rounded-full overflow-hidden shadow-lg w-96 h-96 border-4 border-white bg-white dark:bg-[#1b1b18]">
+            <div @click.stop class="z-50 rounded-full overflow-hidden shadow-lg w-96 h-96 border-4 border-white bg-white">
                 <template x-if="photoPreview">
                     <img
                         x-bind:src="photoPreview"

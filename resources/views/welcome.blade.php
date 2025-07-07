@@ -7,11 +7,11 @@
             {{-- Text Kiri --}}
             <div>
                 {{-- Menyesuaikan ukuran teks untuk mobile (sm:text-4xl) --}}
-                <h2 class="text-3xl sm:text-4xl font-bold font-poppins text-[#1b1b18] dark:text-white mb-4">
+                <h2 class="text-3xl sm:text-4xl font-bold font-poppins text-[#1b1b18] mb-4">
                     Selamat Datang di <br>
                     <span class="text-[#AD1500]">GalleryApps</span>
                 </h2>
-                <p class="text-base md:text-lg text-gray-500 dark:text-gray-200 leading-relaxed mb-4 font-poppins">
+                <p class="text-base md:text-lg text-gray-500 leading-relaxed mb-4 font-poppins">
                     Temukan aplikasi terbaik yang sesuai kebutuhanmu lewat ulasan mendalam,
                     fitur unggulan, dan link unduh resmi. <br>
                     Semua cepat, spesifik, dan terpercaya di satu platform.

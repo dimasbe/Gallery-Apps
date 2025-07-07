@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
         
         // 
         // if (env('APP_ENV') === 'production' || str_contains(env('APP_URL'), 'ngrok-free.app')) {
-        URL::forceScheme('https');
+        //URL::forceScheme('https');
         // }
     }
 }

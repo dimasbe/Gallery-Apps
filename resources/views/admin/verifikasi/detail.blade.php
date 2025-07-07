@@ -160,7 +160,7 @@
             </div>
             <div>
                 <p class="font-semibold">Rating Konten</p>
-                <p>{{ $aplikasi['rating_konten'] }}</p>
+                <p>{{ $aplikasi['rating_konten'] }}+ : {{ $aplikasi->rating_konten_deskripsi ?? 'Kekerasan tingkat menengah' }} </p>
             </div>
         </div>
 

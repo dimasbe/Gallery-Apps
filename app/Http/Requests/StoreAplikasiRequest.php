@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class StoreAplikasiRequest extends FormRequest
 {
@@ -20,7 +21,11 @@ class StoreAplikasiRequest extends FormRequest
             'nama_pemilik'    => 'required|string|max:255',
             'id_kategori'     => 'required|exists:kategori,id',
             'tanggal_rilis'   => 'required|date',
-            'versi'           => 'required|string|max:50',
+            'versi'           => [
+                'required',
+                'numeric',
+                'min:1',
+            ],
             'rating_konten'   => 'required|string|max:50',
             'tautan_aplikasi' => 'required|url',
             'deskripsi'       => 'required|string',
@@ -42,6 +47,8 @@ class StoreAplikasiRequest extends FormRequest
             'tanggal_rilis.required'   => 'Tanggal rilis wajib diisi.',
             'tanggal_rilis.date'       => 'Tanggal rilis harus berupa tanggal yang valid.',
             'versi.required'           => 'Versi aplikasi wajib diisi.',
+            'versi.numeric'            => 'Versi aplikasi harus berupa angka.',
+            'versi.min'                => 'Versi aplikasi tidak boleh 0. Harap masukkan nilai lebih dari 0.',
             'versi.max'                => 'Versi maksimal 50 karakter.',
             'rating_konten.required'   => 'Rating konten wajib diisi.',
             'rating_konten.max'        => 'Rating konten maksimal 50 karakter.',
