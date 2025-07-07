@@ -24,11 +24,6 @@ class Kategori extends Model
     const CREATED_AT = 'tanggal_dibuat';
     const UPDATED_AT = 'tanggal_diedit';
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'tanggal_dibuat' => 'datetime',
         'tanggal_diedit' => 'datetime',
@@ -39,19 +34,19 @@ class Kategori extends Model
         return 'slug'; 
     }
 
-
+    /**
+     * Relasi ke tabel aplikasi (one to many)
+     */
     public function aplikasi()
     {
         return $this->hasMany(Aplikasi::class, 'id_kategori');
     }
 
     /**
-     * Relasi many-to-many dengan Berita.
-     * Sebuah kategori bisa dimiliki oleh banyak berita.
+     * Relasi ke tabel berita (one to many)
      */
     public function beritas()
     {
-        // Parameter: Model terkait, nama tabel pivot, foreign key di pivot untuk model ini, foreign key di pivot untuk model terkait
-        return $this->belongsToMany(Berita::class, 'berita_kategori', 'kategori_id', 'berita_id');
+        return $this->hasMany(Berita::class, 'kategori_id');
     }
 }
