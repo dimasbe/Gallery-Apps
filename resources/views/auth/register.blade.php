@@ -9,39 +9,49 @@
         <form method="POST" action="{{ route('register') }}" class="space-y-4" id="registerForm">
             @csrf
 
+            {{-- Nama --}}
             <div>
                 <label for="name" class="block text-sm font-medium text-black mb-1">Nama Lengkap</label>
-                <input id="name" name="name" type="text" required
+                <input id="name" name="name" type="text"
                     class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black"
                     placeholder="Masukkan nama lengkap anda" autocomplete="name">
                 <x-input-error :messages="$errors->get('name')" class="mt-1 text-sm text-red-600" />
+                <p id="error-name" class="mt-1 text-sm text-red-600"></p>
             </div>
 
+            {{-- Email --}}
             <div>
                 <label for="email" class="block text-sm font-medium text-black mb-1">Email</label>
-                <input id="email" name="email" type="email" required
+                <input id="email" name="email" type="email"
                     class="w-full h-[40px] px-4 border border-gray-300 rounded-md bg-white text-sm text-black"
                     placeholder="Masukkan email anda" autocomplete="email">
                 <x-input-error :messages="$errors->get('email')" class="mt-1 text-sm text-red-600" />
+                <p id="error-email" class="mt-1 text-sm text-red-600"></p>
             </div>
 
+            {{-- Password --}}
             <div>
                 <label for="password" class="block text-sm font-medium text-black mb-1">Password</label>
                 <div class="relative">
-                    <input id="password" name="password" type="password" required
+                    <input id="password" name="password" type="password"
                         class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black"
                         placeholder="Masukkan password anda">
-                    <button type="button" onclick="togglePassword(this)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
+                    <button type="button" onclick="togglePassword(this)"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5
+                            <path
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5
                                 s8.268 2.943 9.542 7-3.732 7-9.542 7
                                 -8.268-2.943-9.542-7z" />
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M13.875 18.825A10.05 10.05 0 0112 19
+                            <path
+                                d="M13.875 18.825A10.05 10.05 0 0112 19
                                 c-4.478 0-8.269-2.944-9.543-7
                                 a9.956 9.956 0 012.342-3.36m3.093-2.52
                                 A9.953 9.953 0 0112 5c4.478 0 8.269 2.944 9.543 7
@@ -51,25 +61,33 @@
                     </button>
                 </div>
                 <x-input-error :messages="$errors->get('password')" class="mt-1 text-sm text-red-600" />
+                <p id="error-password" class="mt-1 text-sm text-red-600"></p>
             </div>
 
+            {{-- Konfirmasi Password --}}
             <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-black mb-1">Konfirmasi Password</label>
+                <label for="password_confirmation"
+                    class="block text-sm font-medium text-black mb-1">Konfirmasi Password</label>
                 <div class="relative">
-                    <input id="password_confirmation" name="password_confirmation" type="password" required
+                    <input id="password_confirmation" name="password_confirmation" type="password"
                         class="w-full h-[40px] px-4 pr-10 border border-gray-300 rounded-md bg-white text-sm text-black"
                         placeholder="Ulangi password anda">
-                    <button type="button" onclick="togglePassword(this)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
+                    <button type="button" onclick="togglePassword(this)"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="eye-icon w-5 h-5 text-gray-500 block" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5
+                            <path
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5
                                 s8.268 2.943 9.542 7-3.732 7-9.542 7
                                 -8.268-2.943-9.542-7z" />
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="eye-off-icon w-5 h-5 text-gray-500 hidden" fill="none"
                             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M13.875 18.825A10.05 10.05 0 0112 19
+                            <path
+                                d="M13.875 18.825A10.05 10.05 0 0112 19
                                 c-4.478 0-8.269-2.944-9.543-7
                                 a9.956 9.956 0 012.342-3.36m3.093-2.52
                                 A9.953 9.953 0 0112 5c4.478 0 8.269 2.944 9.543 7
@@ -78,8 +96,10 @@
                         </svg>
                     </button>
                 </div>
+                <p id="error-password_confirmation" class="mt-1 text-sm text-red-600"></p>
             </div>
 
+            {{-- Checkbox --}}
             <div class="flex items-start gap-2 mt-2">
                 <input id="terms" name="terms" type="checkbox"
                     class="mt-1 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
@@ -116,37 +136,29 @@
     </div>
 </div>
 
+{{-- Script --}}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Fungsi untuk toggle password visibility
+document.addEventListener('DOMContentLoaded', function () {
     function togglePassword(button) {
         const input = button.previousElementSibling;
         const eye = button.querySelector('.eye-icon');
         const eyeOff = button.querySelector('.eye-off-icon');
-
         const isPassword = input.type === 'password';
         input.type = isPassword ? 'text' : 'password';
         eye.classList.toggle('hidden', !isPassword);
         eyeOff.classList.toggle('hidden', isPassword);
     }
-
-    // PENTING: Memastikan fungsi togglePassword tersedia secara global jika tidak di app.blade.php
-    // Jika togglePassword sudah ada di app.blade.php, Anda bisa menghapus fungsi ini dari sini.
-    // Namun, agar kode ini mandiri, saya akan biarkan di sini.
     window.togglePassword = togglePassword;
 
-    // Logika untuk mengaktifkan/menonaktifkan tombol Register
     const termsCheckbox = document.getElementById('terms');
     const registerBtn = document.getElementById('registerBtn');
-
     if (termsCheckbox && registerBtn) {
-        // Atur status awal tombol berdasarkan status checkbox
         registerBtn.disabled = !termsCheckbox.checked;
         registerBtn.classList.toggle('opacity-50', !termsCheckbox.checked);
         registerBtn.classList.toggle('cursor-not-allowed', !termsCheckbox.checked);
         registerBtn.classList.toggle('cursor-pointer', termsCheckbox.checked);
 
-        termsCheckbox.addEventListener('change', function() {
+        termsCheckbox.addEventListener('change', function () {
             registerBtn.disabled = !this.checked;
             registerBtn.classList.toggle('opacity-50', !this.checked);
             registerBtn.classList.toggle('cursor-not-allowed', !this.checked);
@@ -154,7 +166,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Logika untuk tautan "Login" di halaman registrasi agar membuka modal
+    const form = document.getElementById('registerForm');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmInput = document.getElementById('password_confirmation');
+
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+
+        // Reset
+        document.getElementById('error-name').innerText = '';
+        document.getElementById('error-email').innerText = '';
+        document.getElementById('error-password').innerText = '';
+        document.getElementById('error-password_confirmation').innerText = '';
+        [nameInput, emailInput, passwordInput, passwordConfirmInput].forEach(input => {
+            input.classList.remove('border-red-500');
+        });
+
+        if (!nameInput.value.trim()) {
+            isValid = false;
+            nameInput.classList.add('border-red-500');
+            document.getElementById('error-name').innerText = 'Nama wajib diisi.';
+        }
+
+        if (!emailInput.value.trim()) {
+            isValid = false;
+            emailInput.classList.add('border-red-500');
+            document.getElementById('error-email').innerText = 'Email wajib diisi.';
+        }
+
+        if (!passwordInput.value.trim()) {
+            isValid = false;
+            passwordInput.classList.add('border-red-500');
+            document.getElementById('error-password').innerText = 'Password wajib diisi.';
+        }
+
+        if (!passwordConfirmInput.value.trim()) {
+            isValid = false;
+            passwordConfirmInput.classList.add('border-red-500');
+            document.getElementById('error-password_confirmation').innerText = 'Konfirmasi password wajib diisi.';
+        }
+
+        if (passwordInput.value && passwordConfirmInput.value && passwordInput.value !== passwordConfirmInput.value) {
+            isValid = false;
+            passwordInput.classList.add('border-red-500');
+            passwordConfirmInput.classList.add('border-red-500');
+            document.getElementById('error-password_confirmation').innerText = 'Password dan konfirmasi tidak sama.';
+        }
+
+        if (!isValid) event.preventDefault();
+    });
     const loginLinkRegister = document.getElementById('loginLinkRegister');
     if (loginLinkRegister) {
         loginLinkRegister.addEventListener('click', function(event) {
