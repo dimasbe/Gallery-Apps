@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-white">
+    <div class="min-h-screen flex items-center justify-center">
         <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
             <!-- Title -->
             <h2 class="text-2xl font-bold text-center text-black">Reset Password</h2>

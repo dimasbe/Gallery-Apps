@@ -139,9 +139,7 @@
         </section>
     </div>
 </div>
-@endsection
 
-@section('scripts')
 <script>
     function changePerPage(value) {
         const currentUrl = new URL(window.location.href);

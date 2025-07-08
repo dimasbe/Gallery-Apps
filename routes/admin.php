@@ -74,6 +74,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/riwayat/{id}/delete', [AdminRiwayatController::class, 'destroy'])->name('riwayat.delete');
     Route::put('/riwayat/{id}/archive', [AdminRiwayatController::class, 'archive'])->name('riwayat.archive');
 
+    Route::put('riwayat/{id}/verify', [AdminRiwayatController::class, 'verify'])->name('riwayat.verify');
+    Route::put('riwayat/{id}/reject', [AdminRiwayatController::class, 'reject'])->name('riwayat.reject');
+
     // Route Arsip Admin
     Route::get('/arsip', [ArsipController::class, 'index'])->name('arsip.index');
     Route::get('/arsip/{id}/show', [ArsipController::class, 'show'])->name('arsip.show');

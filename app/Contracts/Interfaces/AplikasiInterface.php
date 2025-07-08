@@ -11,6 +11,8 @@ use App\Contracts\Interfaces\Eloquent\AplikasiQueryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator; // Added for pagination
 use Illuminate\Http\Request; // Added for request parameter in methods
 use Illuminate\Support\Collection;
+use App\Models\Aplikasi;
+use Illuminate\Database\Eloquent\Model;
 
 interface AplikasiInterface extends
     BaseInterface,

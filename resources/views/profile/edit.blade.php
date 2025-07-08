@@ -53,7 +53,7 @@
         @method('PATCH')
 
         {{-- Avatar & Info User --}}
-        <div class="mb-6 flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 space-y-4 sm:space-y-0">
+        <div class="mb-6 flex flex-col sm:flex-row items-center sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
             <div class="relative">
                 <template x-if="photoPreview">
                     <img

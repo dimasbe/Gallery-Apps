@@ -25,7 +25,7 @@
     </div>
     
     <div class="bg-white shadow-md rounded-lg p-6">
-
+        
         {{-- Header: Kembali Button --}}
         {{-- Removed px-6 here to allow it to align with the overall section padding (px-4) --}}
         <div class="mb-6">
@@ -48,142 +48,109 @@
 
                 <div class="flex items-center space-x-4 mb-6">
                     <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Logo" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
-                    <div class="flex items-center space-x-4">
-                        {{-- Rating --}}
-                        <div class="flex flex-col items-start">
-                            <div class="flex items-center">
-                                <span class="text-gray-700 text-base font-poppins font-semibold">3,8</span>
-                                <svg class="w-4 h-4 text-yellow-400 fill-current ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.176-6.545L.587 7.646l6.545-.952L10 1l2.868 5.694 6.545.952-4.765 4.099 1.176 6.545z" />
-                                </svg>
-                            </div>
-                            <span class="text-gray-600 text-xs font-poppins">37,2 jt ulasan</span>
-                        </div>
-
-                        {{-- Separator --}}
-                        <div class="h-10 w-px bg-gray-300"></div>
-
-                        {{-- Downloads --}}
-                        <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">500 jt+</span>
-                            <span class="text-gray-600 text-xs font-poppins">download</span>
-                        </div>
-
-                        {{-- Separator --}}
-                        <div class="h-10 w-px bg-gray-300"></div>
-
-                        {{-- Age Rating --}}
-                        <div class="flex flex-col items-start">
-                            <span class="text-gray-700 text-base font-poppins font-semibold">12+</span>
-                            <span class="text-gray-600 text-xs font-poppins">rating 12+</span>
-                        </div>
-                    </div>
+                    {{-- Google Play Button --}}
+                    <a href="{{ $aplikasi->tautan_aplikasi }}" target="_blank"
+                        class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
+                        hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
+                        {{-- Google Play Icon --}}
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
+                        alt="Google Play Icon Only"
+                        class="h-7 w-7">
+                        {{-- Text for Google Play --}}
+                        <span class="text-sm text-gray-800 font-poppins">
+                            Dapatkan di <br>
+                            <strong class="font-bold">Google Play</strong>
+                        </span>
+                    </a>
                 </div>
-
-                {{-- Google Play Button - Updated to match the provided image --}}
-                <a href="https://play.google.com/store/apps/details?id=com.mobile.legends" target="_blank"
-                   class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
-                                 hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
-                    {{-- Google Play Icon --}}
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
-                                 alt="Google Play Icon Only"
-                                 class="h-7 w-7"> {{-- Adjusted size to match image --}}
-
-                    {{-- Text for Google Play --}}
-                    <span class="text-sm text-gray-800 font-poppins">
-                        Dapatkan di <br>
-                        <strong class="font-bold">Google Play</strong>
-                    </span>
-                </a>
             </div>
 
-            {{-- Right Column: Image Gallery (Carousel) --}}
-            {{-- Added mt-8 for mobile spacing, md:mt-0 to remove it on larger screens --}}
-            <div class="flex-1 md:w-1/2 relative overflow-hidden rounded-lg shadow-md mt-8 md:mt-0">
-                <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
-                    {{-- Reduced max-height for smaller appearance --}}
-                    {{-- Added data-index attribute to each image for easy lookup in JS --}}
-                    @foreach($aplikasi->fotoAplikasi as $index => $foto)
+                {{-- Right Column: Image Gallery (Carousel) --}}
+                {{-- Added mt-8 for mobile spacing, md:mt-0 to remove it on larger screens --}}
+                <div class="flex-1 md:w-1/2 relative overflow-hidden rounded-lg shadow-md mt-8 md:mt-0">
+                    <div id="gallery-carousel" class="flex transition-transform duration-300 ease-in-out" style="transform: translateX(0);">
+                        {{-- Reduced max-height for smaller appearance --}}
+                        {{-- Added data-index attribute to each image for easy lookup in JS --}}
+                        @foreach($aplikasi->fotoAplikasi as $index => $foto)
                         <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Screenshot {{ $index + 1 }}" class="w-full flex-shrink-0 object-cover rounded-lg cursor-pointer" style="max-height: 300px;" data-index="{{ $index }}">
-                    @endforeach
+                        @endforeach
+                    </div>
+
+                    <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button id="next-btn" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
                 </div>
-
-                <button id="prev-btn" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button id="next-btn" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full opacity-75 hover:opacity-100 transition-opacity hover:bg-white hover:text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
             </div>
-        </div>
 
-        {{-- Description/Features Section --}}
-        {{-- Removed px-6 here --}}
-                <div class="mb-8">
-            <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
-            <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
-                <p>{{ $aplikasi['deskripsi'] }}</p>
-
-                <p class="mt-4">Fitur Utama:</p>
-                {{-- Kita akan menampilkan fitur-fitur sebagai daftar (bullet points) --}}
-                <ul class="list-disc list-inside mt-2">
-                    {{-- Memisahkan string fitur berdasarkan baris baru dan membuat setiap baris menjadi item daftar --}}
-                    @foreach (explode("\n", $aplikasi['fitur']) as $feature)
+            {{-- Description/Features Section --}}
+            {{-- Removed px-6 here --}}
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold font-poppins text-gray-800 mb-4">Deskripsi</h2>
+                <div id="description-content" class="text-gray-700 font-poppins leading-relaxed overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 120px;">
+                    <p>{{ $aplikasi['deskripsi'] }}</p>
+                    
+                    <p class="mt-4">Fitur Utama:</p>
+                    {{-- Kita akan menampilkan fitur-fitur sebagai daftar (bullet points) --}}
+                    <ul class="list-disc list-inside mt-2">
+                        {{-- Memisahkan string fitur berdasarkan baris baru dan membuat setiap baris menjadi item daftar --}}
+                        @foreach (explode("\n", $aplikasi['fitur']) as $feature)
                         {{-- Memastikan item daftar tidak kosong --}}
                         @if (!empty(trim($feature)))
-                            <li>{{ trim($feature) }}</li>
+                        <li>{{ trim($feature) }}</li>
                         @endif
-                    @endforeach
-                </ul>
+                        @endforeach
+                    </ul>
+                </div>
+                <button id="read-more-btn" class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
             </div>
-            <button id="read-more-btn" class="mt-4 text-red-600 hover:text-red-700 font-semibold font-poppins focus:outline-none">Baca Selengkapnya</button>
-        </div>
         
-        {{-- Additional Info Section --}}
-        {{-- Removed px-6 here --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
-            <div>
-                <p class="font-semibold">Dirilis Tanggal</p>
-                <p>{{ $aplikasi['tanggal_rilis'] }}</p>
-            </div>
-            <div>
-                <p class="font-semibold">Diupdate Pada</p>
-                <p>{{ $aplikasi['tanggal_update'] }}</p>
-            </div>
-            <div>
-                <p class="font-semibold">Versi</p>
-                <p>{{ $aplikasi['versi'] }}</p>
-            </div>
-            <div>
-                <p class="font-semibold">Rating Konten</p>
-                <p>{{ $aplikasi['rating_konten'] }}+ : {{ $aplikasi->rating_konten_deskripsi ?? 'Kekerasan tingkat menengah' }} </p>
+            {{-- Additional Info Section --}}
+            {{-- Removed px-6 here --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-700 font-poppins text-sm mb-8">
+                <div>
+                    <p class="font-semibold">Dirilis Tanggal</p>
+                    <p>{{ $aplikasi['tanggal_rilis'] }}</p>
+                </div>
+                <div>
+                    <p class="font-semibold">Diupdate Pada</p>
+                    <p>{{ $aplikasi['tanggal_update'] }}</p>
+                </div>
+                <div>
+                    <p class="font-semibold">Versi</p>
+                    <p>{{ $aplikasi['versi'] }}</p>
+                </div>
+                <div>
+                    <p class="font-semibold">Rating Konten</p>
+                    <p>{{ $aplikasi['rating_konten'] }}+ : {{ $aplikasi->rating_konten_deskripsi ?? 'Kekerasan tingkat menengah' }} </p>
+                </div>
             </div>
         </div>
-
     </div>
-</div>
 
-{{-- Image Modal Pop-up --}}
-<div id="image-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-    <button id="close-modal-btn" class="absolute top-4 right-4 text-white text-3xl font-bold">&times;</button>
-    <div class="relative">
-        <img id="modal-image" src="" alt="Enlarged Screenshot" class="max-w-full max-h-[90vh] rounded-lg shadow-lg object-contain">
-        <button id="modal-prev-btn" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full opacity-75 hover:opacity-100 transition-opacity">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-        </button>
-        <button id="modal-next-btn" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full opacity-75 hover:opacity-100 transition-opacity">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </button>
+    {{-- Image Modal Pop-up --}}
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <button id="close-modal-btn" class="absolute top-4 right-4 text-white text-3xl font-bold">&times;</button>
+        <div class="relative">
+            <img id="modal-image" src="" alt="Enlarged Screenshot" class="max-w-full max-h-[90vh] rounded-lg shadow-lg object-contain">
+            <button id="modal-prev-btn" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full opacity-75 hover:opacity-100 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button id="modal-next-btn" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full opacity-75 hover:opacity-100 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
     </div>
-</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

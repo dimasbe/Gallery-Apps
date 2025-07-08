@@ -73,24 +73,21 @@
 
                 <div class="flex items-center space-x-4 mb-6">
                     <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Logo" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0 object-contain">
-                    <div class="flex items-center space-x-4">
-                    </div>
+                    {{-- Google Play Button --}}
+                    <a href="{{ $aplikasi->tautan_aplikasi }}" target="_blank"
+                        class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
+                        hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
+                        {{-- Google Play Icon --}}
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
+                        alt="Google Play Icon Only"
+                        class="h-7 w-7">
+                        {{-- Text for Google Play --}}
+                        <span class="text-sm text-gray-800 font-poppins">
+                            Dapatkan di <br>
+                            <strong class="font-bold">Google Play</strong>
+                        </span>
+                    </a>
                 </div>
-
-                {{-- Google Play Button --}}
-                @if($aplikasi->tautan_aplikasi)
-                <a href="{{ $aplikasi->tautan_aplikasi }}" target="_blank"
-                   class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
-                                 hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
-                                 alt="Google Play Icon Only"
-                                 class="h-7 w-7">
-                    <span class="text-sm text-gray-800 font-poppins">
-                        Dapatkan di <br>
-                        <strong class="font-bold">Google Play</strong>
-                    </span>
-                </a>
-                @endif
             </div>
 
             {{-- Right Column: Image Gallery (Carousel) --}}
@@ -166,12 +163,12 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="status" value="diterima">
-                    <button type="submit" class="w-full px-8 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
-                        Verifikasi Aplikasi
+                    <button type="submit" class="w-full px-8 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
+                        Terima
                     </button>
                 </form>
-                <button type="button" onclick="showRejectModal()" class="w-full sm:w-auto px-8 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
-                    Tolak Aplikasi
+                <button type="button" onclick="showRejectModal()" class="w-full sm:w-auto px-8 py-3 bg-red-700 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-200 ease-in-out">
+                    Tolak
                 </button>
             </div>
         </div>

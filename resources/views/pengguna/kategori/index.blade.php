@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<section class="max-w-7xl mx-auto p-6">
     {{-- Konten Utama --}}
     <div class="flex flex-col">
         {{-- Pencarian --}}
@@ -37,7 +38,7 @@
                 style="max-height: 10rem;">
                 @foreach ($aplikasiKategoris as $kategori)
                     <a href="{{ route('kategori.show', ['kategori' => $kategori->nama_kategori]) }}"
-                        class="category-item bg-gray-100 text-center p-2 rounded-md hover:bg-gray-300">
+                        class="category-item bg-gray-100 text-center p-5 rounded-md hover:bg-gray-300">
                         {{ $kategori->nama_kategori }}
                     </a>
                 @endforeach
@@ -57,83 +58,85 @@
 
         </div>
     </div>
-@endsection {{-- Penutup section content --}}
 
-@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const categoryGroup = document.getElementById('category-group');
-        const toggleButton = document.getElementById('toggle-button');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const noResultsMessage = document.getElementById('noResultsMessage');
-        const categoryItems = Array.from(document.querySelectorAll('.category-item'));
+    const categoryGroup = document.getElementById('category-group');
+    const toggleButton = document.getElementById('toggle-button');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const categoryItems = Array.from(document.querySelectorAll('.category-item'));
 
-        let expanded = false;
-        const initialMaxHeight = '10rem';
+    let expanded = false;
+    const initialMaxHeight = '10rem'; // Store the initial max-height as a string
 
-        function filterCategories() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            let foundResults = false;
-
-            categoryItems.forEach(item => {
-                const categoryName = item.textContent.toLowerCase();
-                if (categoryName.includes(searchTerm)) {
-                    item.style.display = ''; // Tampilkan item
-                    foundResults = true;
-                } else {
-                    item.style.display = 'none'; // Sembunyikan item
-                }
-            });
-
-            if (!foundResults && searchTerm.length > 0) {
-                noResultsMessage.classList.remove('hidden'); // Tampilkan pesan 'tidak ada hasil'
-            } else {
-                noResultsMessage.classList.add('hidden'); // Sembunyikan pesan 'tidak ada hasil'
-            }
-
-            // Atur tampilan tombol "Tampilkan Semua" dan tinggi grup kategori
-            if (searchTerm.length === 0) {
-                toggleButton.classList.remove('hidden'); // Tampilkan tombol toggle
-                if (!expanded) {
-                    categoryGroup.style.maxHeight = initialMaxHeight; // Kembali ke tinggi awal jika belum diperluas
-                    toggleButton.textContent = 'Tampilkan Semua';
-                } else {
-                    categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px'; // Tetap sesuaikan tinggi jika sedang expanded
-                    toggleButton.textContent = 'Sembunyikan';
-                }
-            } else {
-                toggleButton.classList.add('hidden'); // Sembunyikan tombol toggle saat ada pencarian
-                categoryGroup.style.maxHeight = 'none'; // Biarkan tinggi menyesuaikan konten yang difilter
-            }
+    // Function to set the initial state of the category group and toggle button
+    function initializeCategoryDisplay() {
+        if (!expanded) {
+            categoryGroup.style.maxHeight = initialMaxHeight;
+            toggleButton.textContent = 'Tampilkan Semua';
+        } else {
+            // If already expanded, ensure it retains its expanded height
+            categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px';
+            toggleButton.textContent = 'Sembunyikan';
         }
+        // Only show the toggle button if there are more items than fit in initialMaxHeight
+        toggleButton.classList.toggle('hidden', categoryGroup.scrollHeight <= parseFloat(initialMaxHeight) * 16); // Convert rem to px (1rem = 16px default)
+    }
 
-        // Aktifkan event listener untuk filter saat mengetik
-        searchInput.addEventListener('input', filterCategories);
+    function filterCategories() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        let foundResults = false;
+        let visibleItemsCount = 0;
 
-        // Tambahkan event listener untuk tombol pencarian (opsional, jika ingin tetap ada tombol)
-        searchButton.addEventListener('click', filterCategories);
-
-        // Event listener untuk tombol "Tampilkan Semua/Sembunyikan"
-        toggleButton.addEventListener('click', () => {
-            if (expanded) {
-                categoryGroup.style.maxHeight = initialMaxHeight;
-                toggleButton.textContent = 'Tampilkan Semua';
+        categoryItems.forEach(item => {
+            const categoryName = item.textContent.toLowerCase();
+            if (categoryName.includes(searchTerm)) {
+                item.style.display = ''; // Show item
+                foundResults = true;
+                visibleItemsCount++;
             } else {
-                // Pastikan semua item terlihat sebelum menghitung scrollHeight saat diperluas
-                categoryItems.forEach(item => {
-                    item.style.display = '';
-                });
-                categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px';
-                toggleButton.textContent = 'Sembunyikan';
+                item.style.display = 'none'; // Hide item
             }
-            expanded = !expanded;
         });
 
-        // Panggil filterCategories saat halaman dimuat untuk inisialisasi awal.
-        // Ini memastikan bahwa jika ada teks di input dari refresh atau riwayat browser,
-        // filter akan diterapkan, atau semua kategori ditampilkan jika input kosong.
-        filterCategories();
+        if (!foundResults && searchTerm.length > 0) {
+            noResultsMessage.classList.remove('hidden'); // Show 'no results' message
+        } else {
+            noResultsMessage.classList.add('hidden'); // Hide 'no results' message
+        }
+
+        // Adjust toggle button visibility and category group height based on search
+        if (searchTerm.length === 0) {
+            // When search is empty, reset to initial display logic
+            initializeCategoryDisplay();
+        } else {
+            // When searching, always show all filtered results and hide the toggle button
+            categoryGroup.style.maxHeight = 'none'; // Allow content to dictate height
+            toggleButton.classList.add('hidden'); // Hide toggle button during search
+            expanded = true; // Treat as expanded so toggle button shows "Sembunyikan" if it reappears
+        }
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterCategories);
+    searchButton.addEventListener('click', filterCategories); // Keep for explicit button click
+
+    toggleButton.addEventListener('click', () => {
+        if (expanded) {
+            categoryGroup.style.maxHeight = initialMaxHeight;
+            toggleButton.textContent = 'Tampilkan Semua';
+        } else {
+            categoryGroup.style.maxHeight = categoryGroup.scrollHeight + 'px';
+            toggleButton.textContent = 'Sembunyikan';
+        }
+        expanded = !expanded;
     });
+
+    // Initial setup on page load
+    initializeCategoryDisplay(); // Set the initial state
+    filterCategories(); // Apply filter in case search input has pre-filled value
+});
 </script>
-@endpush
+@endsection

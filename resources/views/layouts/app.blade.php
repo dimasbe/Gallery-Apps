@@ -62,7 +62,11 @@
 
 @stack('head')
 
-<body class="bg-[#FDFDFC] text-[#1b1b18] min-h-screen font-[Poppins]">
+<body class="bg-[#FDFDFC] text-[#1b1b18] min-h-screen font-[Poppins]" style="
+display: flex;
+justify-content: space-between;
+flex-direction: column;
+">
     <header class="fixed top-0 left-0 w-full z-50 shadow-sm bg-white">
         <nav class="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
             {{-- LOGO --}}
@@ -382,13 +386,13 @@
     </div>
     
     {{-- MODAL LOGIN (Disamakan dengan tampilan Register) --}}
-<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="w-[460px] bg-white rounded-xl shadow p-8 relative">
-        <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-semibold">
-            &times;
-        </button>
-        <h2 class="text-[24px] font-bold text-black text-center mb-1">Login</h2>
-        <p class="text-center text-[13px] text-black mb-6">Selamat Datang Kembali di GalleryApps</p>
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="w-[460px] bg-white rounded-xl shadow p-8 relative">
+            <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-semibold">
+                &times;
+            </button>
+            <h2 class="text-[24px] font-bold text-black text-center mb-1">Login</h2>
+            <p class="text-center text-[13px] text-black mb-6">Selamat Datang Kembali di GalleryApps</p>
 
         {{-- Notifikasi Error Umum untuk Modal Login (jika ada error yang tidak terkait langsung dengan input) --}}
         @if (session('error') && !($errors->has('email') || $errors->has('password')))
@@ -482,33 +486,34 @@
 
 <script>
     // Navbar Dropdown (User Profile)
-    function toggleDropdown(event) { // Terima event
-        event.stopPropagation(); // Hentikan event agar tidak naik ke window.onclick
+    function toggleDropdown(event) {
+        event.stopPropagation();
         const dropdownMenu = document.getElementById('dropdownMenu');
-        dropdownMenu.classList.toggle('hidden');
-        
-        // Pastikan dropdown notifikasi tertutup saat dropdown profil dibuka
+        if (dropdownMenu) {
+            dropdownMenu.classList.toggle('hidden');
+        }
+
         const notificationDropdown = document.getElementById('notificationDropdown');
-        if (!notificationDropdown.classList.contains('hidden')) {
+        if (notificationDropdown && !notificationDropdown.classList.contains('hidden')) {
             notificationDropdown.classList.add('hidden');
         }
     }
 
     // Notification Dropdown
-    function toggleNotificationDropdown(event) { // Terima event
-        event.stopPropagation(); // Hentikan event agar tidak naik ke window.onclick
+    function toggleNotificationDropdown(event) {
+        event.stopPropagation();
         const notificationDropdown = document.getElementById('notificationDropdown');
-        notificationDropdown.classList.toggle('hidden');
-        
-        // Pastikan dropdown profil tertutup saat dropdown notifikasi dibuka
+        if (notificationDropdown) {
+            notificationDropdown.classList.toggle('hidden');
+        }
+
         const dropdownMenu = document.getElementById('dropdownMenu');
-        if (!dropdownMenu.classList.contains('hidden')) {
+        if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
             dropdownMenu.classList.add('hidden');
         }
-        
-        // Mark all unread notifications as read when the dropdown is opened
-        const unreadNotifications = document.querySelectorAll('.notification-item'); 
-        let unreadCountAfterOpen = 0; 
+
+        const unreadNotifications = document.querySelectorAll('.notification-item');
+        let unreadCountAfterOpen = 0;
 
         unreadNotifications.forEach(item => {
             if (item.classList.contains('unread-notification')) {
@@ -542,38 +547,32 @@
                 });
             }
         });
-        updateGlobalNotificationDot(); 
+        updateGlobalNotificationDot();
     }
 
     // Close dropdowns when clicking outside
     window.onclick = function(event) {
-        // Cek apakah klik berasal dari dalam tombol profil atau dropdown-nya
         const isClickInsideProfileButtonOrDropdown = event.target.closest('button[onclick="toggleDropdown(event)"]') || event.target.closest('#dropdownMenu');
-        
-        // Cek apakah klik berasal dari dalam tombol notifikasi atau dropdown-nya
         const isClickInsideNotificationButtonOrDropdown = event.target.closest('[onclick="toggleNotificationDropdown(event)"]') || event.target.closest('#notificationDropdown');
-
-        // Cek apakah klik berasal dari dalam tombol hamburger atau mobile menu
         const isClickInsideHamburgerOrMobileMenu = event.target.closest('#hamburgerButton') || event.target.closest('#mobileMenu');
 
-
-        if (!isClickInsideProfileButtonOrDropdown) {
-            const dropdownMenu = document.getElementById('dropdownMenu');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        if (dropdownMenu && !isClickInsideProfileButtonOrDropdown) {
             if (!dropdownMenu.classList.contains('hidden')) {
                 dropdownMenu.classList.add('hidden');
             }
         }
 
-        if (!isClickInsideNotificationButtonOrDropdown) {
-             const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        if (notificationDropdown && !isClickInsideNotificationButtonOrDropdown) {
             if (!notificationDropdown.classList.contains('hidden')) {
                 notificationDropdown.classList.add('hidden');
             }
         }
 
-        if (!isClickInsideHamburgerOrMobileMenu) {
-            const mobileMenu = document.getElementById('mobileMenu');
-            if (mobileMenu && mobileMenu.classList.contains('open')) {
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenu && !isClickInsideHamburgerOrMobileMenu) {
+            if (mobileMenu.classList.contains('open')) {
                 mobileMenu.classList.remove('open');
             }
         }
@@ -584,120 +583,126 @@
         const input = document.getElementById(inputId);
         const eyeIcon = button.querySelector('.eye-icon');
         const eyeOffIcon = button.querySelector('.eye-off-icon');
-
-        if (input.type === "password") {
-            input.type = "text";
-            eyeIcon.classList.add('hidden');
-            eyeOffIcon.classList.remove('hidden');
-        } else {
-            input.type = "password";
-            eyeIcon.classList.remove('hidden');
-            eyeOffIcon.classList.add('hidden');
+        
+        if (input && eyeIcon && eyeOffIcon) {
+            if (input.type === "password") {
+                input.type = "text";
+                eyeIcon.classList.add('hidden');
+                eyeOffIcon.classList.remove('hidden');
+            } else {
+                input.type = "password";
+                eyeIcon.classList.remove('hidden');
+                eyeOffIcon.classList.add('hidden');
+            }
         }
     }
 
     // Login Modal
     const loginModal = document.getElementById('loginModal');
-    const loginForm = document.getElementById('loginForm');
+    const loginFormModal = document.getElementById('loginFormModal');
     const loginEmailInput = document.getElementById('login_email');
     const loginPasswordInput = document.getElementById('login_password');
     const errorLoginEmail = document.getElementById('error-login_email');
     const errorLoginPassword = document.getElementById('error-login_password');
 
     function openModal() {
-        loginModal.classList.remove('hidden');
+        if (loginModal) loginModal.classList.remove('hidden');
     }
 
     function closeLoginModal() {
-        loginModal.classList.add('hidden');
-        // Clear previous error messages when closing the modal
-        errorLoginEmail.classList.add('hidden');
-        errorLoginPassword.classList.add('hidden');
-        loginEmailInput.classList.remove('border-red-500');
-        loginPasswordInput.classList.remove('border-red-500');
+        if (loginModal) loginModal.classList.add('hidden');
+        if (errorLoginEmail) errorLoginEmail.classList.add('hidden');
+        if (errorLoginPassword) errorLoginPassword.classList.add('hidden');
+        if (loginEmailInput) loginEmailInput.classList.remove('border-red-500');
+        if (loginPasswordInput) loginPasswordInput.classList.remove('border-red-500');
     }
 
-    // Validate login form
-    loginForm.addEventListener('submit', function(event) {
-        let isValid = true;
+    // Validate login form (untuk modal)
+    if (loginFormModal) {
+        loginFormModal.addEventListener('submit', function(event) {
+            let isValid = true;
 
-        if (loginEmailInput.value.trim() === '') {
-            errorLoginEmail.classList.remove('hidden');
-            loginEmailInput.classList.add('border-red-500');
-            isValid = false;
-        } else {
-            errorLoginEmail.classList.add('hidden');
-            loginEmailInput.classList.remove('border-red-500');
-        }
+            if (loginEmailInput && loginEmailInput.value.trim() === '') {
+                if (errorLoginEmail) errorLoginEmail.classList.remove('hidden');
+                if (loginEmailInput) loginEmailInput.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                if (errorLoginEmail) errorLoginEmail.classList.add('hidden');
+                if (loginEmailInput) loginEmailInput.classList.remove('border-red-500');
+            }
 
-        if (loginPasswordInput.value.trim() === '') {
-            errorLoginPassword.classList.remove('hidden');
-            loginPasswordInput.classList.add('border-red-500');
-            isValid = false;
-        } else {
-            errorLoginPassword.classList.add('hidden');
-            loginPasswordInput.classList.remove('border-red-500');
-        }
+            if (loginPasswordInput && loginPasswordInput.value.trim() === '') {
+                if (errorLoginPassword) errorLoginPassword.classList.remove('hidden');
+                if (loginPasswordInput) loginPasswordInput.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                if (errorLoginPassword) errorLoginPassword.classList.add('hidden');
+                if (loginPasswordInput) loginPasswordInput.classList.remove('border-red-500');
+            }
 
-        if (!isValid) {
-            event.preventDefault();
-        }
-    });
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    }
 
     // Check for errors on page load and open the modal if present
     @if ($errors->has('email') || $errors->has('password') || session('error'))
-        document.addEventListener('DOMContentLoaded', function() {
-            openModal();
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        openModal();
+    });
     @endif
 
     // Notification Popup
-    const notificationPopupOverlay = document.getElementById('notificationPopupOverlay');
-    const popupNotificationTitle = document.getElementById('popupNotificationTitle');
-    const popupNotificationTime = document.getElementById('popupNotificationTime');
-    const popupNotificationContent = document.getElementById('popupNotificationContent');
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationItems = document.querySelectorAll('.notification-item');
+        if (notificationItems.length > 0) {
+            const notificationPopupOverlay = document.getElementById('notificationPopupOverlay');
+            const popupNotificationTitle = document.getElementById('popupNotificationTitle');
+            const popupNotificationTime = document.getElementById('popupNotificationTime');
+            const popupNotificationContent = document.getElementById('popupNotificationContent');
 
-    document.querySelectorAll('.notification-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const title = this.querySelector('p:nth-child(1)').textContent;
-            const content = this.querySelector('p:nth-child(2)').textContent;
-            const originalTime = this.querySelector('[data-original-time]').dataset.originalTime;
+            notificationItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const title = this.querySelector('p:nth-child(1)').textContent;
+                    const content = this.querySelector('p:nth-child(2)').textContent;
+                    const originalTime = this.querySelector('[data-original-time]').dataset.originalTime;
 
-            popupNotificationTitle.textContent = title;
-            popupNotificationContent.textContent = content;
-            popupNotificationTime.textContent = formatNotificationTime(originalTime);
+                    if (popupNotificationTitle) popupNotificationTitle.textContent = title;
+                    if (popupNotificationContent) popupNotificationContent.textContent = content;
+                    if (popupNotificationTime) popupNotificationTime.textContent = formatNotificationTime(originalTime);
 
-            notificationPopupOverlay.classList.remove('hidden');
+                    if (notificationPopupOverlay) notificationPopupOverlay.classList.remove('hidden');
 
-            // Mark this specific notification as read (client-side only for now)
-            this.classList.remove('unread-notification');
-            const unreadDot = this.querySelector('.unread-dot');
-            if (unreadDot) {
-                unreadDot.classList.add('hidden');
-            }
-            updateGlobalNotificationDot();
-
-            // Optionally, send an AJAX request to mark as read on the server
-            const notificationId = this.dataset.notificationId;
-            if (notificationId) {
-                fetch(`/notifications/${notificationId}/mark-as-read`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                    this.classList.remove('unread-notification');
+                    const unreadDot = this.querySelector('.unread-dot');
+                    if (unreadDot) {
+                        unreadDot.classList.add('hidden');
                     }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        console.error('Failed to mark notification as read:', response.statusText);
+                    updateGlobalNotificationDot();
+
+                    const notificationId = this.dataset.notificationId;
+                    if (notificationId) {
+                        fetch(`/notifications/${notificationId}/mark-as-read`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Failed to mark notification as read:', response.statusText);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error marking notification as read:', error);
+                        });
                     }
-                })
-                .catch(error => {
-                    console.error('Error marking notification as read:', error);
                 });
-            }
-        });
+            });
+        }
     });
 
     function closeNotificationPopup() {
@@ -730,11 +735,13 @@
     // Global Notification Dot Logic
     function updateGlobalNotificationDot() {
         const globalDot = document.getElementById('globalNotificationDot');
-        const unreadCount = document.querySelectorAll('.notification-item.unread-notification').length;
-        if (unreadCount > 0) {
-            globalDot.classList.remove('hidden');
-        } else {
-            globalDot.classList.add('hidden');
+        if (globalDot) {
+            const unreadCount = document.querySelectorAll('.notification-item.unread-notification').length;
+            if (unreadCount > 0) {
+                globalDot.classList.remove('hidden');
+            } else {
+                globalDot.classList.add('hidden');
+            }
         }
     }
 

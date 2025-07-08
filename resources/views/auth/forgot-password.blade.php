@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen flex items-center justify-center bg-white">
+    <div class="min-h-screen flex items-center justify-center">
         <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
             <!-- Title -->
             <h2 class="text-2xl font-bold text-center text-black">Lupa Password</h2>
@@ -20,7 +20,7 @@
                     <x-input-label for="email" :value="__('Email')" />
                     <x-text-input id="email" class="block mt-1 w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                         type="email" name="email" :value="old('email')" required autofocus
-                        placeholder="Masukkan email Anda" />
+                        placeholder="Masukkan email anda" />
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
 

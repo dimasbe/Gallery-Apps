@@ -46,27 +46,21 @@
                 <div class="flex items-center space-x-4 mb-6">
                     {{-- Display the app logo --}}
                     <img src="{{ asset('storage/' . $aplikasi->logo) }}" alt="{{ $aplikasi->nama_aplikasi }} Icon" class="w-20 h-20 rounded-xl shadow-md flex-shrink-0">
-                    <div class="flex items-center space-x-4">
-                    </div>
-                </div>
-
-                {{-- Google Play Button - Updated to match the provided image --}}
-                @if($aplikasi->tautan_aplikasi)
+                    {{-- Google Play Button --}}
                     <a href="{{ $aplikasi->tautan_aplikasi }}" target="_blank"
-                       class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
-                              hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
+                        class="inline-flex items-center px-4 py-3 rounded-lg bg-white border border-gray-300 shadow-sm
+                        hover:shadow-md hover:border-gray-400 transition-all duration-200 space-x-3">
                         {{-- Google Play Icon --}}
                         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg"
-                             alt="Google Play Icon Only"
-                             class="h-7 w-7"> {{-- Adjusted size to match image --}}
-
+                        alt="Google Play Icon Only"
+                        class="h-7 w-7">
                         {{-- Text for Google Play --}}
                         <span class="text-sm text-gray-800 font-poppins">
                             Dapatkan di <br>
                             <strong class="font-bold">Google Play</strong>
                         </span>
                     </a>
-                @endif
+                </div>
             </div>
 
             {{-- Right Column: Image Gallery (Carousel) --}}

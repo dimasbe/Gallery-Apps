@@ -109,11 +109,7 @@
             {{-- Modal Edit Kategori --}}
             <div id="modalEdit" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
                 <div class="bg-white w-full max-w-md rounded-lg shadow-lg p-6 relative">
-                    <button onclick="tutupModal('modalEdit')"
-                        class="absolute top-2 right-2 text-gray-500 hover:text-red-700">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <h2 class="text-xl font-bold mb-4 text-gray-800">Edit Kategori</h2>
+                    <h2 class="text-center text-xl font-bold mb-4 text-gray-800">Edit Kategori</h2>
                     <form id="formEditKategori" enctype="multipart/form-data" novalidate> {{-- Added novalidate here --}}
                         @csrf
                         @method('PUT')
@@ -314,6 +310,8 @@
                     </a>
                 </div>
             </div>
+        </div>
+    </div>
 
     {{-- SweetAlert2 CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

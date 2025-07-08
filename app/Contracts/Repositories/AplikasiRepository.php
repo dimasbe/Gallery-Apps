@@ -257,7 +257,7 @@ class AplikasiRepository extends BaseRepository implements AplikasiInterface
         if ($aplikasi) {
             $aplikasi->status_verifikasi = StatusTypeEnum::DITOLAK->value;
             $aplikasi->alasan_penolakan = $reason;
-            $aplikasi->tanggal_verifikasi = now();
+            $aplikasi->tanggal_verifikasi = null; // Set ke null saat ditolak
             $aplikasi->save();
         }
         return $aplikasi;
